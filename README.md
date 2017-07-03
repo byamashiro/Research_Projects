@@ -29,6 +29,8 @@ You are parsing 2 station(s)
 Enter station names: INVK  
 Enter station names: OULU  
 Parsing the ['INVK', 'OULU'] stations  
+
+
 <img src="nm_data.png" width="500">
 
 
@@ -36,6 +38,8 @@ Parsing the ['INVK', 'OULU'] stations
 In [2]: **run pandas_test_proton.py**  
 Enter a start date (yyyymmdd): 20120305  
 Enter a end date (yyyymmdd): 20120309  
+
+
 <img src="proton.png" width="500">
 
 
@@ -47,6 +51,8 @@ Enter a start hour or "full": 00
 Enter a end hour: 03  
 Parsing Type III Data: [20120307 00:00:00 -- 20120307 03:00:00]  
 Elapsed Time: 16.3 seconds  
+
+
 <img src="radio.png" width="500">
 
 
@@ -92,7 +98,9 @@ Data Set | Normalized (Y/N) | Bad Data Specifiers
 ------------ | ------------- | -------------
 Proton Flux | N | -99999.0, 0.0
 Xray Flux | N | -99999.0, 0.0
-NM Scale | N | n/a 
+Neutron Monitor Rate | N | n/a 
+Radio Burst | N | n/a 
+
 
 
 
