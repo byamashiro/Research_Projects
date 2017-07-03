@@ -130,7 +130,7 @@ for i in nm_counter:
 
 
 #====Plotting
-#myFmt = mdates.DateFormatter('%m/%d\n%H:%M')
+myFmt = mdates.DateFormatter('%m/%d\n%H:%M')
 
 color_count = []
 for i in sorted_nm_list:
@@ -157,7 +157,7 @@ plt.tight_layout()
 #ax = fig.add_subplot(111)
 ax = plt.gca()
 
-#ax.xaxis.set_major_formatter(myFmt)
+ax.xaxis.set_major_formatter(myFmt)
 #plt.axes().xaxis.set_major_formatter(myFmt)
 
 plt.setp(ax.xaxis.get_majorticklabels(), rotation=0, horizontalalignment='center')
