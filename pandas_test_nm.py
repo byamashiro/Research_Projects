@@ -8,8 +8,6 @@ import numpy as np
 import random
 import sys
 
-import operator
-
 
 start_date = input('Enter start date (yyyymmdd): ')
 start_day = start_date[6:8]
@@ -79,41 +77,28 @@ print(f'Parsing the {station_multi} stations')
 
 event_obj_start = datetime.datetime.strptime(f'{start_date} {start_hour}', '%Y%m%d %H')
 event_obj_start_str = datetime.datetime.strftime(event_obj_start, '%Y%m%d %H:%M:%S')
-event_obj_start_str_date = datetime.datetime.strftime(event_obj_start, '%Y-%m-%d %H')
+event_obj_start_str_date = datetime.datetime.strftime(event_obj_start, '%Y%m%d %H')
 
 event_obj_end = datetime.datetime.strptime(f'{end_date} {end_hour}', '%Y%m%d %H')
 event_obj_end_str = datetime.datetime.strftime(event_obj_end, '%Y%m%d %H:%M:%S')
-event_obj_end_str_date = datetime.datetime.strftime(event_obj_end, '%Y-%m-%d %H')
-
-
+event_obj_end_str_date = datetime.datetime.strftime(event_obj_end, '%Y%m%d %H')
 
 
 
 #=======sorting column header test
 
-#sorter = ['PSNM', 'TIBT', 'ESOI', 'ATHN', 'MXCO', 'ARNM', 'NANM', 'PTFM', 'CALM', 'AATB', 'ROME', 'BKSN', 'HRMS', 'JUNG', 'JUNG1', 'LMKS', 'IRK2', 'IRK3', 'IRKT', 'DRBS', 'NVBK', 'MCRL', 'MOSC', 'NEWK', 'KIEL', 'KIEL2', 'MGDN', 'YKTK', 'KERG', 'CALG', 'OULU', 'SANB', 'SNAE', 'APTY', 'NRLK', 'TXBY', 'FSMT', 'INVK', 'JBGO', 'NAIN', 'PWNK', 'THUL', 'MWSN', 'NEU3', 'SOPB', 'SOPO', 'MRNY', 'DOMB', 'DOMC', 'TERA']
+#sorter_list = ['PSNM', 'TIBT', 'ESOI', 'ATHN', 'MXCO', 'ARNM', 'NANM', 'PTFM', 'CALM', 'AATB', 'ROME', 'BKSN', 'HRMS', 'JUNG', 'JUNG1', 'LMKS', 'IRK2', 'IRK3', 'IRKT', 'DRBS', 'NVBK', 'MCRL', 'MOSC', 'NEWK', 'KIEL', 'KIEL2', 'MGDN', 'YKTK', 'KERG', 'CALG', 'OULU', 'SANB', 'SNAE', 'APTY', 'NRLK', 'TXBY', 'FSMT', 'INVK', 'JBGO', 'NAIN', 'PWNK', 'THUL', 'MWSN', 'NEU3', 'SOPB', 'SOPO', 'MRNY', 'DOMB', 'DOMC', 'TERA']
 sorter = {'PSNM':0, 'TIBT':1, 'ESOI':2, 'ATHN':3, 'MXCO':4, 'ARNM':5, 'NANM':6, 'PTFM':7, 'CALM':8, 'AATB':9, 'ROME':10, 'BKSN':11, 'HRMS':12, 'JUNG':13, 'JUNG1':14, 'LMKS':15, 'IRK2':16, 'IRK3':17, 'IRKT':18, 'DRBS':19, 'NVBK':20, 'MCRL':21, 'MOSC':22, 'NEWK':23, 'KIEL':24, 'KIEL2':25, 'MGDN':26, 'YKTK':27, 'KERG':28, 'CALG':29, 'OULU':30, 'SANB':31, 'SNAE':32, 'APTY':33, 'NRLK':34, 'TXBY':35, 'FSMT':36, 'INVK':37, 'JBGO':38, 'NAIN':39, 'PWNK':40, 'THUL':41, 'MWSN':42, 'NEU3':43, 'SOPB':44, 'SOPO':45, 'MRNY':46, 'DOMB':47, 'DOMC':48, 'TERA':49}
 #sorted_sorter = sorted(sorter.items(), key=operator.itemgetter(1))
 sorted_lambda = sorted(sorter.items(), key=lambda x: x[1])
-'''
-for i in station_multi:
-	if i in [i[0] for i in sorted_lambda]:
-		sorted_lambda[i].append((1,))
-'''
+
 
 sorted_nm_list = []
 for i in [i[0] for i in sorted_lambda]:
 	if i in station_multi:
 		sorted_nm_list.append(i)
-#nm_data.columns = nm_data.columns.astype("category")
-#nm_data.columns.cat.set_categories(sorter, inplace=True)
-#df.reindex_axis(sorted(df.columns), axis=1)
 
 #========creating station string for url
-
-#station_str = ''
-#for i in station_multi:
-#	station_str += f'&stations[]={i}'
 
 station_str = ''
 for i in sorted_nm_list:
@@ -125,10 +110,10 @@ url = f'http://www.nmdb.eu/nest/draw_graph.php?formchk=1{station_str}&tabchoice=
 
 nm_data = pd.DataFrame([])
 
-name_list = ['datetime'] + [ str(i) for i in sorted_nm_list]
+name_list = ['date_time'] + [ str(i) for i in sorted_nm_list]
 
 dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S')
-nm_data = pd.read_csv(url, sep=';|\n|\b', skiprows=132, skipfooter=3, engine='python', index_col='datetime', names=name_list,keep_default_na=False, date_parser=dateparse, parse_dates=['datetime']) #, 
+nm_data = pd.read_csv(url, sep=';|\n|\b', skiprows=133, skipfooter=3, engine='python', index_col='date_time', names=name_list, date_parser=dateparse, parse_dates=['date_time']) #, 
 
 
 nm_counter = []
@@ -142,9 +127,6 @@ for i in nm_counter:
 	if i == 1:
 		print('Please select station with data for this time frame.')
 		sys.exit(0)
-
-
-
 
 
 #====Plotting
@@ -176,7 +158,9 @@ plt.tight_layout()
 ax = plt.gca()
 
 #ax.xaxis.set_major_formatter(myFmt)
+#plt.axes().xaxis.set_major_formatter(myFmt)
+
 plt.setp(ax.xaxis.get_majorticklabels(), rotation=0, horizontalalignment='center')
 
-plt.savefig('nm_data.png', format='png', dpi=900)
+#plt.savefig('nm_data.png', format='png', dpi=900)
 plt.show()

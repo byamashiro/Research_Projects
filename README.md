@@ -15,6 +15,8 @@
 
 - [ ] Integrate all data into subplots
 
+- [ ] Incorporate online databases for radio and proton data
+
 
 
 # Running Scripts
