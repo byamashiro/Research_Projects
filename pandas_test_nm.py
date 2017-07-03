@@ -178,5 +178,5 @@ ax = plt.gca()
 #ax.xaxis.set_major_formatter(myFmt)
 plt.setp(ax.xaxis.get_majorticklabels(), rotation=0, horizontalalignment='center')
 
-#plt.savefig('nm_data.pdf', format='pdf', dpi=900)
+plt.savefig('nm_data.pdf', format='pdf', dpi=900)
 plt.show()

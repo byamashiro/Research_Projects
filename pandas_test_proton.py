@@ -94,11 +94,11 @@ plt.minorticks_on()
 plt.grid(True)
 plt.yscale('log')
 plt.legend(loc='lower right')
-#plt.savefig('xray.pdf', format='pdf', dpi=900)
 plt.tight_layout()
 
 
 ax.xaxis.set_major_formatter(myFmt)
 
+plt.savefig('proton.pdf', format='pdf', dpi=900)
 plt.show()
 #plt.clf()
