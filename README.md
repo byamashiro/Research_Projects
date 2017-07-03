@@ -12,8 +12,8 @@
 # Running Scripts
 
 ### Neutron Monitor [nm_script](https://github.com/byamashiro/Research_Projects/blob/master/pandas_test_nm.py)
-* In [1]: run pandas_test_nm.py
-* Enter start date (yyyymmdd): 20120306
+* In [1]: **run pandas_test_nm.py**
+* Enter start date (yyyymmdd): 20120304
 * Enter a end date (yyyymmdd): 20120318
 * Enter a start hour or "full": full
 * How many stations to parse: 2
@@ -21,23 +21,23 @@
 * Enter station names: INVK
 * Enter station names: OULU
 * Parsing the ['INVK', 'OULU'] stations
-<img src="proton.pdf" width="500">
+<img src="proton.png" width="500">
 
 ### GOES-15 Proton Flux [prot_script](https://github.com/byamashiro/Research_Projects/blob/master/pandas_test_proton.py)
-* In [2]: run pandas_test_proton.py
+* In [2]: **run pandas_test_proton.py**
 * Enter a start date (yyyymmdd): 20120305
-* Enter a end date (yyyymmdd): 20120316
-<img src="nm_data.pdf" width="500">
+* Enter a end date (yyyymmdd): 20120309
+<img src="nm_data.png" width="500">
 
 ### WIND Type III Radio Burst [radio_script](https://github.com/byamashiro/Research_Projects/blob/master/pandas_test_radio.py)
-* In [3]: run pandas_test_radio.py
+* In [3]: **run pandas_test_radio.py**
 * Enter a start date (yyyymmdd): 20120307
 * Enter a end date (yyyymmdd): 20120307
 * Enter a start hour or "full": 00
-* Enter a end hour: 04
-* Parsing Type III Data: [20120307 00:00:00 -- 20120307 04:00:00]
-* Elapsed Time: 16.31 seconds
-<img src="radio.pdf" width="500">
+* Enter a end hour: 03
+* Parsing Type III Data: [20120307 00:00:00 -- 20120307 03:00:00]
+* Elapsed Time: 16.3 seconds
+<img src="radio.png" width="500">
 
 
 ###### Sample displayed data of pandas data:

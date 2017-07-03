@@ -103,5 +103,5 @@ plt.setp(ax.xaxis.get_majorticklabels(), rotation=0, horizontalalignment='center
 end_time = time.clock()
 print(f'Elapsed Time: {round(end_time - start_time , 2)} seconds')
 
-plt.savefig('radio.pdf', format='pdf', dpi=900)
+plt.savefig('radio.png', format='png', dpi=900)
 plt.show()

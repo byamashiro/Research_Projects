@@ -99,6 +99,6 @@ plt.tight_layout()
 
 ax.xaxis.set_major_formatter(myFmt)
 
-plt.savefig('proton.pdf', format='pdf', dpi=900)
+plt.savefig('proton.png', format='png', dpi=900)
 plt.show()
 #plt.clf()
