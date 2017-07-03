@@ -7,8 +7,9 @@
 
 - [ ] What are the statistical deviations from the background during intense solar events?
 
-#Running Scripts
+# Running Scripts
 
+### Neutron Monitor
 In [1]: run pandas_test_nm.py
 Enter start date (yyyymmdd): 20120306
 Enter a end date (yyyymmdd): 20120318
@@ -19,10 +20,12 @@ Enter station names: INVK
 Enter station names: OULU
 Parsing the ['INVK', 'OULU'] stations
 
+### GOES-15 Proton Flux
 In [2]: run pandas_test_proton.py
 Enter a start date (yyyymmdd): 20120305
 Enter a end date (yyyymmdd): 20120316
 
+### WIND Type III Radio Burst
 In [3]: run pandas_test_radio.py
 Enter a start date (yyyymmdd): 20120307
 Enter a end date (yyyymmdd): 20120307
