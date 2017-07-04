@@ -8,6 +8,7 @@
 - [x] Type III Radio Bursts
 
 - [ ] Fix issues with matplotlib DateFormatter "year out of range"
+	- [ ] Added issue with null errors in data frames
 
 - [ ] Collect GOES-15 Xray data
 
@@ -44,8 +45,8 @@ datetime
 ```python
 import matplotlib.dates as mdates
 
-myFmt = mdates.DateFormatter('%m/%d\n%H:%M') #this is line that breaks code (ValueError: year 60740 is out of range)
-ax.xaxis.set_major_formatter(myFmt)
+myFmt = mdates.DateFormatter('%m/%d\n%H:%M')
+ax.xaxis.set_major_formatter(myFmt) #this is line that breaks code (ValueError: year 60740 is out of range)
 ```
 
 # Running Scripts
