@@ -1,11 +1,11 @@
 # Space Weather Projects
 
 # Tasks
-- [x] Proton Flux
+- [x] Proton Flux (7/3/2017)
 
-- [x] Neutron Monitor
+- [x] Neutron Monitor (7/3/2017)
 
-- [x] Type III Radio Bursts
+- [x] Type III Radio Bursts (7/3/2017)
 
 - [ ] Fix issues with matplotlib DateFormatter "year out of range"
 	- [ ] Added issue with null errors in data frames
