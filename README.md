@@ -17,7 +17,36 @@
 
 - [ ] Incorporate online databases for radio and proton data
 
+# Current Errors
+### Null values
+- Some values are being registered as 'null'. Tried to add ``` na_values=['null']``` to the read_csv function, but the null is still being processed and results in a plotting error. To recreate error, run the 'pandas_test_nm.py' script for 20120307-20120309 (full) for stations (2) INVK and OULU.
+- Resolution will probably consist of removing null values, list comprehension on all null values in pandas dataframe.  
+```TypeError: Empty 'DataFrame': no numeric data to plot```
 
+```python
+                       OULU     INVK
+datetime                            
+2012-03-08 17:28:00  96.459  176.470
+2012-03-08 17:29:00  98.389  173.920
+2012-03-08 17:30:00  94.656     null
+2012-03-08 17:31:00  92.282  172.800
+2012-03-08 17:32:00  94.688  175.980
+2012-03-08 17:33:00  97.718  175.790
+2012-03-08 17:34:00  97.269  177.460
+2012-03-08 17:35:00  98.304  176.330
+```
+
+### DateFormatter
+- Code breaks when trying to format the x-axis labels using the DateFormatter function from matplotlib in the script, 'pandas_test_nm.py'.
+- Potentially the index are of a different definition, although each index shows the correct format 'yyyy-mm-dd hh:mm:ss' in the specified time interval between 20120307-20120309. Also test if delimiter could be changed to 'delim_whitespace=True' in read_csv function.  
+```ValueError: year 60740 is out of range```
+
+```python
+import matplotlib.dates as mdates
+
+myFmt = mdates.DateFormatter('%m/%d\n%H:%M') #this is line that breaks code (ValueError: year 60740 is out of range)
+ax.xaxis.set_major_formatter(myFmt)
+```
 
 # Running Scripts
 
@@ -33,7 +62,7 @@ Enter station names: OULU
 Parsing the ['INVK', 'OULU'] stations  
 
 
-<img src="nm_data.png" width="500">
+<img src="nm_data_test.png" width="500">
 
 
 ### GOES-15 Proton Flux ([prot_script](https://github.com/byamashiro/Research_Projects/blob/master/pandas_test_proton.py))
@@ -42,7 +71,7 @@ Enter a start date (yyyymmdd): 20120305
 Enter a end date (yyyymmdd): 20120309  
 
 
-<img src="proton.png" width="500">
+<img src="proton_test.png" width="500">
 
 
 ### WIND Type III Radio Burst ([radio_script](https://github.com/byamashiro/Research_Projects/blob/master/pandas_test_radio.py))
@@ -55,7 +84,7 @@ Parsing Type III Data: [20120307 00:00:00 -- 20120307 03:00:00]
 Elapsed Time: 16.3 seconds  
 
 
-<img src="radio.png" width="500">
+<img src="radio_test.png" width="500">
 
 
 ###### Sample displayed data of pandas data:

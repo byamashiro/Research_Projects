@@ -113,7 +113,7 @@ nm_data = pd.DataFrame([])
 name_list = ['datetime'] + [ str(i) for i in sorted_nm_list]
 
 dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S')
-nm_data = pd.read_csv(url, sep=';|\n|\b', skiprows=134, skipfooter=3, engine='python', index_col='datetime', names=name_list, date_parser=dateparse, parse_dates=['datetime']) #, 
+nm_data = pd.read_csv(url, sep=';|\n|\b', skiprows=133, skipfooter=3, engine='python', index_col='datetime', names=name_list, date_parser=dateparse, parse_dates=['datetime'], na_values=['null']) #, 
 
 
 nm_counter = []
@@ -157,10 +157,10 @@ plt.tight_layout()
 #ax = fig.add_subplot(111)
 ax = plt.gca()
 
-#ax.xaxis.set_major_formatter(myFmt) #this is line that breaks code (ValueError: year 60740 is out of range)
+ax.xaxis.set_major_formatter(myFmt) #this is line that breaks code (ValueError: year 60740 is out of range)
 #plt.axes().xaxis.set_major_formatter(myFmt)
 
-plt.setp(ax.xaxis.get_majorticklabels(), rotation=0, horizontalalignment='center')
+#plt.setp(ax.xaxis.get_majorticklabels(), rotation=0, horizontalalignment='center')
 
 #plt.savefig('nm_data.png', format='png', dpi=900)
 plt.show()
