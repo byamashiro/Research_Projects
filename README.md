@@ -10,6 +10,11 @@
 - [x] Fix issues with matplotlib DateFormatter "year out of range" (7/5/2017)
 	- [x] Added issue with null errors in data frames (7/5/2017)
 
+- [ ] Remake Radio Burst script using CDF and online databases
+    - [x] Use pycdf **(module: spacepy)** to read CDF data (7/6/2017)
+    - [ ] Push data into pandas dataframe
+    - [ ] Set up automated url inputs
+
 - [ ] Collect GOES-15 Xray data
 
 - [ ] Collect WIND/ACE Solar Wind data
@@ -18,10 +23,16 @@
 
 - [ ] Incorporate online databases for radio and proton data
 
-# Current Errors
-none
+# Current Errors and Pressing Tasks
+### NaN values for Neutron Monitor script for lack of data
+- Some neutron monitors do not have data and will return NaN values. When the script runs and the NaN values are added, the title columns will be shifted since there is no data in those columns. Essentially, 3 labels will be made for 2 columns, and the headers might not match the correlated data.
+
+
 
 # Running Scripts
+
+### Remastered WIND Type III Radio Burst ([radio_script_v2](https://github.com/byamashiro/Research_Projects/blob/master/radio_remastered.py))
+- In progress
 
 ### Neutron Monitor ([nm_script](https://github.com/byamashiro/Research_Projects/blob/master/pandas_test_nm.py))
 In [1]: **run pandas_test_nm.py**  
