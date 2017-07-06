@@ -125,7 +125,7 @@ OULU Neutron Monitor Data
 # Resolved Errors
 
 ### Null values (resolved 7/5/2017)
-* Resolution: There were three spaces in front of the null values, delimit whitespace to removed them. As a quick fix, 3 spaces were added to the 'na_values' argument, '   null'.  
+* **Resolution**: There were three spaces in front of the null values, delimit whitespace to removed them. As a quick fix, 3 spaces were added to the 'na_values' argument, '   null'.  
 
 - Some values are being registered as 'null'. Tried to add ``` na_values=['null']``` to the read_csv function, but the null is still being processed and results in a plotting error. To recreate error, run the 'pandas_test_nm.py' script for 20120307-20120309 (full) for stations (2) INVK and OULU.
 - Resolution will probably consist of removing null values, list comprehension on all null values in pandas dataframe.  
@@ -145,7 +145,7 @@ datetime
 ```
 
 ### DateFormatter (resolved 7/5/2017)
-* Resolution: Used the matplotlib plot function instead of the pandas plot function.
+* **Resolution**: Used the matplotlib plot function instead of the pandas plot function.
 
 - Code breaks when trying to format the x-axis labels using the DateFormatter function from matplotlib in the script, 'pandas_test_nm.py'.
 - Potentially the index are of a different definition, although each index shows the correct format 'yyyy-mm-dd hh:mm:ss' in the specified time interval between 20120307-20120309. Also test if delimiter could be changed to 'delim_whitespace=True' in read_csv function.  
