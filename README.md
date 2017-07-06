@@ -7,8 +7,8 @@
 
 - [x] Type III Radio Bursts (7/3/2017)
 
-- [ ] Fix issues with matplotlib DateFormatter "year out of range"
-	- [ ] Added issue with null errors in data frames
+- [x] Fix issues with matplotlib DateFormatter "year out of range" (7/5/2017)
+	- [x] Added issue with null errors in data frames (7/5/2017)
 
 - [ ] Collect GOES-15 Xray data
 
@@ -19,35 +19,7 @@
 - [ ] Incorporate online databases for radio and proton data
 
 # Current Errors
-### Null values
-- Some values are being registered as 'null'. Tried to add ``` na_values=['null']``` to the read_csv function, but the null is still being processed and results in a plotting error. To recreate error, run the 'pandas_test_nm.py' script for 20120307-20120309 (full) for stations (2) INVK and OULU.
-- Resolution will probably consist of removing null values, list comprehension on all null values in pandas dataframe.  
-```TypeError: Empty 'DataFrame': no numeric data to plot```
-
-```python
-                       OULU     INVK
-datetime                            
-2012-03-08 17:28:00  96.459  176.470
-2012-03-08 17:29:00  98.389  173.920
-2012-03-08 17:30:00  94.656     null
-2012-03-08 17:31:00  92.282  172.800
-2012-03-08 17:32:00  94.688  175.980
-2012-03-08 17:33:00  97.718  175.790
-2012-03-08 17:34:00  97.269  177.460
-2012-03-08 17:35:00  98.304  176.330
-```
-
-### DateFormatter
-- Code breaks when trying to format the x-axis labels using the DateFormatter function from matplotlib in the script, 'pandas_test_nm.py'.
-- Potentially the index are of a different definition, although each index shows the correct format 'yyyy-mm-dd hh:mm:ss' in the specified time interval between 20120307-20120309. Also test if delimiter could be changed to 'delim_whitespace=True' in read_csv function.  
-```ValueError: year 60740 is out of range```
-
-```python
-import matplotlib.dates as mdates
-
-myFmt = mdates.DateFormatter('%m/%d\n%H:%M')
-ax.xaxis.set_major_formatter(myFmt) #this is line that breaks code (ValueError: year 60740 is out of range)
-```
+none
 
 # Running Scripts
 
@@ -142,12 +114,47 @@ The data consists of mainly flux data from instruments on the ground, Earth orbi
 ### Data Caveats
 Corrupted data is labeled as -99999.0, and 0.0 flux is most probable to be corrupted as well. Corrupted data is changed using the pandas replace function to np.nan.
 
-GOES-13 Proton Flux
+## Data originals
+GOES-13 Proton Flux  
+GOES-15 Xray Flux  
+ACE Magnetic Field Components  
+ACE Solar Wind Parameters  
+OULU Neutron Monitor Data  
 
-GOES-15 Xray Flux
 
-ACE Magnetic Field Components
+# Resolved Errors
 
-ACE Solar Wind Parameters
+### Null values (resolved 7/5/2017)
+* Resolution: There were three spaces in front of the null values, delimit whitespace to removed them. As a quick fix, 3 spaces were added to the 'na_values' argument, '   null'.  
 
-OULU Neutron Monitor Data
+- Some values are being registered as 'null'. Tried to add ``` na_values=['null']``` to the read_csv function, but the null is still being processed and results in a plotting error. To recreate error, run the 'pandas_test_nm.py' script for 20120307-20120309 (full) for stations (2) INVK and OULU.
+- Resolution will probably consist of removing null values, list comprehension on all null values in pandas dataframe.  
+```TypeError: Empty 'DataFrame': no numeric data to plot```
+
+```python
+                       OULU     INVK
+datetime                            
+2012-03-08 17:28:00  96.459  176.470
+2012-03-08 17:29:00  98.389  173.920
+2012-03-08 17:30:00  94.656     null
+2012-03-08 17:31:00  92.282  172.800
+2012-03-08 17:32:00  94.688  175.980
+2012-03-08 17:33:00  97.718  175.790
+2012-03-08 17:34:00  97.269  177.460
+2012-03-08 17:35:00  98.304  176.330
+```
+
+### DateFormatter (resolved 7/5/2017)
+* Resolution: Used the matplotlib plot function instead of the pandas plot function.
+
+- Code breaks when trying to format the x-axis labels using the DateFormatter function from matplotlib in the script, 'pandas_test_nm.py'.
+- Potentially the index are of a different definition, although each index shows the correct format 'yyyy-mm-dd hh:mm:ss' in the specified time interval between 20120307-20120309. Also test if delimiter could be changed to 'delim_whitespace=True' in read_csv function.  
+```ValueError: year 60740 is out of range```
+
+```python
+import matplotlib.dates as mdates
+
+myFmt = mdates.DateFormatter('%m/%d\n%H:%M')
+ax.xaxis.set_major_formatter(myFmt) #this is line that breaks code (ValueError: year 60740 is out of range)
+```
+

@@ -113,8 +113,8 @@ nm_data = pd.DataFrame([])
 name_list = ['datetime'] + [ str(i) for i in sorted_nm_list]
 
 dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S')
-nm_data = pd.read_csv(url, sep=';|\n|\b', skiprows=133, skipfooter=3, engine='python', index_col='datetime', names=name_list, date_parser=dateparse, parse_dates=['datetime'], na_values=['null']) #, 
-
+nm_data = pd.read_csv(url,sep=';|\n|\b', skiprows=133, skipfooter=3, engine='python', index_col='datetime', date_parser=dateparse, names=name_list, na_values=['   null']) #, , parse_dates=['datetime'], date_parser=dateparse
+#delim_whitespace=True
 
 nm_counter = []
 for item in sorted_nm_list:
@@ -123,11 +123,12 @@ for item in sorted_nm_list:
 	else:
 		nm_counter.append(0)
 
+'''
 for i in nm_counter:
 	if i == 1:
 		print('Please select station with data for this time frame.')
 		sys.exit(0)
-
+'''
 
 #====Plotting
 myFmt = mdates.DateFormatter('%m/%d\n%H:%M') #this is line that breaks code (ValueError: year 60740 is out of range)
@@ -135,18 +136,18 @@ myFmt = mdates.DateFormatter('%m/%d\n%H:%M') #this is line that breaks code (Val
 color_count = []
 for i in sorted_nm_list:
 
-	color_list = ['red','orange','yellow','green','blue','indigo','violet','purple']
+	color_list = ['red','orange','green','blue','indigo','violet','purple'] #,'yellow'
 	color_list = list(set(color_list) - set(color_count))
 
 	rand_color = random.choice(color_list)
 	color_count.append(rand_color)
 
-
-	nm_data[f'{i}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].plot(color=rand_color, label= f'{i}')
+	#nm_data[f'{i}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].plot(color=rand_color, label= f'{i}')
+	plt.plot(nm_data.index, nm_data[f'{i}'], color=rand_color, label=f'{i}')
 
 #nm_data['RCORR_E'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].plot(color='limegreen', label= 'Corrected for Efficiency')
 
-plt.title(f'Neutron Monitor Data Corrected for Efficiency: {station} Station\n[{event_obj_start_str} -- {event_obj_end_str}]', fontname="Arial", fontsize = 14)
+plt.title(f'Neutron Monitor Data Corrected for Efficiency\n[{event_obj_start_str} -- {event_obj_end_str}]', fontname="Arial", fontsize = 14)
 plt.xlabel('Time', fontname="Arial", fontsize = 14)
 plt.ylabel('Counts/s', fontname="Arial", fontsize = 14)
 plt.minorticks_on()
@@ -158,9 +159,11 @@ plt.tight_layout()
 ax = plt.gca()
 
 ax.xaxis.set_major_formatter(myFmt) #this is line that breaks code (ValueError: year 60740 is out of range)
+#ax.xaxis.set_major_formatter(dates.DateFormatter('%H'))
 #plt.axes().xaxis.set_major_formatter(myFmt)
 
-#plt.setp(ax.xaxis.get_majorticklabels(), rotation=0, horizontalalignment='center')
+plt.setp(ax.xaxis.get_majorticklabels(), rotation=0, horizontalalignment='center')
+
 
 #plt.savefig('nm_data.png', format='png', dpi=900)
 plt.show()
