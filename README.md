@@ -25,7 +25,8 @@
 
 # Current Errors and Pressing Tasks
 ### Set up online CDF reader through Python
-- Add online functionality to ([radio_script_v2](https://github.com/byamashiro/Research_Projects/blob/master/radio_remastered.py). The script currently runs offline with local data files. Attempt was made using urllib and requests, but response is in binary/byte format and cannot be read with .json() methods. Possibly encode/decode into ascii format and run through CDF methods. **Note**: Each .cdf file might contain different versions (i.e _v02) for string recognition.
+- Add online functionality to ([radio_script_v2](https://github.com/byamashiro/Research_Projects/blob/master/radio_remastered.py)). The script currently runs offline with local data files. Attempt was made using urllib and requests, but response is in binary/byte format and cannot be read with .json() methods. Possibly encode/decode into ascii format and run through CDF methods. **Note**: Each .cdf file might contain different versions (i.e _v02) for string recognition.
+- The easier and less efficient option would be to download the data from each site and run the .cdf reader locally.
 
 ### NaN values for Neutron Monitor script for lack of data
 - Some neutron monitors do not have data and will return NaN values. When the script runs and the NaN values are added, the title columns will be shifted since there is no data in those columns. Essentially, 3 labels will be made for 2 columns, and the headers might not match the correlated data.
