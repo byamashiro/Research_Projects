@@ -33,13 +33,13 @@
 # Running Scripts
 
 ### Remastered WIND Type III Radio Burst ([radio_script_v2](https://github.com/byamashiro/Research_Projects/blob/master/radio_remastered.py))
-In [33]: **run radio_remastered.py**
-Enter start date (yyyymmdd): 20120307
-Enter a end date (yyyymmdd): 20120307
-Enter a start hour or "full": 00
-Enter a end hour: 04
-100% [..........................................................................] 3555206 / 3555206
-Parsing Type III Data: [20120307 00:00:00 -- 20120307 04:00:00]
+In [33]: **run radio_remastered.py**  
+Enter start date (yyyymmdd): 20120307  
+Enter a end date (yyyymmdd): 20120307  
+Enter a start hour or "full": 00  
+Enter a end hour: 04  
+100% [..........................................................................] 3555206 / 3555206  
+Parsing Type III Data: [20120307 00:00:00 -- 20120307 04:00:00]  
 Elapsed Time: 0.96 seconds  
 
 
