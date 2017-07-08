@@ -94,7 +94,7 @@ Enter a end date (yyyymmdd): 20120309
 <img src="Plots/proton_test.png" width="500">
 
 
-### WIND Type III Radio Burst ([radio_script](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/pandas_test_radio.py)) [Depricated]
+### WIND Type III Radio Burst ([radio_script](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/pandas_test_radio.py)) [Deprecated]
 In [3]: **run pandas_test_radio.py**  
 Enter a start date (yyyymmdd): 20120307  
 Enter a end date (yyyymmdd): 20120307  
