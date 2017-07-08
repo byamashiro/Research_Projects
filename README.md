@@ -67,7 +67,7 @@ Parsing Type III Data for 2012-03-03
 100% [..........................................................................] 3555206 / 3555206  
 Parsing Type III Data for 2012-03-04  
 
-Plotting Type III Data: [20120301 00:00:00 -- 20120304 23:00:00]
+Plotting Type III Data: [20120301 00:00:00 -- 20120304 23:00:00]  
 Elapsed Time: 3.35 seconds  
 
 
