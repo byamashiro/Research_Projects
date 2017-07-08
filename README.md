@@ -26,7 +26,7 @@
 # Current Errors and Pressing Tasks
 
 ### Outliers for Radio Burst script
--Values ~300 sfu that seem to be outliers. Values will be removed, but each spike includes more than 1 point, therefore a single max threshold will not suffice.
+- Values ~300 sfu that seem to be outliers. Values will be removed, but each spike includes more than 1 point, therefore a single max threshold will not suffice.
 
 
 ### NaN values for Neutron Monitor script for lack of data
