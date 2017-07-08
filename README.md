@@ -32,7 +32,7 @@
 
 # Running Scripts
 
-### Remastered WIND Type III Radio Burst ([radio_script_v2](https://github.com/byamashiro/Research_Projects/Scripts/blob/master/radio_remastered.py))
+### Remastered WIND Type III Radio Burst ([radio_script_v2](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/radio_remastered.py))
 In [33]: **run radio_remastered.py**  
 Enter start date (yyyymmdd): 20120307  
 Enter a end date (yyyymmdd): 20120307  
@@ -46,7 +46,7 @@ Elapsed Time: 0.96 seconds
 <img src="Plots/remastered_radio_test.png" width="500">
 
 
-### Neutron Monitor ([nm_script](https://github.com/byamashiro/Research_Projects/Scripts/blob/master/pandas_test_nm.py))
+### Neutron Monitor ([nm_script](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/pandas_test_nm.py))
 In [1]: **run pandas_test_nm.py**  
 Enter start date (yyyymmdd): 20120304  
 Enter a end date (yyyymmdd): 20120318  
@@ -61,7 +61,7 @@ Parsing the ['INVK', 'OULU'] stations
 <img src="Plots/nm_data_test.png" width="500">
 
 
-### GOES-15 Proton Flux ([prot_script](https://github.com/byamashiro/Research_Projects/Scripts/blob/master/pandas_test_proton.py))
+### GOES-15 Proton Flux ([prot_script](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/pandas_test_proton.py))
 In [2]: **run pandas_test_proton.py**  
 Enter a start date (yyyymmdd): 20120305  
 Enter a end date (yyyymmdd): 20120309  
@@ -70,7 +70,7 @@ Enter a end date (yyyymmdd): 20120309
 <img src="Plots/proton_test.png" width="500">
 
 
-### WIND Type III Radio Burst ([radio_script](https://github.com/byamashiro/Research_Projects/Scripts/blob/master/pandas_test_radio.py))
+### WIND Type III Radio Burst ([radio_script](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/pandas_test_radio.py))
 In [3]: **run pandas_test_radio.py**  
 Enter a start date (yyyymmdd): 20120307  
 Enter a end date (yyyymmdd): 20120307  
@@ -150,7 +150,7 @@ OULU Neutron Monitor Data
 ### Set up online CDF reader through Python (7/8/2017)
 * **Resolution**: Used wget instead of requests and urllib library. The .cdf is downloaded locally and removed after the data is inserted into a data variable.
 
-- Add online functionality to ([radio_script_v2](https://github.com/byamashiro/Research_Projects/Scripts/blob/master/radio_remastered.py)). The script currently runs offline with local data files. Attempt was made using urllib and requests, but response is in binary/byte format and cannot be read with .json() methods. Possibly encode/decode into ascii format and run through CDF methods. **Note**: Each .cdf file might contain different versions (i.e _v02) for string recognition.
+- Add online functionality to ([radio_script_v2](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/radio_remastered.py)). The script currently runs offline with local data files. Attempt was made using urllib and requests, but response is in binary/byte format and cannot be read with .json() methods. Possibly encode/decode into ascii format and run through CDF methods. **Note**: Each .cdf file might contain different versions (i.e _v02) for string recognition.
 - The easier and less efficient option would be to download the data from each site and run the .cdf reader locally.
 
 
