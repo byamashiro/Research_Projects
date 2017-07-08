@@ -33,17 +33,41 @@
 # Running Scripts
 
 ### Remastered WIND Type III Radio Burst ([radio_script_v2](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/radio_remastered.py))
+#### Single Day
 In [33]: **run radio_remastered.py**  
 Enter start date (yyyymmdd): 20120307  
 Enter a end date (yyyymmdd): 20120307  
 Enter a start hour or "full": 00  
 Enter a end hour: 04  
 100% [..........................................................................] 3555206 / 3555206  
-Parsing Type III Data: [20120307 00:00:00 -- 20120307 04:00:00]  
+Parsing Type III Data for 2012-03-01  
+
+Plotting Type III Data: [20120307 00:00:00 -- 20120307 04:00:00]  
 Elapsed Time: 0.96 seconds  
 
 
 <img src="Plots/remastered_radio_test.png" width="500">
+
+
+#### Multiple Days
+In [96]: **run radio_remastered.py**
+Enter start date (yyyymmdd): 20120301
+Enter a end date (yyyymmdd): 20120304
+Enter a start hour or "full": full
+100% [..........................................................................] 3555206 / 3555206
+Parsing Type III Data for 2012-03-01
+100% [..........................................................................] 3555206 / 3555206
+Parsing Type III Data for 2012-03-02
+100% [..........................................................................] 3555206 / 3555206
+Parsing Type III Data for 2012-03-03
+100% [..........................................................................] 3555206 / 3555206
+Parsing Type III Data for 2012-03-04  
+
+Plotting Type III Data: [20120301 00:00:00 -- 20120304 23:00:00]
+Elapsed Time: 3.35 seconds  
+
+
+<img src="Plots/remastered_radio_multi_test.png" width="500">
 
 
 ### Neutron Monitor ([nm_script](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/pandas_test_nm.py))

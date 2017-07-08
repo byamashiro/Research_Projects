@@ -41,6 +41,8 @@ if len(start_date) != 8 or len(end_date) != 8:
 	sys.exit(0)
 
 start_hour = input('Enter a start hour or "full": ').zfill(2)
+if start_hour == '':
+	start_hour = 'full'
 
 if start_hour.isdigit() == True:
 	end_hour = input('Enter a end hour: ').zfill(2)
@@ -77,56 +79,116 @@ end = datetime.date( year = int(f'{end_year}'), month = int(f'{end_month}') , da
 start_time = time.clock()
 
 #==========Data
-rb_data = pd.DataFrame([])
+radio_filename = f'wi_h1_wav_{start_date}_v01.cdf'
 
+'''
+radio_name_list = []
+url_list = []
 for date in daterange( start, end ):
 	try:
 		event_date = str(date).replace('-','')
-		radio_name = f'wi_h1_wav_{event_date}_v01.cdf'
-		url = f'https://cdaweb.gsfc.nasa.gov/pub/data/wind/waves/wav_h1/{event_date[:4]}/{radio_name}'
-		radio_in = wget.download(url)
-		
-		cdf = pycdf.CDF(radio_in) # cdf = pycdf.CDF('wi_h1_wav_20120307_v01.cdf')
-		os.remove(radio_name)
-	
-		print(f'\nParsing Type III Data for {date}')
-		
-		time_rb = []
-		for i in cdf['Epoch']:
-			time_rb.append(i)
-		
-		freq_rb = []
-		for i in cdf['Frequency_RAD1']:
-			freq_rb.append(i)
-		
-		rad1_rb = []
-		for i in cdf['E_VOLTAGE_RAD1']:
-			rad1_rb.append(i)
-		
-		
-		
-		data_time = pd.DataFrame(time_rb)
-		data_time.columns = ['date_time']
-		
-		data_freq = pd.DataFrame(freq_rb)
-		data_freq.columns = ['freq']
-		
-		data_rad1 = pd.DataFrame(rad1_rb)
-		data_rad1.columns = data_freq['freq']
-		
-		rb_concat = pd.concat([data_time, data_rad1], axis=1)
-		rb_concat.set_index(['date_time'], inplace=True)
-	
-		rb_data = rb_data.append(rb_concat)
+		radio_name_list.append(f'wi_h1_wav_{event_date}_v01.cdf')
+		url_list.append(f'https://cdaweb.gsfc.nasa.gov/pub/data/wind/waves/wav_h1/{event_date[:4]}/{radio_filename}')
+		#proton_df_ind = pd.read_csv(f'{full_proton_path}/{event_date[0:6]}/g15_epead_p27w_32s_{event_date}_{event_date}.csv', skiprows=282, header=0)
+		#proton_df = proton_df.append(proton_df_ind)
 	except:
-		print(f'\nMISSING DATA FOR: {date}\n')
+		print(f'Missing data for {date}')
 		continue
+'''
 
+rb_data = pd.DataFrame([])
+
+for date in daterange( start, end ):
+	#try:
+	event_date = str(date).replace('-','')
+	radio_name = f'wi_h1_wav_{event_date}_v01.cdf'
+	url = f'https://cdaweb.gsfc.nasa.gov/pub/data/wind/waves/wav_h1/{event_date[:4]}/{radio_name}'
+	radio_in = wget.download(url)
+	
+	cdf = pycdf.CDF(radio_in) # cdf = pycdf.CDF('wi_h1_wav_20120307_v01.cdf')
+	os.remove(radio_name)
+
+	print(f'\nParsing Type III Data: [{event_obj_start_str} -- {event_obj_end_str}]')
+	
+	time_rb = []
+	for i in cdf['Epoch']:
+		time_rb.append(i)
+	
+	freq_rb = []
+	for i in cdf['Frequency_RAD1']:
+		freq_rb.append(i)
+	
+	rad1_rb = []
+	for i in cdf['E_VOLTAGE_RAD1']:
+		rad1_rb.append(i)
+	
+	
+	
+	data_time = pd.DataFrame(time_rb)
+	data_time.columns = ['date_time']
+	
+	data_freq = pd.DataFrame(freq_rb)
+	data_freq.columns = ['freq']
+	
+	data_rad1 = pd.DataFrame(rad1_rb)
+	data_rad1.columns = data_freq['freq']
+	
+	rb_concat = pd.concat([data_time, data_rad1], axis=1)
+	rb_concat.set_index(['date_time'], inplace=True)
+
+	rb_data = rb_data.append(rb_concat)
+
+		#proton_df_ind = pd.read_csv(f'{full_proton_path}/{event_date[0:6]}/g15_epead_p27w_32s_{event_date}_{event_date}.csv', skiprows=282, header=0)
+		#proton_df = proton_df.append(proton_df_ind)
+'''
+	except:
+		print(f'Missing data for {date}')
+		continue 
+'''
+
+#sys.exit(0)
+
+
+#url = f'https://cdaweb.gsfc.nasa.gov/pub/data/wind/waves/wav_h1/{start_year}/{radio_filename}'
+#radio_in = wget.download(url)
+
+
+
+'''
+cdf = pycdf.CDF(radio_in) # cdf = pycdf.CDF('wi_h1_wav_20120307_v01.cdf')
+
+os.remove(radio_filename)
+print(f'\nParsing Type III Data: [{event_obj_start_str} -- {event_obj_end_str}]')
+
+time_rb = []
+for i in cdf['Epoch']:
+	time_rb.append(i)
+
+freq_rb = []
+for i in cdf['Frequency_RAD1']:
+	freq_rb.append(i)
+
+rad1_rb = []
+for i in cdf['E_VOLTAGE_RAD1']:
+	rad1_rb.append(i)
+
+
+
+data_time = pd.DataFrame(time_rb)
+data_time.columns = ['date_time']
+
+data_freq = pd.DataFrame(freq_rb)
+data_freq.columns = ['freq']
+
+data_rad1 = pd.DataFrame(rad1_rb)
+data_rad1.columns = data_freq['freq']
+
+rb_data = pd.concat([data_time, data_rad1], axis=1)
+rb_data.set_index(['date_time'], inplace=True)
+'''
 rb_data['avg'] = rb_data.mean(axis=1, numeric_only=True)
 
 #=========Plotting
-print(f'\nPlotting Type III Data: [{event_obj_start_str} -- {event_obj_end_str}]')
-
 rb_data['avg'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].plot(color='navy', label= '20 kHz - 1040 kHz')
 plt.title(f'WIND Type III Radio Bursts: RAD 1\n[{event_obj_start_str} -- {event_obj_end_str}]', fontname="Arial", fontsize = 14)
 plt.xlabel('Time', fontname="Arial", fontsize = 14)
@@ -145,7 +207,7 @@ plt.setp(ax.xaxis.get_majorticklabels(), rotation=0, horizontalalignment='center
 
 end_time = time.clock()
 print(f'Elapsed Time: {round(end_time - start_time , 2)} seconds')
-plt.savefig('remastered_radio_multi.png', format='png', dpi=900)
+plt.savefig('remastered_radio.png', format='png', dpi=900)
 
 plt.show()
 
