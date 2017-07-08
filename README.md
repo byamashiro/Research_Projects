@@ -10,10 +10,10 @@
 - [x] Fix issues with matplotlib DateFormatter "year out of range" (7/5/2017)
 	- [x] Added issue with null errors in data frames (7/5/2017)
 
-- [ ] Remake Radio Burst script using CDF and online databases
+- [x] Remake Radio Burst script using CDF and online databases (7/8/2017)
     - [x] Use pycdf **(module: spacepy)** to read CDF data (7/6/2017)
     - [x] Push data into pandas dataframe (7/7/2017)
-    - [ ] Set up automated url inputs
+    - [x] Set up automated url inputs (7/8/2017)
 
 - [ ] Collect GOES-15 Xray data
 
@@ -24,9 +24,6 @@
 - [ ] Incorporate online databases for radio and proton data
 
 # Current Errors and Pressing Tasks
-### Set up online CDF reader through Python
-- Add online functionality to ([radio_script_v2](https://github.com/byamashiro/Research_Projects/blob/master/radio_remastered.py)). The script currently runs offline with local data files. Attempt was made using urllib and requests, but response is in binary/byte format and cannot be read with .json() methods. Possibly encode/decode into ascii format and run through CDF methods. **Note**: Each .cdf file might contain different versions (i.e _v02) for string recognition.
-- The easier and less efficient option would be to download the data from each site and run the .cdf reader locally.
 
 ### NaN values for Neutron Monitor script for lack of data
 - Some neutron monitors do not have data and will return NaN values. When the script runs and the NaN values are added, the title columns will be shifted since there is no data in those columns. Essentially, 3 labels will be made for 2 columns, and the headers might not match the correlated data.
@@ -36,7 +33,18 @@
 # Running Scripts
 
 ### Remastered WIND Type III Radio Burst ([radio_script_v2](https://github.com/byamashiro/Research_Projects/blob/master/radio_remastered.py))
-- In progress
+In [33]: **run radio_remastered.py**
+Enter start date (yyyymmdd): 20120307
+Enter a end date (yyyymmdd): 20120307
+Enter a start hour or "full": 00
+Enter a end hour: 04
+100% [..........................................................................] 3555206 / 3555206
+Parsing Type III Data: [20120307 00:00:00 -- 20120307 04:00:00]
+Elapsed Time: 0.96 seconds  
+
+
+<img src="remastered_radio_test.png" width="500">
+
 
 ### Neutron Monitor ([nm_script](https://github.com/byamashiro/Research_Projects/blob/master/pandas_test_nm.py))
 In [1]: **run pandas_test_nm.py**  
@@ -139,6 +147,13 @@ OULU Neutron Monitor Data
 
 # Resolved Errors
 
+### Set up online CDF reader through Python (7/8/2017)
+* **Resolution**: Used wget instead of requests and urllib library. The .cdf is downloaded locally and removed after the data is inserted into a data variable.
+
+- Add online functionality to ([radio_script_v2](https://github.com/byamashiro/Research_Projects/blob/master/radio_remastered.py)). The script currently runs offline with local data files. Attempt was made using urllib and requests, but response is in binary/byte format and cannot be read with .json() methods. Possibly encode/decode into ascii format and run through CDF methods. **Note**: Each .cdf file might contain different versions (i.e _v02) for string recognition.
+- The easier and less efficient option would be to download the data from each site and run the .cdf reader locally.
+
+
 ### Null values (resolved 7/5/2017)
 * **Resolution**: There were three spaces in front of the null values, delimit whitespace to removed them. As a quick fix, 3 spaces were added to the 'na_values' argument, '   null', ``` na_values=['   null']```.  
 
@@ -158,6 +173,7 @@ datetime
 2012-03-08 17:34:00  97.269  177.460
 2012-03-08 17:35:00  98.304  176.330
 ```
+
 
 ### DateFormatter (resolved 7/5/2017)
 * **Resolution**: Used the matplotlib plot function instead of the pandas plot function. The new function used was ``` plt.plot(nm_data.index, nm_data[f'{i}'], color=rand_color, label=f'{i}')``` instead of ``` nm_data[f'{i}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].plot(color=rand_color, label= f'{i}')```.
