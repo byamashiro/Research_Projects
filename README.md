@@ -124,6 +124,10 @@ Plotting GOES-15W Proton Flux Data: [20120306 00:00:00 -- 20120314 23:00:00]
 <img src="Plots/proton_remastered_test.png" width="500">
 
 
+# Deprecated Scripts
+Deprecated [scripts](https://github.com/byamashiro/Research_Projects/tree/master/Scripts/deprecated_scripts) are kept for reference. All scripts are working, but most do not incorporate online data fetching.
+ 
+
 ###### Sample displayed data of pandas data:
 
 ### Sample Type III Radio Burst Data
