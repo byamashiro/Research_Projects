@@ -4,22 +4,14 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import datetime
 import sys
-import wget
-import os
+import glob
+
+
 
 #proton_path = 'Data/GOES_proton_flux'
 
 start_date = input('Enter a start date (yyyymmdd): ')
 end_date = input('Enter a end date (yyyymmdd): ')
-
-
-start_day = start_date[6:8]
-start_month = start_date[4:6]
-start_year = start_date[:4]
-
-end_day = end_date[6:8]
-end_month = end_date[4:6]
-end_year = end_date[:4]
 
 def daterange( start_date, end_date ):
     if start_date <= end_date: #
@@ -39,15 +31,8 @@ full_proton_path = f'/Users/bryanyamashiro/Desktop/GoddardInternship2/Data_Reduc
 
 
 #===========Data
-
 start = datetime.date( year = int(f'{start_date[0:4]}'), month = int(f'{start_date[4:6]}') , day = int(f'{start_date[6:8]}') )
 end = datetime.date( year = int(f'{end_date[0:4]}'), month = int(f'{end_date[4:6]}') , day = int(f'{end_date[6:8]}') )
-
-#radio_name = f'g15_epead_p27w_32s_{event_date}_{event_date}.csv'
-#proton_url = f'https://cdaweb.gsfc.nasa.gov/pub/data/wind/waves/wav_h1/{event_date[:4]}/{radio_name}'
-#proton_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_full/{start_year}/{start_month}/goes15/csv/'
-#proton_in = wget.download(proton_url)
-
 
 proton_df = pd.DataFrame([])
 
@@ -55,45 +40,52 @@ for date in daterange( start, end ):
 	try:
 		event_date = str(date).replace('-','')
 		#print(event_date[0:6])
-		proton_name = f'g15_epead_p27w_32s_{event_date}_{event_date}.csv'
-		proton_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_full/{event_date[:4]}/{event_date[4:6]}/goes15/csv/{proton_name}'
-		proton_in = wget.download(proton_url)
-
-
-		#name_list = ['datetime'] + [ str(i) for i in sorted_nm_list]
-
-		dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
-		proton_df_ind = pd.read_csv(f'{proton_in}', skiprows=282, date_parser=dateparse,index_col='time_tag', header=0)
+		proton_df_ind = pd.read_csv(f'{full_proton_path}/{event_date[0:6]}/g15_epead_p27w_32s_{event_date}_{event_date}.csv', skiprows=282, header=0)
 		proton_df = proton_df.append(proton_df_ind)
-
-		os.remove(proton_name)
 	except:
-		print(f'\nMissing data for {date}')
+		print(f'Missing data for {date}')
 		continue
 
 
+
+''' #works for 2 files perfectly
+for date in daterange( start, end ):
+	try:
+		event_date = str(date).replace('-','')
+		print(event_date)
+		#proton_df_ind = pd.read_csv(f'{proton_path}/g15_epead_p27w_32s_{event_date}_{event_date}.csv', skiprows=282, header=0)
+		if event_date[0:6] == start_date[0:6]:
+			proton_df_ind = pd.read_csv(f'{full_proton_path_start}/g15_epead_p27w_32s_{event_date}_{event_date}.csv', skiprows=282, header=0)
+			proton_df = proton_df.append(proton_df_ind)
+		elif event_date[0:6] != start_date[0:6]:
+			proton_df_ind = pd.read_csv(f'{full_proton_path_end}/g15_epead_p27w_32s_{event_date}_{event_date}.csv', skiprows=282, header=0)
+			proton_df = proton_df.append(proton_df_ind)
+	except:
+		print(f'Missing data for {date}')
+		continue
+'''
 proton_df.loc[proton_df['P3W_UNCOR_FLUX'] <= 0.0] = np.nan #11.6 MeV
 proton_df.loc[proton_df['P4W_UNCOR_FLUX'] <= 0.0] = np.nan #30.6 MeV
 proton_df.loc[proton_df['P5W_UNCOR_FLUX'] <= 0.0] = np.nan #63.1 MeV
 proton_df.loc[proton_df['P6W_UNCOR_FLUX'] <= 0.0] = np.nan #165 MeV
 
-#proton_time = pd.to_datetime(proton_df['time_tag']) #xray_time = xray_df[['time_tag']]
+proton_time = pd.to_datetime(proton_df['time_tag']) #xray_time = xray_df[['time_tag']]
 
 proton_3W_flux = proton_df['P3W_UNCOR_FLUX']	#11.6 MeV
 proton_4W_flux = proton_df['P4W_UNCOR_FLUX']	#30.6 MeV
 proton_5W_flux = proton_df['P5W_UNCOR_FLUX']	#63.1 MeV
 proton_6W_flux = proton_df['P6W_UNCOR_FLUX']	#165 MeV
 
-#=========Proton flux
+#=========xray flux
 myFmt = mdates.DateFormatter('%m/%d\n%H:%M')
 
 fig = plt.figure()
 ax = fig.add_subplot(111)
 
-plt.plot(proton_df.index, proton_3W_flux, '-', color='red', label= '11.6 MeV')
-plt.plot(proton_df.index, proton_4W_flux, '-', color='orange', label = '30.6 MeV')
-plt.plot(proton_df.index, proton_5W_flux, '-', color='green', label= '63.1 MeV')
-plt.plot(proton_df.index, proton_6W_flux, '-', color='blue', label = '165 MeV')
+plt.plot(proton_time, proton_3W_flux, '-', color='red', label= '11.6 MeV')
+plt.plot(proton_time, proton_4W_flux, '-', color='orange', label = '30.6 MeV')
+plt.plot(proton_time, proton_5W_flux, '-', color='green', label= '63.1 MeV')
+plt.plot(proton_time, proton_6W_flux, '-', color='blue', label = '165 MeV')
 
 plt.title('GOES-15 Proton Flux', fontname="Arial", fontsize = 14)
 plt.xlabel('Time', fontname="Arial", fontsize = 14)
@@ -107,6 +99,6 @@ plt.tight_layout()
 
 ax.xaxis.set_major_formatter(myFmt)
 
-#plt.savefig('proton.png', format='png', dpi=900)
+plt.savefig('proton.png', format='png', dpi=900)
 plt.show()
 #plt.clf()

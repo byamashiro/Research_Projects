@@ -22,7 +22,7 @@ start_date = input('Enter start date (yyyymmdd): ')
 start_day = start_date[6:8]
 start_month = start_date[4:6]
 start_year = start_date[:4]
-start_minute = '00'
+#start_minute = '00'
 
 end_date = input('Enter a end date (yyyymmdd): ')
 if end_date == '':
@@ -31,7 +31,7 @@ if end_date == '':
 end_day = end_date[6:8]
 end_month = end_date[4:6]
 end_year = end_date[:4]
-end_minute = '00'
+#end_minute = '00'
 
 if start_year != end_year:
 	print('\nDATE ERROR: Enter dates of the same year.')
