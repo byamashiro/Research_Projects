@@ -6,7 +6,7 @@ Enter a start date (yyyymmdd): 20120305
 Enter a end date (yyyymmdd): 20120309  
 
 
-<img src="Plots/proton_test.png" width="500">
+<img src="../Plots/proton_test.png" width="500">
 
 
 ### WIND Type III Radio Burst ([radio_script_v1](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/pandas_test_radio.py)) **[Deprecated]**
@@ -19,5 +19,5 @@ Parsing Type III Data: [20120307 00:00:00 -- 20120307 03:00:00]
 Elapsed Time: 16.3 seconds  
 
 
-<img src="Plots/radio_test.png" width="500">
+<img src="../../Plots/radio_test.png" width="500">
 
