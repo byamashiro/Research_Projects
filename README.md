@@ -15,6 +15,12 @@
     - [x] Push data into pandas dataframe (7/7/2017)
     - [x] Set up automated url inputs (7/8/2017)
 
+- [ ] Remake GOES Proton Flux scripts
+    - [ ] Automate script to download File name: g15_epead_p27e_32s_20120307_20120307 from https://satdat.ngdc.noaa.gov/sem/goes/data/new_full/2012/03/goes15/csv/
+    - [ ] Energy range flux selections (6 channels)
+    - [ ] Collect GOES data from legacy satellites if specific date is not found
+        - [ ] Integrate GOES 8-13 satellites for date ranges
+
 - [ ] Collect GOES-15 Xray data
 
 - [ ] Collect WIND/ACE Solar Wind data
