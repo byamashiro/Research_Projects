@@ -102,7 +102,7 @@ Enter a start date (yyyymmdd): 20120306
 Enter a end date (yyyymmdd): 20120315  
 Enter a start hour or "full": full  
 Energy Channels  
-======================  
+\======================  
 1: 6.5 MeV  
 2: 11.6 MeV  
 3: 30.6 MeV  
