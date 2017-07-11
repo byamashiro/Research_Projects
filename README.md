@@ -17,7 +17,7 @@
 
 - [ ] Remake GOES Proton Flux scripts
     - [x] Automate script to download File name: g15_epead_p27e_32s_20120307_20120307 from https://satdat.ngdc.noaa.gov/sem/goes/data/new_full/2012/03/goes15/csv/ (7/10/2017)
-    - [ ] Energy range flux selections (6 channels)
+    - [x] Energy range flux selections (6 channels) (7/10/2017)
     - [ ] Collect GOES data from legacy satellites if specific date is not found
         - [ ] Integrate GOES 8-13 satellites for date ranges
 
@@ -95,31 +95,24 @@ Parsing the ['INVK', 'OULU'] stations
 <img src="Plots/nm_data_test.png" width="500">
 
 
+
 ### Remastered GOES-15 Proton Flux ([prot_script_v2](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/pandas_test_proton.py))
-In [53]: **run pandas_test_proton.py**  
+In [115]: **run pandas_test_proton.py**  
 Enter a start date (yyyymmdd): 20120306  
-Enter a end date (yyyymmdd): 20120314  
+Enter a end date (yyyymmdd): 20120315  
 Enter a start hour or "full": full  
-100% [........................................................] 445201 / 445201  
-Parsing GOES-15W Data for 2012-03-06  
-100% [........................................................] 456806 / 456806  
-Parsing GOES-15W Data for 2012-03-07  
-100% [........................................................] 458854 / 458854  
-Parsing GOES-15W Data for 2012-03-08  
-100% [........................................................] 457728 / 457728  
-Parsing GOES-15W Data for 2012-03-09  
-100% [........................................................] 458066 / 458066  
-Parsing GOES-15W Data for 2012-03-10  
-100% [........................................................] 457898 / 457898  
-Parsing GOES-15W Data for 2012-03-11  
-100% [........................................................] 457745 / 457745  
-Parsing GOES-15W Data for 2012-03-12  
-100% [........................................................] 445509 / 445509  
-Parsing GOES-15W Data for 2012-03-13  
-100% [........................................................] 458011 / 458011  
-Parsing GOES-15W Data for 2012-03-14  
-  
-Plotting GOES-15W Proton Flux Data: [20120306 00:00:00 -- 20120314 23:00:00]  
+Energy Channels  
+======================  
+1: 6.5 MeV  
+2: 11.6 MeV  
+3: 30.6 MeV  
+4: 63.1 MeV  
+5: 165 MeV  
+6: 433 MeV  
+Enter Energy Channel(s) or "full": full  
+100% [............................................................................] 456593 / 456593  
+Plotting GOES-15W Proton Flux Data: [20120306 00:00:00 -- 20120315 23:00:00]  
+
 
 <img src="Plots/proton_remastered_test.png" width="500">
 

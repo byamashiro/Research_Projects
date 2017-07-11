@@ -62,20 +62,12 @@ start = datetime.date( year = int(f'{start_date[0:4]}'), month = int(f'{start_da
 end = datetime.date( year = int(f'{end_date[0:4]}'), month = int(f'{end_date[4:6]}') , day = int(f'{end_date[6:8]}') )
 
 #===========Specify energy range bins
-print('Energy Channels\n======================\n1: 6.5 MeV\n2: 11.6 MeV\n3: 30.6 MeV\n4: 63.1 MeV\n5: 165 MeV\n6: 433 MeV')
+print('Energy Ranges\n======================\n1: 6.5 MeV\n2: 11.6 MeV\n3: 30.6 MeV\n4: 63.1 MeV\n5: 165 MeV\n6: 433 MeV')
 energy_bin_set = set()
 
 while True: # energy_bin != 'done':
-	energy_bin = input('Enter Energy Channel(s) or "full": ')
+	energy_bin = input('Enter Energy Range: ')
 	if energy_bin != 'done':
-		if energy_bin == 'full':
-			energy_bin_set.add('1')
-			energy_bin_set.add('2')
-			energy_bin_set.add('3')
-			energy_bin_set.add('4')
-			energy_bin_set.add('5')
-			energy_bin_set.add('6')
-			break
 		if int(energy_bin) < 7:
 			energy_bin_set.add(energy_bin)
 			#print(len(energy_bin_set))
@@ -89,21 +81,42 @@ while True: # energy_bin != 'done':
 energy_bin_list = []
 for i in energy_bin_set:
 	if '1' in i:
-		energy_bin_list.append(['P2W_UNCOR_FLUX','6.5 MeV', 'red'])
+		energy_bin_list.append(['P2W_UNCOR_FLUX','6.5 MeV'])
 	elif '2' in i:
-		energy_bin_list.append(['P3W_UNCOR_FLUX','11.6 MeV','orange'])
+		energy_bin_list.append(['P3W_UNCOR_FLUX','11.6 MeV'])
 	elif '3' in i:
-		energy_bin_list.append(['P4W_UNCOR_FLUX','30.6 MeV','green'])
+		energy_bin_list.append(['P4W_UNCOR_FLUX','30.6 MeV'])
 	elif '4' in i:
-		energy_bin_list.append(['P5W_UNCOR_FLUX','63.1 MeV','blue'])
+		energy_bin_list.append(['P5W_UNCOR_FLUX','63.1 MeV'])
 	elif '5' in i:
-		energy_bin_list.append(['P6W_UNCOR_FLUX','165 MeV','purple'])
+		energy_bin_list.append(['P6W_UNCOR_FLUX','165 MeV'])
 	elif '6' in i:
-		energy_bin_list.append(['P7W_UNCOR_FLUX','433 MeV','violet'])
+		energy_bin_list.append(['P7W_UNCOR_FLUX','433 MeV'])
+
+
+
+
+
+
+
+
+
+#===========Define Paths
+#full_proton_path_start = f'/Users/bryanyamashiro/Desktop/GoddardInternship2/Data_Reduction_final/GOES/original/Epead/{start_date[0:6]}'
+#full_proton_path_end = f'/Users/bryanyamashiro/Desktop/GoddardInternship2/Data_Reduction_final/GOES/original/Epead/{end_date[0:6]}'
+#full_proton_path = f'/Users/bryanyamashiro/Desktop/GoddardInternship2/Data_Reduction_final/GOES/original/Epead/'
 
 
 
 #===========Data
+
+
+#radio_name = f'g15_epead_p27w_32s_{event_date}_{event_date}.csv'
+#proton_url = f'https://cdaweb.gsfc.nasa.gov/pub/data/wind/waves/wav_h1/{event_date[:4]}/{radio_name}'
+#proton_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_full/{start_year}/{start_month}/goes15/csv/'
+#proton_in = wget.download(proton_url)
+
+
 proton_df = pd.DataFrame([])
 
 for date in daterange( start, end ):
@@ -113,6 +126,9 @@ for date in daterange( start, end ):
 		proton_name = f'g15_epead_p27w_32s_{event_date}_{event_date}.csv'
 		proton_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_full/{event_date[:4]}/{event_date[4:6]}/goes15/csv/{proton_name}'
 		proton_in = wget.download(proton_url)
+		print(f'\nParsing GOES-15W Data for {date}')
+
+
 
 		#name_list = ['datetime'] + [ str(i) for i in sorted_nm_list]
 
@@ -155,15 +171,31 @@ event_obj_end_str_date = datetime.datetime.strftime(event_obj_end, '%Y%m%d %H')
 print(f'\nPlotting GOES-15W Proton Flux Data: [{event_obj_start_str} -- {event_obj_end_str}]')
 myFmt = mdates.DateFormatter('%m/%d\n%H:%M')
 
+#fig = plt.figure()
+#ax = fig.add_subplot(111)
+
+#plt.plot(proton_df.index, proton_2W_flux, '-', color='red', label= '6.5 MeV')
+#plt.plot(proton_df.index, proton_3W_flux, '-', color='orange', label= '11.6 MeV')
+#plt.plot(proton_df.index, proton_4W_flux, '-', color='green', label = '30.6 MeV')
+#plt.plot(proton_df.index, proton_5W_flux, '-', color='blue', label= '63.1 MeV')
+#plt.plot(proton_df.index, proton_6W_flux, '-', color='purple', label = '165 MeV')
+
 color_count = []
-for i in sorted(energy_bin_list):
-	#color_list = ['red','orange','yellow','green','blue','purple'] #,'yellow'
-	#color_list = list(set(color_list) - set(color_count))
+for i in energy_bin_list:
+	color_list = ['red','orange','yellow','green','blue','purple'] #,'yellow'
+	color_list = list(set(color_list) - set(color_count))
 
-	#rand_color = random.choice(color_list)
-	#color_count.append(rand_color)
+	rand_color = random.choice(color_list)
+	color_count.append(rand_color)
 
-	proton_df[f'{i[0]}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].plot(color=f'{i[2]}', label= f'{i[1]}')
+	proton_df[f'{i[0]}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].plot(color=rand_color, label= f'{i[1]}')
+#proton_df['P2W_UNCOR_FLUX'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].plot(color='red', label= '6.5 MeV')
+#proton_df['P3W_UNCOR_FLUX'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].plot(color='orange', label= '11.6 MeV')
+#proton_df['P4W_UNCOR_FLUX'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].plot(color='green', label = '30.6 MeV')
+#proton_df['P5W_UNCOR_FLUX'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].plot(color='blue', label= '63.1 MeV')
+#proton_df['P6W_UNCOR_FLUX'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].plot(color='purple', label = '165 MeV')
+#proton_df['P7W_UNCOR_FLUX'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].plot(color='violet', label = '433 MeV')
+
 
 
 plt.title(f'GOES-15W Proton Flux\n[{event_obj_start_str} -- {event_obj_end_str}]', fontname="Arial", fontsize = 14)
@@ -182,6 +214,6 @@ ax.xaxis.set_major_formatter(myFmt)
 plt.setp(ax.xaxis.get_majorticklabels(), rotation=0, horizontalalignment='center')
 #ax.xaxis.set_major_formatter(myFmt)
 
-plt.savefig('proton_remastered.png', format='png', dpi=900)
+#plt.savefig('proton.png', format='png', dpi=900)
 plt.show()
 #plt.clf()
