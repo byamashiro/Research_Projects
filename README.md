@@ -24,12 +24,19 @@
 - [ ] Collect GOES-15 Xray data
 
 - [ ] Collect WIND/ACE Solar Wind data
+    - [x] Bulk speed (7/12/2017)
+    - [ ] Temperature
+    - [ ] Magnetic field components/absolute value
 
 - [ ] Integrate all data into subplots
 
 - [ ] Incorporate online databases for radio and proton data
 
 # Current Errors and Pressing Tasks
+
+### Outliers and changes for Solar Wind script
+- Values significantly over 1000 km/s and single points need to be removed from the dataset. Incorporate temperature and magnetic field components from both ACE and Wind. Aesthetic fixes to the current wget downloading scheme, and find a more efficient method of downloading variant versions of .cdf files. Look for different data sources for solar wind speed with a lower time interval. Deviations are not negligible between both ACE and Wind solar wind speed measurements, see the output [figure](Plots/solarwind_test.png).
+
 
 ### Outliers for Radio Burst script
 - Values ~300 sfu that seem to be outliers. Values will be removed, but each spike includes more than 1 point, therefore a single max threshold will not suffice.
@@ -117,9 +124,43 @@ Plotting GOES-15W Proton Flux Data: [20120306 00:00:00 -- 20120315 23:00:00]
 <img src="Plots/proton_remastered_test.png" width="500">
 
 
+
+### Solar Wind Speed ([swind_script](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/pandas_test_swind.py))
+In [25]: **run pandas_test_swind.py**  
+Enter a start date (yyyymmdd): 20120306  
+Enter a end date (yyyymmdd): 20120308  
+Enter a start hour or "full": full  
+100% [........................................................] 150195 / 150195  
+VERSION ERROR: The version v00 for WIND data does not exist, attempting v01  
+100% [........................................................] 150195 / 150195  
+VERSION ERROR: The version v00 for WIND data does not exist, attempting v01  
+100% [........................................................] 150195 / 150195  
+VERSION ERROR: The version v00 for WIND data does not exist, attempting v01  
+  
+VERSION ERROR: The version v01 for WIND data does not exist, attempting v02  
+100% [........................................................] 169472 / 169472  
+Plotting Solar Wind Data: [20120306 00:00:00 -- 20120308 23:00:00]  
+
+
+<img src="Plots/solarwind_test.png" width="500">
+
+
 # Deprecated Scripts
 Deprecated [scripts](https://github.com/byamashiro/Research_Projects/tree/master/Scripts/deprecated_scripts) are kept for reference. All scripts are working, but most do not incorporate online data fetching.
  
+
+# Data
+The data consists of mainly flux data from instruments on the ground, Earth orbit, and at the L1 Lagrange point. The data includes a sample from (2012 March), not normalized, and complete in intervals of about 30 seconds to a minute. Data values that were not accepted are denoted at extreme negative values around -9999. The specifics of each data set is commented in each header.
+
+### Data Caveats
+Corrupted data is labeled as -99999.0, and 0.0 flux is most probable to be corrupted as well. Corrupted data is changed using the pandas replace function to np.nan.
+
+## Data originals
+GOES-13 Proton Flux  
+GOES-15 Xray Flux  
+ACE Magnetic Field Components  
+ACE Solar Wind Parameters  
+OULU Neutron Monitor Data  
 
 ###### Sample displayed data of pandas data:
 
@@ -168,19 +209,6 @@ Radio Burst | N | n/a
 
 
 
-
-# Data
-The data consists of mainly flux data from instruments on the ground, Earth orbit, and at the L1 Lagrange point. The data includes a sample from (2012 March), not normalized, and complete in intervals of about 30 seconds to a minute. Data values that were not accepted are denoted at extreme negative values around -9999. The specifics of each data set is commented in each header.
-
-### Data Caveats
-Corrupted data is labeled as -99999.0, and 0.0 flux is most probable to be corrupted as well. Corrupted data is changed using the pandas replace function to np.nan.
-
-## Data originals
-GOES-13 Proton Flux  
-GOES-15 Xray Flux  
-ACE Magnetic Field Components  
-ACE Solar Wind Parameters  
-OULU Neutron Monitor Data  
 
 
 # Resolved Errors

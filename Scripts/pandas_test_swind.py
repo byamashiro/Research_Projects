@@ -7,6 +7,9 @@ import sys
 import wget
 import os
 import random
+from spacepy import pycdf
+from urllib import error
+
 
 def daterange( start_date, end_date ):
     if start_date <= end_date: #
@@ -63,8 +66,8 @@ end = datetime.date( year = int(f'{end_date[0:4]}'), month = int(f'{end_date[4:6
 
 #===========Data
 
-#swind_ace_df = pd.DataFrame([])
-#swind_wind_df = pd.DataFrame([])
+ace_data = pd.DataFrame([])
+wind_data = pd.DataFrame([])
 
 
 for date in daterange( start, end ):
@@ -73,59 +76,63 @@ for date in daterange( start, end ):
 
 		#====ACE
 		swind_ace_name = f'ac_h0_swe_{event_date}_v10.cdf'
-		swind_ace_url = f'https://cdaweb.gsfc.nasa.gov/pub/data/ace/swepam/level_2_cdaweb/swe_h0/2011/{swind_name}'
+		swind_ace_url = f'https://cdaweb.gsfc.nasa.gov/pub/data/ace/swepam/level_2_cdaweb/swe_h0/{event_date[:4]}/{swind_ace_name}'
 		swind_ace_in = wget.download(swind_ace_url)
 
-		swind_ace_cdf = pycdf.CDF(swind_ace_in) # cdf = pycdf.CDF('wi_h1_wav_20120307_v01.cdf')
+		swind_ace_cdf = pycdf.CDF(swind_ace_name) # cdf = pycdf.CDF('wi_h1_wav_20120307_v01.cdf')
 		os.remove(swind_ace_name)
-	
-		#print(f'\nParsing Type III Data for {date}')
-		
+			
 		time_ace_swind = []
-		for i in cdf['Epoch']:
+		for i in swind_ace_cdf['Epoch']:
 			time_ace_swind.append(i)
 		
 		bulk_ace_vel = []
-		for i in cdf['Vp']:
+		for i in swind_ace_cdf['Vp']:
 			bulk_ace_vel.append(i)
 
 		data_ace_time = pd.DataFrame(time_ace_swind)
 		data_ace_time.columns = ['date_time']
 		
-		bulk_ace_vel = pd.DataFrame(bulk_ace_vel)
-		bulk_ace_vel.columns = ['ace_bulk_vel']
+		ace_vel = pd.DataFrame(bulk_ace_vel)
+		ace_vel.columns = ['ace_bulk_vel']
 		
-		ace_concat = pd.concat([data_time, ace_bulk_vel], axis=1)
-		#rb_concat.set_index(['date_time'], inplace=True)
+		ace_concat = pd.concat([data_ace_time, ace_vel], axis=1)
+		ace_concat.set_index(['date_time'], inplace=True)
 	
 		ace_data = ace_data.append(ace_concat)
 
 		#====WIND
-		swind_wind_name = f'wi_h1_swe_{event_date}_v01.cdf	'
-		swind_wind_url = f'https://cdaweb.gsfc.nasa.gov/pub/data/ace/swepam/level_2_cdaweb/swe_h0/2011/{swind_name}'
-		swind_wind_in = wget.download(swind_wind_url)
+		for i in range(10):
+			try:
+				swind_wind_name = f'wi_k0_swe_{event_date}_v0{i}.cdf'
+				swind_wind_url = f'https://cdaweb.gsfc.nasa.gov/pub/data/wind/swe/swe_k0/{event_date[:4]}/{swind_wind_name}'
+				swind_wind_in = wget.download(swind_wind_url)
+			except error.HTTPError as err:
+				print(f'\nVERSION ERROR: The version v0{i} for WIND data does not exist, attempting v0{i+1}')
+				continue
+			else:
+				break
 
-		swind_wind_cdf = pycdf.CDF(swind_wind_in) # cdf = pycdf.CDF('wi_h1_wav_20120307_v01.cdf')
+
+		swind_wind_cdf = pycdf.CDF(swind_wind_name) # cdf = pycdf.CDF('wi_h1_wav_20120307_v01.cdf')
 		os.remove(swind_wind_name)
-	
-		#print(f'\nParsing Type III Data for {date}')
-		
+			
 		time_wind_swind = []
-		for i in cdf['Epoch']:
+		for i in swind_wind_cdf['Epoch']:
 			time_wind_swind.append(i)
 		
 		bulk_wind_vel = []
-		for i in cdf['Vp']:
+		for i in swind_wind_cdf['V_GSE_p']:
 			bulk_wind_vel.append(i)
 
 		data_wind_time = pd.DataFrame(time_wind_swind)
 		data_wind_time.columns = ['date_time']
 		
-		bulk_wind_vel = pd.DataFrame(bulk_wind_vel)
-		bulk_wind_vel.columns = ['wind_bulk_vel', 'longitude', 'latitude']
+		wind_vel = pd.DataFrame(bulk_wind_vel)
+		wind_vel.columns = ['wind_bulk_vel', 'longitude', 'latitude']
 		
-		wind_concat = pd.concat([data_time, wind_bulk_vel], axis=1)
-		#rb_concat.set_index(['date_time'], inplace=True)
+		wind_concat = pd.concat([data_wind_time, wind_vel], axis=1)
+		wind_concat.set_index(['date_time'], inplace=True)
 	
 		wind_data = wind_data.append(wind_concat)
 
@@ -134,7 +141,8 @@ for date in daterange( start, end ):
 		continue
 
 
-ace_data.loc[wind_data['ace_bulk_vel'] <= 0.0] = np.nan #6.5 MeV
+
+ace_data.loc[ace_data['ace_bulk_vel'] <= 0.0] = np.nan #6.5 MeV
 wind_data.loc[wind_data['wind_bulk_vel'] <= 0.0] = np.nan #6.5 MeV
 
 
@@ -146,30 +154,23 @@ event_obj_end = datetime.datetime.strptime(f'{end_date} {end_hour}', '%Y%m%d %H'
 event_obj_end_str = datetime.datetime.strftime(event_obj_end, '%Y%m%d %H:%M:%S')
 event_obj_end_str_date = datetime.datetime.strftime(event_obj_end, '%Y%m%d %H')
 
-#=========Proton flux
-print(f'\nPlotting GOES-15W Proton Flux Data: [{event_obj_start_str} -- {event_obj_end_str}]')
-myFmt = mdates.DateFormatter('%m/%d\n%H:%M')
-'''
-color_count = []
-for i in sorted(energy_bin_list):
-	color_list = ['red','orange','yellow','green','blue','purple'] #,'yellow'
-	color_list = list(set(color_list) - set(color_count))
+#=========Solar Wind Plotting
+print(f'\nPlotting Solar Wind Data: [{event_obj_start_str} -- {event_obj_end_str}]')
 
-	rand_color = random.choice(color_list)
-	color_count.append(rand_color)
 
-	ace_data[f'{i[0]}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].plot(color=rand_color, label= f'{i[1]}')
+#ace_data['ace_bulk_vel'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].plot(color='blue', label= 'ACE')
+#wind_data['wind_bulk_vel'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].plot(color='red', label= 'WIND')
 
-'''
-ace_data['ace_bulk_vel'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].plot(color=blue, label= 'ACE')
-wind_data['wind_bulk_vel'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].plot(color=red, label= 'WIND')
+plt.plot(wind_data['wind_bulk_vel'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='red', label='Wind: Ion Bulk Flow Speed GSE')
+plt.plot(ace_data.loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='blue', label='ACE: H Bulk Speed')
 
-plt.title(f'GOES-15W Proton Flux\n[{event_obj_start_str} -- {event_obj_end_str}]', fontname="Arial", fontsize = 14)
+
+plt.title(f'Solar Wind Bulk Flow Speed\n[{event_obj_start_str} -- {event_obj_end_str}]', fontname="Arial", fontsize = 14)
 plt.xlabel('Time', fontname="Arial", fontsize = 14)
-plt.ylabel('Flux [pfu]', fontname="Arial", fontsize = 14)
+plt.ylabel('Speed [km/s]', fontname="Arial", fontsize = 14)
 plt.minorticks_on()
 plt.grid(True)
-plt.yscale('log')
+#plt.yscale('log')
 plt.legend(loc='lower right')
 plt.tight_layout()
 
@@ -180,6 +181,6 @@ ax.xaxis.set_major_formatter(myFmt)
 plt.setp(ax.xaxis.get_majorticklabels(), rotation=0, horizontalalignment='center')
 #ax.xaxis.set_major_formatter(myFmt)
 
-#plt.savefig('proton_remastered.png', format='png', dpi=900)
+plt.savefig('solarwind_test.png', format='png', dpi=900)
 plt.show()
 #plt.clf()
