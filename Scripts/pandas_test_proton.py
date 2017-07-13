@@ -102,8 +102,6 @@ for i in energy_bin_set:
 		energy_bin_list.append(['P7W_UNCOR_FLUX','433 MeV','violet'])
 
 
-
-#===========Data
 proton_df = pd.DataFrame([])
 
 for date in daterange( start, end ):

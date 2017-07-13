@@ -103,6 +103,7 @@ for i in sorted_nm_list:
 	station_str += f'&stations[]={i}'
 
 #=========Fetch online neutron monitor data
+start_minute, end_minute = '00'.zfill(2)
 
 url = f'http://www.nmdb.eu/nest/draw_graph.php?formchk=1{station_str}&tabchoice=revori&dtype=corr_for_efficiency&tresolution=0&yunits=0&date_choice=bydate&start_day={start_day}&start_month={start_month}&start_year={start_year}&start_hour={start_hour}&start_min={start_minute}&end_day={end_day}&end_month={end_month}&end_year={end_year}&end_hour={end_hour}&end_min={end_minute}&output=ascii'
 
