@@ -58,21 +58,21 @@
 ### OMNI Data ([omni_script_alpha](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/pandas_test_omni.py))
 
 In [198]: **run pandas_test_omni.py**  
-========================================  
-=               DATASETS               =  
-========================================  
+\========================================  
+\=               DATASETS               =  
+\========================================  
 1 - GOES-15 Proton Flux  
 2 - Wind Type III Radio Bursts  
 3 - Neutron Monitor Counts  
 4 - ACE/Wind Solar Wind Speed  
-========================================  
+\========================================  
 Enter Dataset Option or "all": all  
 Enter a start date (yyyymmdd): 20120307  
 Enter a end date (yyyymmdd): 20120307  
 Enter a start hour or "full": full  
-========================================  
-=         GOES-15 Proton Flux          =  
-========================================  
+\========================================  
+\=         GOES-15 Proton Flux          =  
+\========================================  
 Energy Channels  
 --------------------  
 1: 6.5 MeV  
@@ -83,22 +83,22 @@ Energy Channels
 6: 433 MeV  
 Enter Energy Channel(s) or "full": full  
 100% [............................................................................] 456806 / 456806  
-========================================  
-=      Wind Type III Radio Bursts      =  
-========================================  
+\========================================  
+\=      Wind Type III Radio Bursts      =  
+\========================================  
 100% [..........................................................................] 3555206 / 3555206  
 Parsing Type III Data for 2012-03-07  
-========================================  
-=           Neutron Monitors           =  
-========================================  
+\========================================  
+\=           Neutron Monitors           =  
+\========================================  
 How many stations to parse: 2  
 You are parsing 2 station(s)  
 Enter station names: OULU  
 Enter station names: INVK  
 Parsing the ['OULU', 'INVK'] stations  
-========================================  
-=      ACE/Wind Solar Wind Speed       =  
-========================================  
+\========================================  
+\=      ACE/Wind Solar Wind Speed       =  
+\========================================  
 100% [............................................................................] 150195 / 150195  
 VERSION ERROR: The version v00 for WIND data does not exist, attempting v01  
 100% [............................................................................] 169472 / 169472  
