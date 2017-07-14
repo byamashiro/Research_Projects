@@ -195,7 +195,7 @@ if '1' in option_bin_set:
 
 #=========== 2: Wind Type III Radio Burst
 if '2' in option_bin_set:
-	print(f'{"="*40}\n{"=" + "Wind Type III Radio Bursts".center(38," ") + "="}\n{"="*40}')
+	print(f'\n{"="*40}\n{"=" + "Wind Type III Radio Bursts".center(38," ") + "="}\n{"="*40}')
 	rb_data = pd.DataFrame([])
 	
 	for date in daterange( start, end ):
@@ -528,7 +528,7 @@ plt.minorticks_on()
 plt.legend(loc='lower right')
 plt.tight_layout()
 
-#ax = plt.gca()
+ax = plt.gca()
 myFmt = mdates.DateFormatter('%m/%d\n%H:%M')
 
 ax4.xaxis.set_major_formatter(myFmt)
@@ -536,6 +536,8 @@ f.subplots_adjust(hspace=.15)
 
 plt.setp(ax.xaxis.get_majorticklabels(), rotation=0, horizontalalignment='center')
 #ax.xaxis.set_major_formatter(myFmt)
+#plt.savefig('omni_test.png', format='png', dpi=900)
+
 plt.show()
 
 

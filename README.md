@@ -29,10 +29,16 @@
     - [ ] Magnetic field components/absolute value
 
 - [ ] Integrate all data into subplots
+    - [x] Incorporate all pandas data frames from other scripts into one script (7/13/2017)
+    - [ ] Dynamic subplots
 
 - [ ] Incorporate online databases for radio and proton data
 
 # Current Errors and Pressing Tasks
+
+### Dynamic subplots and modifications to the Omni script
+- Devise a way to plot selected datasets on subplots. The script runs with all data is loaded, but breaks with selections. Although the script is dynamic, there currently must be a static plot to host the first plot, and then subplots are appended to that "anchor" plot. Therefore, if the static anchor dataset is not chosen, the script cannot build on an empty canvas. The optimal solution seems to be unpacking different subplots (i.e. fig, (ax1, ax2, ...)). This solution requires that ax1, etc. must be literals and not strings, which removes options such as "for" loops with a list. An idea was to force a string to be a variable name, but this option should not be used if possible. A lambda function was also considered, but wildcard logic doesn't seem optimal for data frames while calling .index and columnized data.
+- Minor tick gridlines for y-axis should be added with minorticks on. Add legends for each subplot and y-axis labels with units. but also reduce size of the legend and y-axis labels. Neutron monitor data seems to be cut off past the ~23 hour mark, include the rest of that data. Insert an "if" statement to deter plotting of neutron monitor data (long-term changes) and type III radio burst data (short-term changes) on the same canvas. 
 
 ### Outliers and changes for Solar Wind script
 - Values significantly over 1000 km/s and single points need to be removed from the dataset. Incorporate temperature and magnetic field components from both ACE and Wind. Aesthetic fixes to the current wget downloading scheme, and find a more efficient method of downloading variant versions of .cdf files. Look for different data sources for solar wind speed with a lower time interval. Deviations are not negligible between both ACE and Wind solar wind speed measurements, see the output [figure](Plots/solarwind_test.png).
@@ -48,6 +54,60 @@
 
 
 # Running Scripts
+
+### OMNI Data ([omni_script_alpha](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/pandas_test_omni.py))
+
+In [198]: **run pandas_test_omni.py**  
+========================================  
+=               DATASETS               =  
+========================================  
+1 - GOES-15 Proton Flux  
+2 - Wind Type III Radio Bursts  
+3 - Neutron Monitor Counts  
+4 - ACE/Wind Solar Wind Speed  
+========================================  
+Enter Dataset Option or "all": all  
+Enter a start date (yyyymmdd): 20120307  
+Enter a end date (yyyymmdd): 20120307  
+Enter a start hour or "full": full  
+========================================  
+=         GOES-15 Proton Flux          =  
+========================================  
+Energy Channels  
+--------------------  
+1: 6.5 MeV  
+2: 11.6 MeV  
+3: 30.6 MeV  
+4: 63.1 MeV  
+5: 165 MeV  
+6: 433 MeV  
+Enter Energy Channel(s) or "full": full  
+100% [............................................................................] 456806 / 456806  
+========================================  
+=      Wind Type III Radio Bursts      =  
+========================================  
+100% [..........................................................................] 3555206 / 3555206  
+Parsing Type III Data for 2012-03-07  
+========================================  
+=           Neutron Monitors           =  
+========================================  
+How many stations to parse: 2  
+You are parsing 2 station(s)  
+Enter station names: OULU  
+Enter station names: INVK  
+Parsing the ['OULU', 'INVK'] stations  
+========================================  
+=      ACE/Wind Solar Wind Speed       =  
+========================================  
+100% [............................................................................] 150195 / 150195  
+VERSION ERROR: The version v00 for WIND data does not exist, attempting v01  
+100% [............................................................................] 169472 / 169472  
+
+
+
+<img src="Plots/omni_test.png" width="500">
+
+
 
 ### Remastered WIND Type III Radio Burst ([radio_script_v2](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/radio_remastered.py))
 #### Single Day
