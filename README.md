@@ -53,7 +53,7 @@
 
 
 
-# Running Scripts
+# Running Scripts [PRELIMINARY]
 
 ### OMNI Data ([omni_script_alpha](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/pandas_test_omni.py))
 
@@ -74,7 +74,7 @@ Enter a start hour or "full": full
 \=         GOES-15 Proton Flux          =  
 \========================================  
 Energy Channels  
---------------------  
+\--------------------  
 1: 6.5 MeV  
 2: 11.6 MeV  
 3: 30.6 MeV  
