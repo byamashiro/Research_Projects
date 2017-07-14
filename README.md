@@ -53,9 +53,9 @@
 
 
 
-# Running Scripts [PRELIMINARY]
+# Running Scripts
 
-### OMNI Data ([omni_script_alpha](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/pandas_test_omni.py))
+### OMNI Data ([omni_script_alpha](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/pandas_test_omni.py)) [PRELIMINARY]
 
 In [198]: **run pandas_test_omni.py**  
 \========================================  
