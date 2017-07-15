@@ -29,10 +29,11 @@ print(f'{"="*40}\n{"=" + "DATASETS".center(38," ") + "="}\n{"="*40}\n1 - GOES-15
 4 - ACE/Wind Solar Wind Speed'
 '''
 
+#print('Choose Dataset(s) to Plot')
 
 option_bin_set = set()
 while True: # energy_bin != 'done':
-	option_bin = input('Enter Dataset Option then "done" or "all": ')
+	option_bin = input('Enter Dataset Option or "all": ')
 	if option_bin != 'done':
 		if option_bin == 'all':
 			option_bin_set.add('1')
@@ -48,7 +49,20 @@ while True: # energy_bin != 'done':
 				break
 	elif option_bin == 'done':
 		break
-
+'''
+   		elif option_bin == '1':
+   			option_bin_set.add('1')
+   			continue
+   		elif option_bin == '2':
+   			option_bin_set.add('2')
+   			continue
+   		elif option_bin == '3':
+   			option_bin_set.add('3')
+   			continue
+   		elif option_bin == '4':
+   			option_bin_set.add('4')
+   			continue
+'''	
 
 #===============Time frame
 start_date = input('Enter a start date (yyyymmdd): ')
@@ -108,7 +122,7 @@ event_obj_end_str_date = datetime.datetime.strftime(event_obj_end, '%Y%m%d %H')
 
 #=========== 1: GOES-15 Proton Flux
 if '1' in option_bin_set:
-	print(f'\n{"="*40}\n{"=" + "GOES-15 Proton Flux".center(38," ") + "="}\n{"="*40}')
+	print(f'{"="*40}\n{"=" + "GOES-15 Proton Flux".center(38," ") + "="}\n{"="*40}')
 	print(f'{"Energy Channels".center(7, " ")}\n{"-"*20}\n1: 6.5 MeV\n2: 11.6 MeV\n3: 30.6 MeV\n4: 63.1 MeV\n5: 165 MeV\n6: 433 MeV')
 	energy_bin_set = set()
 	
@@ -231,7 +245,7 @@ if '2' in option_bin_set:
 
 #=========== 3: Neutron Monitors
 if '3' in option_bin_set:
-	print(f'\n{"="*40}\n{"=" + "Neutron Monitors".center(38," ") + "="}\n{"="*40}')
+	print(f'{"="*40}\n{"=" + "Neutron Monitors".center(38," ") + "="}\n{"="*40}')
 	
 	list_nm = ['AATB','APTY','ARNM','ATHN','BKSN','CALG','CALM','DOMB',
 				'DOMC','DRBS','ESOI','FSMT','HRMS','INVK','IRK2','IRK3',
@@ -296,7 +310,7 @@ if '3' in option_bin_set:
 
 #=========== 4: Solar Wind (ACE, Wind)
 if '4' in option_bin_set:
-	print(f'\n{"="*40}\n{"=" + "ACE/Wind Solar Wind Speed".center(38," ") + "="}\n{"="*40}')
+	print(f'{"="*40}\n{"=" + "ACE/Wind Solar Wind Speed".center(38," ") + "="}\n{"="*40}')
 	
 	ace_data = pd.DataFrame([])
 	wind_data = pd.DataFrame([])
@@ -529,7 +543,7 @@ plt.show()
 
 '''
 
-#=======pandas plotting solution
+#=======pandas solution
 '''
 1 - GOES-15 Proton Flux
 2 - Wind Type III Radio Bursts
@@ -547,33 +561,28 @@ def next():
 	global j
 	if (j < length_data+2):
 		j += 1
-	#print(length_data_list[j])
-
-def applyPlotStyle():
-	axes[length_data_list[j]].grid(True)
-	axes[length_data_list[j]].minorticks_on()
-	#axes[length_data_list[j]].legend(loc='lower right')
-
 
 f, axes = plt.subplots(nrows=length_data, ncols=1, sharex=True)
 
+
 if '1' in option_bin_set:
 	next()
-	applyPlotStyle()
 	for i in sorted(energy_bin_list):
 		axes[length_data_list[j]].plot(proton_df[f'{i[0]}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color=f'{i[2]}', label= f'{i[1]}')#, logy=True)
-	axes[length_data_list[j]].semilogy #.yscale('log')
 
 if '2' in option_bin_set:
 	next()
-	applyPlotStyle()
 	axes[length_data_list[j]].plot(rb_data['avg'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='navy', label= '20 kHz - 1040 kHz')
+
 
 if '3' in option_bin_set:
 	next()
-	applyPlotStyle()
-	color_count = []
+	axes[length_data_list[j]].plot(wind_data['wind_bulk_vel'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='red', label='Wind: Ion Bulk Flow Speed GSE')
+	axes[length_data_list[j]].plot(ace_data['ace_bulk_vel'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='blue', label='ACE: H Bulk Speed')
 
+if '4' in option_bin_set:
+	next()
+	color_count = []
 	for i in sorted_nm_list:
 	
 		color_list = ['red','orange','green','blue','indigo','violet','purple'] #,'yellow'
@@ -585,32 +594,6 @@ if '3' in option_bin_set:
 		axes[length_data_list[j]].plot(nm_data[f'{i}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color=rand_color, label=f'{i}')
 
 
-if '4' in option_bin_set:
-	next()
-	applyPlotStyle()
-	axes[length_data_list[j]].plot(wind_data['wind_bulk_vel'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='red', label='Wind: Ion Bulk Flow Speed GSE')
-	axes[length_data_list[j]].plot(ace_data['ace_bulk_vel'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='blue', label='ACE: H Bulk Speed')
-
-#axes[0].grid(True)
-
-
-
-#plt.minorticks_on()
-#plt.yscale('log')
-#plt.legend(loc='lower right')
-plt.tight_layout()
-
-myFmt = mdates.DateFormatter('%m/%d\n%H:%M')
-ax = plt.gca()
-ax.xaxis.set_major_formatter(myFmt)
-#f.subplots_adjust(hspace=.15)
-
-plt.setp(ax.xaxis.get_majorticklabels(), rotation=0, horizontalalignment='center')
-#ax.xaxis.set_major_formatter(myFmt)
-
-
-
-plt.subplots_adjust(wspace = 0, hspace = 0)
 plt.show()
 '''
 

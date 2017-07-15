@@ -30,7 +30,9 @@
 
 - [ ] Integrate all data into subplots
     - [x] Incorporate all pandas data frames from other scripts into one script (7/13/2017)
-    - [ ] Dynamic subplots
+    - [x] Dynamic subplots (7/15/2017)
+    - [ ] Fix all subplot axis labels and legends
+    - [ ] Set appropriate logscale
 
 - [ ] Incorporate online databases for radio and proton data
 
