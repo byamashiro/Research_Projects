@@ -20,32 +20,36 @@ def daterange( start_date, end_date ):
             yield start_date - datetime.timedelta( n )
 
 #==============Choosing Dataset
-print(f'{"="*40}\n{"=" + "DATASETS".center(38," ") + "="}\n{"="*40}\n1 - GOES-15 Proton Flux\n2 - Wind Type III Radio Bursts\n3 - Neutron Monitor Counts\n4 - ACE/Wind Solar Wind Speed\n{"="*40}')
+print(f'{"="*40}\n{"=" + "DATASETS".center(38," ") + "="}\n{"="*40}\n1 - GOES-15 Proton Flux\n2 - Wind Type III Radio Bursts\n3 - Neutron Monitor Counts\n4 - ACE/Wind Solar Wind Speed\n5 - GOES-15 Xray Flux\n{"="*40}')
 
 '''
 1 - GOES-15 Proton Flux
 2 - Wind Type III Radio Bursts
 3 - Neutron Monitor Counts
 4 - ACE/Wind Solar Wind Speed'
+5 - GOES-15 Xray Flux
 '''
 
 
 option_bin_set = set()
 while True: # energy_bin != 'done':
-	option_bin = input('Enter Dataset Option then "done" or "all": ')
+	option_bin = input('Enter Dataset Option then "done" or "all": ').lower()
 	if option_bin != 'done':
 		if option_bin == 'all':
 			option_bin_set.add('1')
 			option_bin_set.add('2')
 			option_bin_set.add('3')
 			option_bin_set.add('4')
+			option_bin_set.add('5')
 			break
 		
-		elif int(option_bin) < 5:
+		elif int(option_bin) < 6:
 			option_bin_set.add(option_bin)
 
-			if len(option_bin_set) >= 4:
-				break
+			if len(option_bin_set) > 4:
+				print('SELECTION ERROR: Only 4 datasets are allowed per canvas.')
+				sys.exit(0)
+
 	elif option_bin == 'done':
 		break
 
@@ -170,12 +174,12 @@ if '1' in option_bin_set:
 			print(f'\nMissing data for {date}')
 			continue
 	
-	proton_df.loc[proton_df['P2W_UNCOR_FLUX'] <= 0.0] = np.nan #6.5 MeV
-	proton_df.loc[proton_df['P3W_UNCOR_FLUX'] <= 0.0] = np.nan #11.6 MeV
-	proton_df.loc[proton_df['P4W_UNCOR_FLUX'] <= 0.0] = np.nan #30.6 MeV
-	proton_df.loc[proton_df['P5W_UNCOR_FLUX'] <= 0.0] = np.nan #63.1 MeV
-	proton_df.loc[proton_df['P6W_UNCOR_FLUX'] <= 0.0] = np.nan #165 MeV
-	proton_df.loc[proton_df['P7W_UNCOR_FLUX'] <= 0.0] = np.nan #433 MeV
+	proton_df.loc[proton_df['P2W_UNCOR_FLUX'] < 0.0] = np.nan #6.5 MeV
+	proton_df.loc[proton_df['P3W_UNCOR_FLUX'] < 0.0] = np.nan #11.6 MeV
+	proton_df.loc[proton_df['P4W_UNCOR_FLUX'] < 0.0] = np.nan #30.6 MeV
+	proton_df.loc[proton_df['P5W_UNCOR_FLUX'] < 0.0] = np.nan #63.1 MeV
+	proton_df.loc[proton_df['P6W_UNCOR_FLUX'] < 0.0] = np.nan #165 MeV
+	proton_df.loc[proton_df['P7W_UNCOR_FLUX'] < 0.0] = np.nan #433 MeV
 
 
 
@@ -377,11 +381,39 @@ if '4' in option_bin_set:
 	wind_data.loc[wind_data['wind_bulk_vel'] <= 0.0] = np.nan #6.5 MeV
 
 
+#=========== 5: GOES-15 Xray Flux
+if '5' in option_bin_set:
+	print(f'\n{"="*40}\n{"=" + "GOES-15 Xray Flux".center(38," ") + "="}\n{"="*40}')
+
+	xray_df = pd.DataFrame([])
+	
+	for date in daterange( start, end ):
+		try:
+			event_date = str(date).replace('-','')
+			#print(event_date[0:6])
+			xray_name = f'g15_xrs_2s_{event_date}_{event_date}.csv'
+			#g15_xrs_2s_20120307_20120307.csv
+			xray_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_full/{event_date[:4]}/{event_date[4:6]}/goes15/csv/{xray_name}'
+			xray_in = wget.download(xray_url)
+	
+			xray_name_list = ['time_tag','A_QUAL_FLAG','A_COUNT','A_FLUX','B_QUAL_FLAG','B_COUNT','B_FLUX']
+	
+			dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
+			xray_df_ind = pd.read_csv(f'{xray_in}', skiprows=140, names=xray_name_list, date_parser=dateparse,index_col='time_tag', header=0) # 138 for 20120307
+			xray_df = xray_df.append(xray_df_ind)
+	
+			os.remove(xray_name)
+		except:
+			print(f'\nMissing data for {date}')
+			continue
+	
+	xray_df.loc[xray_df['A_FLUX'] < 0.0] = np.nan #6.5 MeV
+	xray_df.loc[xray_df['B_FLUX'] < 0.0] = np.nan #11.6 MeV
+
+
+
 
 ''' Templates for new data
-#===========
-print(f'\n{"="*40}\nNew Dataset Name Goes Here\n{"="*40}')
-
 #===========
 print(f'\n{"="*40}\nNew Dataset Name Goes Here\n{"="*40}')
 
@@ -415,7 +447,13 @@ def applyPlotStyle():
 	axes[length_data_list[j]].legend(loc='lower right', ncol=1,fontsize=8)# borderaxespad=0)# bbox_to_anchor=(1, 0.5)) # bbox_to_anchor=(1.02,1.0)
 
 
-f, axes = plt.subplots(nrows=length_data, ncols=1, sharex=True, figsize=(10, 6))
+if length_data > 1:
+	f, axes = plt.subplots(nrows=length_data, ncols=1, sharex=True, figsize=(10, 6))
+
+if length_data == 1:
+	length_data_list[0] = 0,0
+	f, axes = plt.subplots(nrows=length_data, ncols=1, sharex=True, figsize=(10, 6), squeeze=False)
+
 
 
 if '1' in option_bin_set:
@@ -458,9 +496,17 @@ if '4' in option_bin_set:
 	axes[length_data_list[j]].set_ylabel('Solar Wind\nSpeed [km/s]', fontname="Arial", fontsize = 12)
 	applyPlotStyle()
 
+if '5' in option_bin_set:
+	next()
+	axes[length_data_list[j]].plot(xray_df['B_FLUX'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='blue', label='0.1-0.8 nm')
+	axes[length_data_list[j]].plot(xray_df['A_FLUX'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='red', label='0.05-0.4 nm')
+	axes[length_data_list[j]].set_yscale('log')
+	axes[length_data_list[j]].set_ylabel('Xray Flux\n[Wm$^2$]', fontname="Arial", fontsize = 12)
+	applyPlotStyle()
 
 
-plt.xlabel('Time', fontname="Arial", fontsize = 12)
+
+plt.xlabel('Time (UT)', fontname="Arial", fontsize = 12)
 
 myFmt = mdates.DateFormatter('%m/%d\n%H:%M')
 ax = plt.gca()
@@ -471,6 +517,6 @@ plt.suptitle(f'Space Weather Monitor\n[{event_obj_start_str} -- {event_obj_end_s
 #plt.tight_layout()
 
 plt.subplots_adjust(wspace = 0, hspace = 0, top=0.91)
-plt.savefig('omni_test.png', format='png', dpi=900)
+#plt.savefig('omni_test.png', format='png', dpi=900)
 
 plt.show()
