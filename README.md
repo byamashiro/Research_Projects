@@ -71,7 +71,7 @@ Module       | Submodule(s) | as | Uses
 
 # Running Scripts
 
-### OMNI Space Weather Script ([omni_script_v2](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/pandas_test_omni.py))
+### OMNI Space Weather ([omni_script_v2](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/pandas_test_omni.py))
 
 In [433]: **run pandas_test_omni.py**  
 \========================================  
