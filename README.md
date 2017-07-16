@@ -2,34 +2,23 @@
 
 **Table of Contents**
 
-- [Current Tasks](#Current Tasks)
-- [Current Errors and Pressing Tasks](#)
-    - [Outliers and changes for Solar Wind script](#)
-    - [Outliers for Radio Burst script](#)
-    - [NaN values for Neutron Monitor script for lack of data](#)
-- [Required Python Modules](#)
-- [Running Scripts](#)
+- [Current Tasks](#current-tasks)
+- [Current Errors and Pressing Tasks](#current-errors-and-pressing-tasks)
+- [Required Python Modules](#required-python-modules)
+- [Running Scripts](#running-scripts)
     - [OMNI Space Weather Script (omni_script_v2)](#)
     - [Remastered WIND Type III Radio Burst (radio_script_v2)](#)
-      - [Single Day](#)
-      - [Multiple Days](#)
     - [Neutron Monitor (nm_script)](#)
     - [Remastered GOES-15 Proton Flux (prot_script_v2)](#)
     - [Solar Wind Speed (swind_script)](#)
 - [Deprecated Scripts](#)
 - [Data](#)
-    - [Data Caveats](#)
+  - [Data Caveats](#)
   - [Data originals](#)
-          - [Sample displayed data of pandas data:](#)
-    - [Sample Type III Radio Burst Data](#)
-    - [Neutron Monitor Data](#)
-    - [Proton Flux Data](#)
+  - [Sample displayed data of pandas data:](#)
 - [Completed Tasks](#)
 - [Resolved Errors](#)
-    - [Dynamic subplots and modifications to the Omni script (7/15/2017)](#)
-    - [Set up online CDF reader through Python (7/8/2017)](#Set up online CDF reader through Python (7/8/2017))
-    - [Null values (resolved 7/5/2017)](#)
-    - [DateFormatter (resolved 7/5/2017)](#)
+
 
 
 # Current Tasks
@@ -243,16 +232,16 @@ The data consists of mainly flux data from instruments on the ground, Earth orbi
 ### Data Caveats
 Corrupted data is labeled as -99999.0, and 0.0 flux is most probable to be corrupted as well. Corrupted data is changed using the pandas replace function to np.nan.
 
-## Data originals
+### Data originals
 GOES-13 Proton Flux  
 GOES-15 Xray Flux  
 ACE Magnetic Field Components  
 ACE Solar Wind Parameters  
 OULU Neutron Monitor Data  
 
-###### Sample displayed data of pandas data:
+### Sample displayed data of pandas data:
 
-### Sample Type III Radio Burst Data
+#### Sample Type III Radio Burst Data
 ```
                              12            16        20        24        28  \
 12_16                                                                         
@@ -262,7 +251,7 @@ OULU Neutron Monitor Data
 2012-03-01 00:03:30  01-03-2012  00:03:30.000  1.107890  1.114680  1.121480 
 ...
 ```
-### Neutron Monitor Data
+#### Neutron Monitor Data
 ```
                         OULU     INVK
 datetime                             
@@ -274,7 +263,7 @@ datetime
 ...
 ```
 
-### Proton Flux Data
+#### Proton Flux Data
 ```
       P3W_QUAL_FLAG  P3W_UNCOR_CR  P3W_UNCOR_FLUX  P4W_QUAL_FLAG  \
 0               NaN           NaN             NaN            NaN   
