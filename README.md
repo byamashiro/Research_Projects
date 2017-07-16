@@ -1,19 +1,6 @@
 # Space Weather Projects
 
-# Tasks
-- [x] Proton Flux (7/3/2017)
-
-- [x] Neutron Monitor (7/3/2017)
-
-- [x] Type III Radio Bursts (7/3/2017)
-
-- [x] Fix issues with matplotlib DateFormatter "year out of range" (7/5/2017)
-	- [x] Added issue with null errors in data frames (7/5/2017)
-
-- [x] Remake Radio Burst script using CDF and online databases (7/8/2017)
-    - [x] Use pycdf **(module: spacepy)** to read CDF data (7/6/2017)
-    - [x] Push data into pandas dataframe (7/7/2017)
-    - [x] Set up automated url inputs (7/8/2017)
+# Current Tasks
 
 - [ ] Remake GOES Proton Flux scripts
     - [x] Automate script to download File name: g15_epead_p27e_32s_20120307_20120307 from https://satdat.ngdc.noaa.gov/sem/goes/data/new_full/2012/03/goes15/csv/ (7/10/2017)
@@ -21,18 +8,15 @@
     - [ ] Collect GOES data from legacy satellites if specific date is not found
         - [ ] Integrate GOES 8-13 satellites for date ranges
 
+
 - [ ] Collect GOES-15 Xray data
+
 
 - [ ] Collect WIND/ACE Solar Wind data
     - [x] Bulk speed (7/12/2017)
     - [ ] Temperature
     - [ ] Magnetic field components/absolute value
 
-- [x] Integrate all data into subplots (7/15/2017)
-    - [x] Incorporate all pandas data frames from other scripts into one script (7/13/2017)
-    - [x] Dynamic subplots (7/15/2017)
-    - [x] Fix all subplot axis labels and legends (7/15/2017)
-    - [x] Set appropriate logscale (7/15/2017)
 
 - [ ] Incorporate online databases for radio and proton data
 
@@ -52,21 +36,21 @@
 # Required Python Modules
 Module       | Submodule(s) | as | Uses
 ------------ | ------------- | ------------- | -------------
-pandas  | - | pd | DataFrames, indexing, plotting, downloading http url data
-numpy | - | np | NaN values
-spacepy | pycdf |  Reading Common Data Format
-urllib | error | For HTTPError recognition
-random | - | Randomizer for random colors
-matplotlib | .pyplot, .mdates | plt, mdates | Plotting, subplots, date formatting
-datetime | - | - | Datetime indexing, datetime strings, datetime conversion from strings
-sys | - | - | Exiting script
-wget | - | - | Downloading files online (.cdf, .csv, .ascii, .txt)
-os | - | - | Remove files through script
+**pandas**       | -                | pd          | DataFrames, indexing, plotting, downloading http url data
+**numpy**        | -                | np          | NaN values
+**spacepy**      | pycdf            | -           |  Reading Common Data Format
+**urllib**       | error            | -           | For HTTPError recognition
+**random**       | -                | -           | Randomizer for random colors
+**matplotlib**   | .pyplot, .mdates | plt, mdates | Plotting, subplots, date formatting
+**datetime**     | -                | -           | Datetime indexing, datetime strings, datetime conversion from strings
+**sys**          | -                | -           | Exiting script
+**wget**         | -                | -           | Downloading files online (.cdf, .csv, .ascii, .txt)
+**os**           | -                | -           | Remove files through script
 
 
 # Running Scripts
 
-### OMNI Data ([omni_script_v2](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/pandas_test_omni.py))
+### OMNI Space Weather Script ([omni_script_v2](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/pandas_test_omni.py))
 
 In [433]: **run pandas_test_omni.py**  
 \========================================  
@@ -271,7 +255,6 @@ datetime
 
 
 
-
 Data Set | Normalized (Y/N) | Bad Data Specifiers
 ------------ | ------------- | -------------
 Proton Flux | N | -99999.0, 0.0
@@ -279,6 +262,30 @@ Xray Flux | N | -99999.0, 0.0
 Neutron Monitor Rate | N | n/a 
 Radio Burst | N | n/a
 Solar Wind Speed | N | < 0.0
+
+
+
+# Completed Tasks
+
+- [x] Proton Flux (7/3/2017)
+
+- [x] Neutron Monitor (7/3/2017)
+
+- [x] Type III Radio Bursts (7/3/2017)
+
+- [x] Fix issues with matplotlib DateFormatter "year out of range" (7/5/2017)
+  - [x] Added issue with null errors in data frames (7/5/2017)
+
+- [x] Remake Radio Burst script using CDF and online databases (7/8/2017)
+    - [x] Use pycdf **(module: spacepy)** to read CDF data (7/6/2017)
+    - [x] Push data into pandas dataframe (7/7/2017)
+    - [x] Set up automated url inputs (7/8/2017)
+
+- [x] Integrate all data into subplots (7/15/2017)
+    - [x] Incorporate all pandas data frames from other scripts into one script (7/13/2017)
+    - [x] Dynamic subplots (7/15/2017)
+    - [x] Fix all subplot axis labels and legends (7/15/2017)
+    - [x] Set appropriate logscale (7/15/2017)
 
 
 
