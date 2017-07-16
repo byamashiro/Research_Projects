@@ -6,18 +6,18 @@
 - [Current Errors and Pressing Tasks](#current-errors-and-pressing-tasks)
 - [Required Python Modules](#required-python-modules)
 - [Running Scripts](#running-scripts)
-    - [OMNI Space Weather Script (omni_script_v2)](#)
-    - [Remastered WIND Type III Radio Burst (radio_script_v2)](#)
-    - [Neutron Monitor (nm_script)](#)
-    - [Remastered GOES-15 Proton Flux (prot_script_v2)](#)
-    - [Solar Wind Speed (swind_script)](#)
-- [Deprecated Scripts](#)
-- [Data](#)
-  - [Data Caveats](#)
-  - [Data originals](#)
-  - [Sample displayed data of pandas data:](#)
-- [Completed Tasks](#)
-- [Resolved Errors](#)
+    - [OMNI Space Weather (omni_script_v2)](#omni-space-weather-(omni_script_v2))
+    - [Remastered WIND Type III Radio Burst (radio_script_v2)](#remastered-wind-type-iii-radio-burst-(radio_script_v2))
+    - [Neutron Monitor (nm_script)](#neutron-monitor-(nm_script))
+    - [Remastered GOES-15 Proton Flux (prot_script_v2)](#remastered-goes-15-proton-flux-(prot_script_v2))
+    - [Solar Wind Speed (swind_script)](#solar-wind-speed-(swind_script))
+- [Deprecated Scripts](#deprecated-scripts)
+- [Data](#data)
+  - [Data Caveats](#data-caveats)
+  - [Data Originals](#data-originals)
+  - [Sample Data](#sample-data)
+- [Completed Tasks](#completed-tasks)
+- [Resolved Errors](#resolved-errors)
 
 
 
@@ -232,14 +232,14 @@ The data consists of mainly flux data from instruments on the ground, Earth orbi
 ### Data Caveats
 Corrupted data is labeled as -99999.0, and 0.0 flux is most probable to be corrupted as well. Corrupted data is changed using the pandas replace function to np.nan.
 
-### Data originals
+### Data Originals
 GOES-13 Proton Flux  
 GOES-15 Xray Flux  
 ACE Magnetic Field Components  
 ACE Solar Wind Parameters  
 OULU Neutron Monitor Data  
 
-### Sample displayed data of pandas data:
+### Sample Data
 
 #### Sample Type III Radio Burst Data
 ```
