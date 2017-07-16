@@ -1,9 +1,8 @@
 # Space Weather Projects
 
-**Table of Contents**  *generated with [DocToc](http://doctoc.herokuapp.com/)*
+**Table of Contents**
 
-- [Space Weather Projects](#)
-- [Current Tasks](#)
+- [Current Tasks](#Current Tasks)
 - [Current Errors and Pressing Tasks](#)
     - [Outliers and changes for Solar Wind script](#)
     - [Outliers for Radio Burst script](#)
@@ -28,11 +27,11 @@
 - [Completed Tasks](#)
 - [Resolved Errors](#)
     - [Dynamic subplots and modifications to the Omni script (7/15/2017)](#)
-    - [Set up online CDF reader through Python (7/8/2017)](#)
+    - [Set up online CDF reader through Python (7/8/2017)](#Set up online CDF reader through Python (7/8/2017))
     - [Null values (resolved 7/5/2017)](#)
     - [DateFormatter (resolved 7/5/2017)](#)
 
-    
+
 # Current Tasks
 
 - [ ] Remake GOES Proton Flux scripts
