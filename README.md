@@ -28,19 +28,15 @@
     - [ ] Temperature
     - [ ] Magnetic field components/absolute value
 
-- [ ] Integrate all data into subplots
+- [x] Integrate all data into subplots (7/15/2017)
     - [x] Incorporate all pandas data frames from other scripts into one script (7/13/2017)
     - [x] Dynamic subplots (7/15/2017)
-    - [ ] Fix all subplot axis labels and legends
-    - [ ] Set appropriate logscale
+    - [x] Fix all subplot axis labels and legends (7/15/2017)
+    - [x] Set appropriate logscale (7/15/2017)
 
 - [ ] Incorporate online databases for radio and proton data
 
 # Current Errors and Pressing Tasks
-
-### Dynamic subplots and modifications to the Omni script
-- Devise a way to plot selected datasets on subplots. The script runs with all data is loaded, but breaks with selections. Although the script is dynamic, there currently must be a static plot to host the first plot, and then subplots are appended to that "anchor" plot. Therefore, if the static anchor dataset is not chosen, the script cannot build on an empty canvas. The optimal solution seems to be unpacking different subplots (i.e. fig, (ax1, ax2, ...)). This solution requires that ax1, etc. must be literals and not strings, which removes options such as "for" loops with a list. An idea was to force a string to be a variable name, but this option should not be used if possible. A lambda function was also considered, but wildcard logic doesn't seem optimal for data frames while calling .index and columnized data.
-- Minor tick gridlines for y-axis should be added with minorticks on. Add legends for each subplot and y-axis labels with units. but also reduce size of the legend and y-axis labels. Neutron monitor data seems to be cut off past the ~23 hour mark, include the rest of that data. Insert an "if" statement to deter plotting of neutron monitor data (long-term changes) and type III radio burst data (short-term changes) on the same canvas. 
 
 ### Outliers and changes for Solar Wind script
 - Values significantly over 1000 km/s and single points need to be removed from the dataset. Incorporate temperature and magnetic field components from both ACE and Wind. Aesthetic fixes to the current wget downloading scheme, and find a more efficient method of downloading variant versions of .cdf files. Look for different data sources for solar wind speed with a lower time interval. Deviations are not negligible between both ACE and Wind solar wind speed measurements, see the output [figure](Plots/solarwind_test.png).
@@ -57,9 +53,9 @@
 
 # Running Scripts
 
-### OMNI Data ([omni_script_alpha](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/pandas_test_omni.py)) [PRELIMINARY]
+### OMNI Data ([omni_script_v2](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/pandas_test_omni.py))
 
-In [198]: **run pandas_test_omni.py**  
+In [433]: **run pandas_test_omni.py*  
 \========================================  
 \=               DATASETS               =  
 \========================================  
@@ -68,10 +64,11 @@ In [198]: **run pandas_test_omni.py**
 3 - Neutron Monitor Counts  
 4 - ACE/Wind Solar Wind Speed  
 \========================================  
-Enter Dataset Option or "all": all  
+Enter Dataset Option then "done" or "all": all  
 Enter a start date (yyyymmdd): 20120307  
 Enter a end date (yyyymmdd): 20120307  
 Enter a start hour or "full": full  
+  
 \========================================  
 \=         GOES-15 Proton Flux          =  
 \========================================  
@@ -90,6 +87,7 @@ Enter Energy Channel(s) or "full": full
 \========================================  
 100% [..........................................................................] 3555206 / 3555206  
 Parsing Type III Data for 2012-03-07  
+  
 \========================================  
 \=           Neutron Monitors           =  
 \========================================  
@@ -98,11 +96,10 @@ You are parsing 2 station(s)
 Enter station names: OULU  
 Enter station names: INVK  
 Parsing the ['OULU', 'INVK'] stations  
+  
 \========================================  
 \=      ACE/Wind Solar Wind Speed       =  
 \========================================  
-100% [............................................................................] 150195 / 150195  
-VERSION ERROR: The version v00 for WIND data does not exist, attempting v01  
 100% [............................................................................] 169472 / 169472  
 
 
@@ -267,13 +264,21 @@ Data Set | Normalized (Y/N) | Bad Data Specifiers
 Proton Flux | N | -99999.0, 0.0
 Xray Flux | N | -99999.0, 0.0
 Neutron Monitor Rate | N | n/a 
-Radio Burst | N | n/a 
+Radio Burst | N | n/a
+Solar Wind Speed | N | < 0.0
 
 
 
 
 
 # Resolved Errors
+
+### Dynamic subplots and modifications to the Omni script (7/15/2017)
+* **Resolution**: Set up a global variable to initialize a dynamic variable that would allow for slicing with a defined set. To make this work, the .axes slicing method was invoked, but required an overhaul on the plot function for each dataset (i.e. every plot function needed to be the same, with only the global index changing). Using the .axes slices allowed for subplots, but in turn, .plt functions did not edit all subplots. The .plt functions only edit the final added subplot, therefore changes must be added right after the plot function for each subplot using the .axes methods.
+
+- Devise a way to plot selected datasets on subplots. The script runs with all data is loaded, but breaks with selections. Although the script is dynamic, there currently must be a static plot to host the first plot, and then subplots are appended to that "anchor" plot. Therefore, if the static anchor dataset is not chosen, the script cannot build on an empty canvas. The optimal solution seems to be unpacking different subplots (i.e. fig, (ax1, ax2, ...)). This solution requires that ax1, etc. must be literals and not strings, which removes options such as "for" loops with a list. An idea was to force a string to be a variable name, but this option should not be used if possible. A lambda function was also considered, but wildcard logic doesn't seem optimal for data frames while calling .index and columnized data.
+- Minor tick gridlines for y-axis should be added with minorticks on. Add legends for each subplot and y-axis labels with units. but also reduce size of the legend and y-axis labels. Neutron monitor data seems to be cut off past the ~23 hour mark, include the rest of that data. Insert an "if" statement to deter plotting of neutron monitor data (long-term changes) and type III radio burst data (short-term changes) on the same canvas. 
+
 
 ### Set up online CDF reader through Python (7/8/2017)
 * **Resolution**: Used wget instead of requests and urllib library. The .cdf is downloaded locally and removed after the data is inserted into a data variable.

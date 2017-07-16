@@ -260,7 +260,6 @@ if '3' in option_bin_set:
 	
 	#sorter_list = ['PSNM', 'TIBT', 'ESOI', 'ATHN', 'MXCO', 'ARNM', 'NANM', 'PTFM', 'CALM', 'AATB', 'ROME', 'BKSN', 'HRMS', 'JUNG', 'JUNG1', 'LMKS', 'IRK2', 'IRK3', 'IRKT', 'DRBS', 'NVBK', 'MCRL', 'MOSC', 'NEWK', 'KIEL', 'KIEL2', 'MGDN', 'YKTK', 'KERG', 'CALG', 'OULU', 'SANB', 'SNAE', 'APTY', 'NRLK', 'TXBY', 'FSMT', 'INVK', 'JBGO', 'NAIN', 'PWNK', 'THUL', 'MWSN', 'NEU3', 'SOPB', 'SOPO', 'MRNY', 'DOMB', 'DOMC', 'TERA']
 	sorter = {'PSNM':0, 'TIBT':1, 'ESOI':2, 'ATHN':3, 'MXCO':4, 'ARNM':5, 'NANM':6, 'PTFM':7, 'CALM':8, 'AATB':9, 'ROME':10, 'BKSN':11, 'HRMS':12, 'JUNG':13, 'JUNG1':14, 'LMKS':15, 'IRK2':16, 'IRK3':17, 'IRKT':18, 'DRBS':19, 'NVBK':20, 'MCRL':21, 'MOSC':22, 'NEWK':23, 'KIEL':24, 'KIEL2':25, 'MGDN':26, 'YKTK':27, 'KERG':28, 'CALG':29, 'OULU':30, 'SANB':31, 'SNAE':32, 'APTY':33, 'NRLK':34, 'TXBY':35, 'FSMT':36, 'INVK':37, 'JBGO':38, 'NAIN':39, 'PWNK':40, 'THUL':41, 'MWSN':42, 'NEU3':43, 'SOPB':44, 'SOPO':45, 'MRNY':46, 'DOMB':47, 'DOMC':48, 'TERA':49}
-	#sorted_sorter = sorted(sorter.items(), key=operator.itemgetter(1))
 	sorted_lambda = sorted(sorter.items(), key=lambda x: x[1])
 	
 	
@@ -340,7 +339,7 @@ if '4' in option_bin_set:
 					swind_wind_url = f'https://cdaweb.gsfc.nasa.gov/pub/data/wind/swe/swe_k0/{event_date[:4]}/{swind_wind_name}'
 					swind_wind_in = wget.download(swind_wind_url)
 				except error.HTTPError as err:
-					print(f'\nVERSION ERROR: The version v0{i} for WIND data does not exist, attempting v0{i+1}')
+					#print(f'\nVERSION ERROR: The version v0{i} for WIND data does not exist, attempting v0{i+1}')
 					continue
 				else:
 					break
@@ -379,157 +378,18 @@ if '4' in option_bin_set:
 
 
 
-'''
+''' Templates for new data
 #===========
-print(f'{"="*40}\nGOES-15 Proton Flux\n{"="*40}')
-
-#===========
-print(f'{"="*40}\nGOES-15 Proton Flux\n{"="*40}')
+print(f'\n{"="*40}\nNew Dataset Name Goes Here\n{"="*40}')
 
 #===========
-print(f'{"="*40}\nGOES-15 Proton Flux\n{"="*40}')
+print(f'\n{"="*40}\nNew Dataset Name Goes Here\n{"="*40}')
 
+#===========
+print(f'\n{"="*40}\nNew Dataset Name Goes Here\n{"="*40}')
 '''
 
-
-#===========Plotting (VERY BROKEN, DO NOT ATTEMPT TO RUN FROM HERE)
-'''
-1 - GOES-15 Proton Flux
-2 - Wind Type III Radio Bursts
-3 - Neutron Monitor Counts
-4 - ACE/Wind Solar Wind Speed'
-'''
-'''
-list_subplot = []
-for i in sorted(option_bin_set):
-	list_subplot.append(f'ax{i}')
-
-# '1'
-fig = plt.figure()
-ax = fig.add_subplot(111)
-rb_data['avg'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].plot(ax=ax, color='navy', label= '20 kHz - 1040 kHz')
-
-
-fig = plt.figure()
-ax = fig.add_subplot(n+1, 1, n+1)
-rb_data['avg'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].plot(ax=ax, color='navy', label= '20 kHz - 1040 kHz')
-
-n = len(fig.axes)
-for i in range(n):
-	fig.axes[i].change_geometry(n+1, 1, i+1)
-
-ax = fig.add_subplot(n+1, 1, n+1)
-for i in sorted(energy_bin_list):
-	proton_df[f'{i[0]}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].plot(ax=ax, color=f'{i[2]}', label= f'{i[1]}', logy=True)
-
-plt.show()
-'''
-
-
-#=====sol 2
-'''
-number_of_subplots=len(option_bin_set)
-
-for i,v in enumerate(range(number_of_subplots)):
-	v = v+1
-	ax1 = plt.subplot(number_of_subplots,1,v)
-	if '1' in option_bin_set and v == 1:
-		rb_data['avg'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].plot(ax=ax1, color='navy', label= '20 kHz - 1040 kHz')
-	if '2' in option_bin_set and v == 2:
-		for i in sorted(energy_bin_list):
-			proton_df[f'{i[0]}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].plot(ax=ax1, color=f'{i[2]}', label= f'{i[1]}', logy=True)
-	if '3' in option_bin_set and v == 3:
-		color_count = []
-		for i in sorted_nm_list:
-
-			color_list = ['red','orange','green','blue','indigo','violet','purple'] #,'yellow'
-			color_list = list(set(color_list) - set(color_count))
-
-			rand_color = random.choice(color_list)
-			color_count.append(rand_color)
-
-			plt.plot(nm_data.index, nm_data[f'{i}'], color=rand_color, label=f'{i}')
-	if '4' in option_bin_set and v == 4:
-		plt.plot(wind_data['wind_bulk_vel'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='red', label='Wind: Ion Bulk Flow Speed GSE')
-		plt.plot(ace_data.loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='blue', label='ACE: H Bulk Speed')
-
-
-plt.title(f'Solar Wind Bulk Flow Speed\n[{event_obj_start_str} -- {event_obj_end_str}]', fontname="Arial", fontsize = 14)
-
-plt.xlabel('Time', fontname="Arial", fontsize = 14)
-plt.ylabel('Speed [km/s]', fontname="Arial", fontsize = 14)
-plt.minorticks_on()
-plt.grid(True)
-#plt.yscale('log')
-plt.legend(loc='lower right')
-plt.tight_layout()
-
-ax = plt.gca()
-myFmt = mdates.DateFormatter('%m/%d\n%H:%M')
-
-ax.xaxis.set_major_formatter(myFmt)
-plt.setp(ax.xaxis.get_majorticklabels(), rotation=0, horizontalalignment='center')
-#ax.xaxis.set_major_formatter(myFmt)
-plt.show()
-
-'''
-#======sol 3
-'''
-f, (ax1, ax2, ax3, ax4) = plt.subplots(4, sharex=True, sharey=False) #plt.subplots(4, sharex=True, sharey=False)
-
-
-
-
-rb_data['avg'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].plot(ax=ax1, color='navy', label= '20 kHz - 1040 kHz')
-
-for i in sorted(energy_bin_list):
-	proton_df[f'{i[0]}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].plot(ax=ax2, color=f'{i[2]}', label= f'{i[1]}', logy=True)
-
-color_count = []
-for i in sorted_nm_list:
-
-	color_list = ['red','orange','green','blue','indigo','violet','purple'] #,'yellow'
-	color_list = list(set(color_list) - set(color_count))
-
-	rand_color = random.choice(color_list)
-	color_count.append(rand_color)
-
-	ax3.plot(nm_data.index, nm_data[f'{i}'], color=rand_color, label=f'{i}')
-
-ax4.plot(wind_data['wind_bulk_vel'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='red', label='Wind: Ion Bulk Flow Speed GSE')
-ax4.plot(ace_data.loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='blue', label='ACE: H Bulk Speed')
-
-
-ax1.set_title(f'Solar Wind Bulk Flow Speed\n[{event_obj_start_str} -- {event_obj_end_str}]', fontname="Arial", fontsize = 14)
-
-ax1.grid(True)
-ax2.grid(True)
-ax3.grid(True)
-ax4.grid(True)
-
-plt.xlabel('Time', fontname="Arial", fontsize = 14)
-plt.ylabel('Speed [km/s]', fontname="Arial", fontsize = 14)
-plt.minorticks_on()
-#plt.grid(True)
-#plt.yscale('log')
-plt.legend(loc='lower right')
-plt.tight_layout()
-
-ax = plt.gca()
-myFmt = mdates.DateFormatter('%m/%d\n%H:%M')
-
-ax4.xaxis.set_major_formatter(myFmt)
-f.subplots_adjust(hspace=.15)
-
-plt.setp(ax.xaxis.get_majorticklabels(), rotation=0, horizontalalignment='center')
-#ax.xaxis.set_major_formatter(myFmt)
-#plt.savefig('omni_test.png', format='png', dpi=900)
-
-plt.show()
-
-'''
-
-#=======pandas plotting solution
+#=========== Plotting Data
 '''
 1 - GOES-15 Proton Flux
 2 - Wind Type III Radio Bursts
@@ -552,26 +412,31 @@ def next():
 def applyPlotStyle():
 	axes[length_data_list[j]].grid(True)
 	axes[length_data_list[j]].minorticks_on()
-	#axes[length_data_list[j]].legend(loc='lower right')
+	axes[length_data_list[j]].legend(loc='lower right', ncol=1,fontsize=8)# borderaxespad=0)# bbox_to_anchor=(1, 0.5)) # bbox_to_anchor=(1.02,1.0)
 
 
-f, axes = plt.subplots(nrows=length_data, ncols=1, sharex=True)
+f, axes = plt.subplots(nrows=length_data, ncols=1, sharex=True, figsize=(10, 6))
+
 
 if '1' in option_bin_set:
 	next()
-	applyPlotStyle()
 	for i in sorted(energy_bin_list):
 		axes[length_data_list[j]].plot(proton_df[f'{i[0]}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color=f'{i[2]}', label= f'{i[1]}')#, logy=True)
-	axes[length_data_list[j]].semilogy #.yscale('log')
+	axes[length_data_list[j]].set_yscale('log')
+	axes[length_data_list[j]].set_ylabel('Proton\nFlux [pfu]', fontname="Arial", fontsize = 12)
+	applyPlotStyle()
+
+
 
 if '2' in option_bin_set:
 	next()
-	applyPlotStyle()
 	axes[length_data_list[j]].plot(rb_data['avg'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='navy', label= '20 kHz - 1040 kHz')
+	axes[length_data_list[j]].set_ylabel('Type III Radio\nBurst [sfu]', fontname="Arial", fontsize = 12)
+	applyPlotStyle()
+
 
 if '3' in option_bin_set:
 	next()
-	applyPlotStyle()
 	color_count = []
 
 	for i in sorted_nm_list:
@@ -583,93 +448,29 @@ if '3' in option_bin_set:
 		color_count.append(rand_color)
 	
 		axes[length_data_list[j]].plot(nm_data[f'{i}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color=rand_color, label=f'{i}')
-
+	axes[length_data_list[j]].set_ylabel('Neu. Monitor\n[counts/s]', fontname="Arial", fontsize = 12)
+	applyPlotStyle()
 
 if '4' in option_bin_set:
 	next()
-	applyPlotStyle()
 	axes[length_data_list[j]].plot(wind_data['wind_bulk_vel'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='red', label='Wind: Ion Bulk Flow Speed GSE')
 	axes[length_data_list[j]].plot(ace_data['ace_bulk_vel'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='blue', label='ACE: H Bulk Speed')
+	axes[length_data_list[j]].set_ylabel('Solar Wind\nSpeed [km/s]', fontname="Arial", fontsize = 12)
+	applyPlotStyle()
 
-#axes[0].grid(True)
 
 
-
-#plt.minorticks_on()
-#plt.yscale('log')
-#plt.legend(loc='lower right')
-plt.tight_layout()
+plt.xlabel('Time', fontname="Arial", fontsize = 12)
 
 myFmt = mdates.DateFormatter('%m/%d\n%H:%M')
 ax = plt.gca()
 ax.xaxis.set_major_formatter(myFmt)
-#f.subplots_adjust(hspace=.15)
 
 plt.setp(ax.xaxis.get_majorticklabels(), rotation=0, horizontalalignment='center')
-#ax.xaxis.set_major_formatter(myFmt)
+plt.suptitle(f'Space Weather Monitor\n[{event_obj_start_str} -- {event_obj_end_str}]', fontname="Arial", fontsize = 14) #, y=1.04,
+#plt.tight_layout()
 
+plt.subplots_adjust(wspace = 0, hspace = 0, top=0.91)
+plt.savefig('omni_test.png', format='png', dpi=900)
 
-
-plt.subplots_adjust(wspace = 0, hspace = 0)
 plt.show()
-'''
-
-#proton plotting
-
-
-
-plt.title(f'GOES-15W Proton Flux\n[{event_obj_start_str} -- {event_obj_end_str}]', fontname="Arial", fontsize = 14)
-plt.xlabel('Time', fontname="Arial", fontsize = 14)
-plt.ylabel('Flux [pfu]', fontname="Arial", fontsize = 14)
-
-#radio burst plotting
-
-
-
-
-plt.title(f'WIND Type III Radio Bursts: RAD 1\n[{event_obj_start_str} -- {event_obj_end_str}]', fontname="Arial", fontsize = 14)
-plt.xlabel('Time', fontname="Arial", fontsize = 14)
-plt.ylabel('Intensity [sfu]', fontname="Arial", fontsize = 14)
-
-
-#Neutron monitor plotting
-
-
-#nm_data['RCORR_E'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].plot(color='limegreen', label= 'Corrected for Efficiency')
-
-plt.title(f'Neutron Monitor Data Corrected for Efficiency\n[{event_obj_start_str} -- {event_obj_end_str}]', fontname="Arial", fontsize = 14)
-plt.xlabel('Time', fontname="Arial", fontsize = 14)
-plt.ylabel('Counts/s', fontname="Arial", fontsize = 14)
-
-
-
-#=========Solar Wind Plotting
-print(f'\nPlotting Solar Wind Data: [{event_obj_start_str} -- {event_obj_end_str}]')
-
-
-#ace_data['ace_bulk_vel'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].plot(color='blue', label= 'ACE')
-#wind_data['wind_bulk_vel'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].plot(color='red', label= 'WIND')
-
-
-
-
-plt.title(f'Solar Wind Bulk Flow Speed\n[{event_obj_start_str} -- {event_obj_end_str}]', fontname="Arial", fontsize = 14)
-plt.xlabel('Time', fontname="Arial", fontsize = 14)
-plt.ylabel('Speed [km/s]', fontname="Arial", fontsize = 14)
-plt.minorticks_on()
-plt.grid(True)
-#plt.yscale('log')
-plt.legend(loc='lower right')
-plt.tight_layout()
-
-ax = plt.gca()
-myFmt = mdates.DateFormatter('%m/%d\n%H:%M')
-
-ax.xaxis.set_major_formatter(myFmt)
-plt.setp(ax.xaxis.get_majorticklabels(), rotation=0, horizontalalignment='center')
-#ax.xaxis.set_major_formatter(myFmt)
-
-plt.savefig('solarwind_test.png', format='png', dpi=900)
-plt.show()
-#plt.clf()
-'''
