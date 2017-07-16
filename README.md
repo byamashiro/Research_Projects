@@ -1,5 +1,38 @@
 # Space Weather Projects
 
+**Table of Contents**  *generated with [DocToc](http://doctoc.herokuapp.com/)*
+
+- [Space Weather Projects](#)
+- [Current Tasks](#)
+- [Current Errors and Pressing Tasks](#)
+    - [Outliers and changes for Solar Wind script](#)
+    - [Outliers for Radio Burst script](#)
+    - [NaN values for Neutron Monitor script for lack of data](#)
+- [Required Python Modules](#)
+- [Running Scripts](#)
+    - [OMNI Space Weather Script (omni_script_v2)](#)
+    - [Remastered WIND Type III Radio Burst (radio_script_v2)](#)
+      - [Single Day](#)
+      - [Multiple Days](#)
+    - [Neutron Monitor (nm_script)](#)
+    - [Remastered GOES-15 Proton Flux (prot_script_v2)](#)
+    - [Solar Wind Speed (swind_script)](#)
+- [Deprecated Scripts](#)
+- [Data](#)
+    - [Data Caveats](#)
+  - [Data originals](#)
+          - [Sample displayed data of pandas data:](#)
+    - [Sample Type III Radio Burst Data](#)
+    - [Neutron Monitor Data](#)
+    - [Proton Flux Data](#)
+- [Completed Tasks](#)
+- [Resolved Errors](#)
+    - [Dynamic subplots and modifications to the Omni script (7/15/2017)](#)
+    - [Set up online CDF reader through Python (7/8/2017)](#)
+    - [Null values (resolved 7/5/2017)](#)
+    - [DateFormatter (resolved 7/5/2017)](#)
+
+    
 # Current Tasks
 
 - [ ] Remake GOES Proton Flux scripts
