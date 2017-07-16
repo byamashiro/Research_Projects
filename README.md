@@ -49,13 +49,26 @@
 ### NaN values for Neutron Monitor script for lack of data
 - Some neutron monitors do not have data and will return NaN values. When the script runs and the NaN values are added, the title columns will be shifted since there is no data in those columns. Essentially, 3 labels will be made for 2 columns, and the headers might not match the correlated data.
 
+# Required Python Modules
+Module       | Submodule(s) | as | Uses
+------------ | ------------- | ------------- | -------------
+pandas  | - | pd | DataFrames, indexing, plotting, downloading http url data
+numpy | - | np | NaN values
+spacepy | pycdf |  Reading Common Data Format
+urllib | error | For HTTPError recognition
+random | - | Randomizer for random colors
+matplotlib | .pyplot, .mdates | plt, mdates | Plotting, subplots, date formatting
+datetime | - | - | Datetime indexing, datetime strings, datetime conversion from strings
+sys | - | - | Exiting script
+wget | - | - | Downloading files online (.cdf, .csv, .ascii, .txt)
+os | - | - | Remove files through script
 
 
 # Running Scripts
 
 ### OMNI Data ([omni_script_v2](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/pandas_test_omni.py))
 
-In [433]: **run pandas_test_omni.py*  
+In [433]: **run pandas_test_omni.py**  
 \========================================  
 \=               DATASETS               =  
 \========================================  
