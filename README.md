@@ -28,6 +28,11 @@
     - [x] Energy range flux selections (6 channels) (7/10/2017)
     - [ ] Collect GOES data from legacy satellites if specific date is not found
         - [ ] Integrate GOES 8-13 satellites for date ranges
+        - [ ] Collect "new_avg" data
+          - [ ] Collect the same "new_full" data in the modern proton event dates
+        - [ ] Specify energy range to be collected, must be over 100 MeV
+        - [ ] Script must be modified for changes in strings in the "new_avg" files
+          - [ ] Attempt to pull specific GOES model from file string (i.e g10, 10)
 
 
 - [ ] Collect GOES-15 Xray data
@@ -42,6 +47,9 @@
 - [ ] Incorporate online databases for radio and proton data
 
 # Current Errors and Pressing Tasks
+
+### GOES legacy data
+- GOES proton flux data requires modifications to omni code. GOES-13 does not cover years in the early 2000's, therefore older GOES satellites must be used. Older satellites do not have full "new_data" as in the GOES-13 to GOES-15 models, therefore the time averaged data "new_avg" will be used, the specific energy range needs to be determined. Safeguards in the omni script to stop data collection from before 2011 must also be manipulated to allow for these dates. 
 
 ### Outliers and changes for Solar Wind script
 - Values significantly over 1000 km/s and single points need to be removed from the dataset. Incorporate temperature and magnetic field components from both ACE and Wind. Aesthetic fixes to the current wget downloading scheme, and find a more efficient method of downloading variant versions of .cdf files. Look for different data sources for solar wind speed with a lower time interval. Deviations are not negligible between both ACE and Wind solar wind speed measurements, see the output [figure](Plots/solarwind_test.png).

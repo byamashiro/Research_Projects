@@ -67,11 +67,11 @@ start_year = start_date[:4]
 end_day = end_date[6:8]
 end_month = end_date[4:6]
 end_year = end_date[:4]
-
-if int(start_year) < 2010:
+'''
+if int(start_year) < 2010: # testing old 2003 data, uncomment laterß
 	print('\nDATE ERROR: Date must start after September 1, 2010')
 	sys.exit(0)
-
+'''
 if len(start_date) != 8 or len(end_date) != 8:
 	print('\nDATE ERROR: Dates must have 8 digits.')
 	sys.exit(0)
@@ -112,75 +112,155 @@ event_obj_end_str_date = datetime.datetime.strftime(event_obj_end, '%Y%m%d %H')
 
 #=========== 1: GOES-15 Proton Flux
 if '1' in option_bin_set:
-	print(f'\n{"="*40}\n{"=" + "GOES-15 Proton Flux".center(38," ") + "="}\n{"="*40}')
-	print(f'{"Energy Channels".center(7, " ")}\n{"-"*20}\n1: 6.5 MeV\n2: 11.6 MeV\n3: 30.6 MeV\n4: 63.1 MeV\n5: 165 MeV\n6: 433 MeV')
-	energy_bin_set = set()
-	
-	while True: # energy_bin != 'done':
-		energy_bin = input('Enter Energy Channel(s) or "full": ')
-		if energy_bin != 'done':
-			if energy_bin == 'full':
-				energy_bin_set.add('1')
-				energy_bin_set.add('2')
-				energy_bin_set.add('3')
-				energy_bin_set.add('4')
-				energy_bin_set.add('5')
-				energy_bin_set.add('6')
-				break
-			if int(energy_bin) < 7:
-				energy_bin_set.add(energy_bin)
-				#print(len(energy_bin_set))
-	
-				if len(energy_bin_set) >= 6:
-					#print('len very long')
+	if int(start_year) > 2011:
+		print(f'\n{"="*40}\n{"=" + "GOES-15 Proton Flux".center(38," ") + "="}\n{"="*40}')
+		print(f'{"Energy Channels".center(7, " ")}\n{"-"*20}\n1: 6.5 MeV\n2: 11.6 MeV\n3: 30.6 MeV\n4: 63.1 MeV\n5: 165 MeV\n6: 433 MeV')
+		energy_bin_set = set()
+		
+		while True: # energy_bin != 'done':
+			energy_bin = input('Enter Energy Channel(s) or "full": ')
+			if energy_bin != 'done':
+				if energy_bin == 'full':
+					energy_bin_set.add('1')
+					energy_bin_set.add('2')
+					energy_bin_set.add('3')
+					energy_bin_set.add('4')
+					energy_bin_set.add('5')
+					energy_bin_set.add('6')
 					break
-		elif energy_bin == 'done':
-			break
-	
-	energy_bin_list = []
-	for i in energy_bin_set:
-		if '1' in i:
-			energy_bin_list.append(['P2W_UNCOR_FLUX','6.5 MeV', 'red'])
-		elif '2' in i:
-			energy_bin_list.append(['P3W_UNCOR_FLUX','11.6 MeV','orange'])
-		elif '3' in i:
-			energy_bin_list.append(['P4W_UNCOR_FLUX','30.6 MeV','green'])
-		elif '4' in i:
-			energy_bin_list.append(['P5W_UNCOR_FLUX','63.1 MeV','blue'])
-		elif '5' in i:
-			energy_bin_list.append(['P6W_UNCOR_FLUX','165 MeV','purple'])
-		elif '6' in i:
-			energy_bin_list.append(['P7W_UNCOR_FLUX','433 MeV','violet'])
-	
-	
-	proton_df = pd.DataFrame([])
-	
-	for date in daterange( start, end ):
-		try:
-			event_date = str(date).replace('-','')
-			#print(event_date[0:6])
-			proton_name = f'g15_epead_p27w_32s_{event_date}_{event_date}.csv'
-			proton_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_full/{event_date[:4]}/{event_date[4:6]}/goes15/csv/{proton_name}'
-			proton_in = wget.download(proton_url)
-	
-			#name_list = ['datetime'] + [ str(i) for i in sorted_nm_list]
-	
-			dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
-			proton_df_ind = pd.read_csv(f'{proton_in}', skiprows=282, date_parser=dateparse,index_col='time_tag', header=0)
-			proton_df = proton_df.append(proton_df_ind)
-	
-			os.remove(proton_name)
-		except:
-			print(f'\nMissing data for {date}')
-			continue
-	
-	proton_df.loc[proton_df['P2W_UNCOR_FLUX'] < 0.0] = np.nan #6.5 MeV
-	proton_df.loc[proton_df['P3W_UNCOR_FLUX'] < 0.0] = np.nan #11.6 MeV
-	proton_df.loc[proton_df['P4W_UNCOR_FLUX'] < 0.0] = np.nan #30.6 MeV
-	proton_df.loc[proton_df['P5W_UNCOR_FLUX'] < 0.0] = np.nan #63.1 MeV
-	proton_df.loc[proton_df['P6W_UNCOR_FLUX'] < 0.0] = np.nan #165 MeV
-	proton_df.loc[proton_df['P7W_UNCOR_FLUX'] < 0.0] = np.nan #433 MeV
+				if int(energy_bin) < 7:
+					energy_bin_set.add(energy_bin)
+					#print(len(energy_bin_set))
+		
+					if len(energy_bin_set) >= 6:
+						#print('len very long')
+						break
+			elif energy_bin == 'done':
+				break
+		
+		energy_bin_list = []
+		for i in energy_bin_set:
+			if '1' in i:
+				energy_bin_list.append(['P2W_UNCOR_FLUX','6.5 MeV', 'red'])
+			elif '2' in i:
+				energy_bin_list.append(['P3W_UNCOR_FLUX','11.6 MeV','orange'])
+			elif '3' in i:
+				energy_bin_list.append(['P4W_UNCOR_FLUX','30.6 MeV','green'])
+			elif '4' in i:
+				energy_bin_list.append(['P5W_UNCOR_FLUX','63.1 MeV','blue'])
+			elif '5' in i:
+				energy_bin_list.append(['P6W_UNCOR_FLUX','165 MeV','purple'])
+			elif '6' in i:
+				energy_bin_list.append(['P7W_UNCOR_FLUX','433 MeV','violet'])
+		
+		
+		proton_df = pd.DataFrame([])
+		
+		for date in daterange( start, end ):
+			try:
+				event_date = str(date).replace('-','')
+				#print(event_date[0:6])
+				proton_name = f'g15_epead_p27w_32s_{event_date}_{event_date}.csv'
+				proton_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_full/{event_date[:4]}/{event_date[4:6]}/goes15/csv/{proton_name}'
+				proton_in = wget.download(proton_url)
+		
+				#name_list = ['datetime'] + [ str(i) for i in sorted_nm_list]
+		
+				dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
+				proton_df_ind = pd.read_csv(f'{proton_in}', skiprows=282, date_parser=dateparse,index_col='time_tag', header=0)
+				proton_df = proton_df.append(proton_df_ind)
+		
+				os.remove(proton_name)
+			except:
+				print(f'\nMissing data for {date}')
+				continue
+		
+		proton_df.loc[proton_df['P2W_UNCOR_FLUX'] < 0.0] = np.nan #6.5 MeV
+		proton_df.loc[proton_df['P3W_UNCOR_FLUX'] < 0.0] = np.nan #11.6 MeV
+		proton_df.loc[proton_df['P4W_UNCOR_FLUX'] < 0.0] = np.nan #30.6 MeV
+		proton_df.loc[proton_df['P5W_UNCOR_FLUX'] < 0.0] = np.nan #63.1 MeV
+		proton_df.loc[proton_df['P6W_UNCOR_FLUX'] < 0.0] = np.nan #165 MeV
+		proton_df.loc[proton_df['P7W_UNCOR_FLUX'] < 0.0] = np.nan #433 MeV
 
+
+#proton flux 2003
+	if int(start_year) == 2003:
+		print(f'\n{"="*40}\n{"=" + "GOES-10 Time Averaged Proton Flux".center(38," ") + "="}\n{"="*40}')
+		print(f'{"Energy Channels".center(7, " ")}\n{"-"*20}\n1: 0.6 - 4.0 MeV\n2: 4.0 - 9.0 MeV\n3: 9.0 - 15.0 MeV\n4: 15.0 - 44.0 MeV\n5: 40.0 - 80.0 MeV\n6: 80.0 - 165.0 MeV\n7: 165.0 - 500.0 MeV')
+		energy_bin_set = set()
+		while True: # energy_bin != 'done':
+			energy_bin = input('Enter Energy Channel(s) or "full": ')
+			if energy_bin != 'done':
+				if energy_bin == 'full':
+					energy_bin_set.add('1')
+					energy_bin_set.add('2')
+					energy_bin_set.add('3')
+					energy_bin_set.add('4')
+					energy_bin_set.add('5')
+					energy_bin_set.add('6')
+					energy_bin_set.add('7')
+					break
+				if int(energy_bin) < 8:
+					energy_bin_set.add(energy_bin)
+					#print(len(energy_bin_set))
+					if len(energy_bin_set) >= 7:
+						#print('len very long')
+						break
+			elif energy_bin == 'done':
+				break
+		energy_bin_list = []
+		for i in energy_bin_set:
+			if '1' in i:
+				energy_bin_list.append(['p1_flux','0.6 - 4.0 MeV', 'red'])
+			elif '2' in i:
+				energy_bin_list.append(['p2_flux','4.0 - 9.0 MeV','orange'])
+			elif '3' in i:
+				energy_bin_list.append(['p3_flux','9.0 - 15.0 MeV','green'])
+			elif '4' in i:
+				energy_bin_list.append(['p4_flux','15.0 - 44.0 MeV','blue'])
+			elif '5' in i:
+				energy_bin_list.append(['p5_flux','40.0 - 80.0 MeV','purple'])
+			elif '6' in i:
+				energy_bin_list.append(['p6_flux','80.0 - 165.0 MeV','violet'])
+			elif '7' in i:
+				energy_bin_list.append(['p7_flux','165.0 - 500.0 MeV','limegreen'])
+		proton_df = pd.DataFrame([])
+		for date in daterange( start, end ):
+			try:
+				event_date = str(date).replace('-','')
+				#print(event_date[0:6])
+				proton_name = f'g10_eps_1m_20031001_20031031.csv' # need to change the final date {event_date}
+				#g10_eps_1m_{event_date}_20031031.csv
+				proton_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_avg/{event_date[:4]}/{event_date[4:6]}/goes10/csv/{proton_name}'
+
+				#https://satdat.ngdc.noaa.gov/sem/goes/data/new_avg/{event_date[:4]}/{event_date[4:6]}/goes10/csv/
+				proton_in = wget.download(proton_url)
+				#name_list = ['datetime'] + [ str(i) for i in sorted_nm_list]
+				dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
+				proton_df_ind = pd.read_csv(f'{proton_in}', skiprows=214, date_parser=dateparse,index_col='time_tag', header=0)
+				proton_df = proton_df.append(proton_df_ind)
+				os.remove(proton_name)
+			except:
+				print(f'\nMissing data for {date}')
+				continue
+		proton_df.loc[proton_df['p1_flux'] < 0.0] = np.nan #6.5 MeV
+		proton_df.loc[proton_df['p2_flux'] < 0.0] = np.nan #11.6 MeV
+		proton_df.loc[proton_df['p3_flux'] < 0.0] = np.nan #30.6 MeV
+		proton_df.loc[proton_df['p4_flux'] < 0.0] = np.nan #63.1 MeV
+		proton_df.loc[proton_df['p5_flux'] < 0.0] = np.nan #165 MeV
+		proton_df.loc[proton_df['p6_flux'] < 0.0] = np.nan #433 MeV
+		proton_df.loc[proton_df['p7_flux'] < 0.0] = np.nan #433 MeV
+
+'''
+GOES-8 1995-01 to 2003-06
+GOES-9 1996-04 to 1998-07
+GOES-10 1998-07 to 2009-12
+GOES-11 2000-07 to 2011-02
+GOES-12 2003-01 to 2010-08
+GOES-13 2010-04 to present, (2006-07 to present for EUVS data)
+GOES-14 2009-12 to present, (2009-07 to 2012-11 for EUVS data)
+GOES-15 2010-09 to present, (2010-04 to present for EUVS data)
+'''
 
 
 #=========== 2: Wind Type III Radio Burst
@@ -455,7 +535,7 @@ if length_data == 1:
 	f, axes = plt.subplots(nrows=length_data, ncols=1, sharex=True, figsize=(10, 6), squeeze=False)
 
 
-
+# proton flux plotting
 if '1' in option_bin_set:
 	next()
 	for i in sorted(energy_bin_list):
@@ -517,6 +597,6 @@ plt.suptitle(f'Space Weather Monitor\n[{event_obj_start_str} -- {event_obj_end_s
 #plt.tight_layout()
 
 plt.subplots_adjust(wspace = 0, hspace = 0, top=0.91)
-#plt.savefig('omni_test.png', format='png', dpi=900)
+#plt.savefig('omni_test_legacy.png', format='png', dpi=900)
 
 plt.show()
