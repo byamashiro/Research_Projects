@@ -11,7 +11,7 @@
     - [Neutron Monitor (nm_script)](#neutron-monitor-nm_script)
     - [Remastered GOES-15 Proton Flux (prot_script_v2)](#remastered-goes-15-proton-flux-prot_script_v2)
     - [Solar Wind Speed (swind_script)](#solar-wind-speed-swind_script)
-    - [Legacy OMNI Space Weather (1995-2009)](#legacy-omni-space-weather-1995_2009)
+    - [Legacy OMNI Space Weather (1995-2009) (legacy_omni_script_v1)](#legacy-omni-space-weather-1995_2009-legacy-omni-script-v1)
 - [Deprecated Scripts](#deprecated-scripts)
 - [Data](#data)
   - [Data Caveats](#data-caveats)
@@ -219,15 +219,15 @@ Plotting Solar Wind Data: [20120306 00:00:00 -- 20120308 23:00:00]
 ### Legacy OMNI Space Weather (1995-2009) ([legacy_omni_script_v1](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/pandas_test_legacy.py))
 
 In [583]: **run pandas_test_legacy.py**  
-========================================  
-=               DATASETS               =  
-========================================  
+\========================================  
+\=               DATASETS               =  
+\========================================  
 1 - GOES-8,10 Proton Flux (1995-Present)  
 2 - Wind Type III Radio Bursts (1994-Present)  
 3 - Neutron Monitor Counts  
 4 - ACE/Wind Solar Wind Speed (1998-Present)/(1994-Present)  
 5 - GOES-8,10 Xray Flux (1995-Present)  
-========================================  
+\========================================  
 Enter Dataset Option then "done" or "all": 1  
 Enter Dataset Option then "done" or "all": 2  
 Enter Dataset Option then "done" or "all": 4  
@@ -236,20 +236,20 @@ Enter Dataset Option then "done" or "all": done
 Enter a start date (yyyymmdd): 20031028  
 Enter a end date (yyyymmdd): 20031028  
 Enter a start hour or "full": full  
-========================================  
-=           GOES Satellites            =  
-========================================  
+\========================================  
+\=           GOES Satellites            =  
+\========================================  
 1 - GOES-8 (1995 - 1998)  
 2 - GOES-10 (1999 - 2009)  
 3 - GOES-13 (2010 - Present) DO NOT USE!  
-========================================  
+\========================================  
 Enter GOES Satellite Option: 2  
   
-========================================  
-=  GOES-10 Time Averaged Proton Flux   =  
-========================================  
+\========================================  
+\=  GOES-10 Time Averaged Proton Flux   =  
+\========================================  
 Energy Channels  
---------------------  
+\--------------------  
 1: 0.6 - 4.0 MeV  
 2: 4.0 - 9.0 MeV  
 3: 9.0 - 15.0 MeV  
@@ -259,26 +259,26 @@ Energy Channels
 7: 165.0 - 500.0 MeV  
 Enter Energy Channel(s) or "full": full  
 100% [..........................................................................] 5637540 / 5637540  
-========================================  
-=      Wind Type III Radio Bursts      =  
-========================================  
+\========================================  
+\=      Wind Type III Radio Bursts      =  
+\========================================  
 100% [..........................................................................] 3539967 / 3539967  
 Parsing Type III Data for 2003-10-28  
   
-========================================  
-=      ACE/Wind Solar Wind Speed       =  
-========================================  
+\========================================  
+\=      ACE/Wind Solar Wind Speed       =  
+\========================================  
 100% [............................................................................] 165376 / 165376  
-========================================  
-=   GOES-10 Time Averaged Xray Flux    =  
-========================================  
-========================================  
-=           GOES Satellites            =  
-========================================  
+\========================================  
+\=   GOES-10 Time Averaged Xray Flux    =  
+\========================================  
+\========================================  
+\=           GOES Satellites            =  
+\========================================  
 1 - GOES-8 (1995 - 1998)  
 2 - GOES-10 (1999 - 2009)  
 3 - GOES-13 (2010 - Present) DO NOT USE!  
-========================================  
+\========================================  
 Enter GOES Satellite Option: 2  
 100% [..........................................................................] 2097840 / 2097840  
 
