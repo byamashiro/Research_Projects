@@ -11,7 +11,7 @@
     - [Neutron Monitor (nm_script)](#neutron-monitor-nm_script)
     - [Remastered GOES-15 Proton Flux (prot_script_v2)](#remastered-goes-15-proton-flux-prot_script_v2)
     - [Solar Wind Speed (swind_script)](#solar-wind-speed-swind_script)
-    - [Legacy OMNI Space Weather (1995-2009) (legacy_omni_script_v1)](#legacy-omni-space-weather-1995_2009-legacy-omni-script-v1)
+    - [Legacy OMNI Space Weather (1995-2009) (legacy_omni_script_v1)](#legacy-omni-space-weather-1995-2009-legacy_omni_script_v1)
 - [Deprecated Scripts](#deprecated-scripts)
 - [Data](#data)
   - [Data Caveats](#data-caveats)
