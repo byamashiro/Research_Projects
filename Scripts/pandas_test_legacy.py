@@ -19,14 +19,18 @@ def daterange( start_date, end_date ):
         for n in range( ( start_date - end_date ).days + 1 ):
             yield start_date - datetime.timedelta( n )
 
+def last_day_of_month(any_day):
+    next_month = any_day.replace(day=28) + datetime.timedelta(days=4)  # this will never fail
+    return next_month - datetime.timedelta(days=next_month.day)
+
 #==============Choosing Dataset
-print(f'{"="*40}\n{"=" + "DATASETS".center(38," ") + "="}\n{"="*40}\n1 - GOES-15 Proton Flux\n2 - Wind Type III Radio Bursts\n3 - Neutron Monitor Counts\n4 - ACE/Wind Solar Wind Speed\n5 - GOES-15 Xray Flux\n{"="*40}')
+print(f'{"="*40}\n{"=" + "DATASETS".center(38," ") + "="}\n{"="*40}\n1 - GOES-8,10 Proton Flux (1995-Present)\n2 - Wind Type III Radio Bursts (1994-Present)\n3 - Neutron Monitor Counts\n4 - ACE/Wind Solar Wind Speed (1998-Present)/(1994-Present)\n5 - GOES-8,10 Xray Flux (1995-Present)\n{"="*40}')
 
 '''
-1 - GOES-15 Proton Flux
-2 - Wind Type III Radio Bursts
+1 - GOES-15 Proton Flux (1995-Present)
+2 - Wind Type III Radio Bursts (1994-Present)
 3 - Neutron Monitor Counts
-4 - ACE/Wind Solar Wind Speed'
+4 - ACE/Wind Solar Wind Speed' (1998-Present)/(1994-Present)
 5 - GOES-15 Xray Flux
 '''
 
@@ -67,11 +71,16 @@ start_year = start_date[:4]
 end_day = end_date[6:8]
 end_month = end_date[4:6]
 end_year = end_date[:4]
-'''
-if int(start_year) < 2010: # testing old 2003 data, uncomment laterß
-	print('\nDATE ERROR: Date must start after September 1, 2010')
+
+if int(start_year) >= 2010: # testing old 2003 data, uncomment laterß
+	print('\nDATE ERROR: Date must start before 2010')
 	sys.exit(0)
-'''
+
+if int(start_year) < 1995: # testing old 2003 data, uncomment laterß
+	print('\nDATE ERROR: Date must start after 1995')
+	sys.exit(0)
+
+
 if len(start_date) != 8 or len(end_date) != 8:
 	print('\nDATE ERROR: Dates must have 8 digits.')
 	sys.exit(0)
@@ -110,14 +119,21 @@ event_obj_end_str = datetime.datetime.strftime(event_obj_end, '%Y%m%d %H:%M:%S')
 event_obj_end_str_date = datetime.datetime.strftime(event_obj_end, '%Y%m%d %H')
 
 
-#=========== 1: GOES-15 Proton Flux
+#=========== 1: Legacy GOES Proton Flux
 if '1' in option_bin_set:
-	satellite_no = input('Specify which GOES Satellite (13 or 15): ')
+	month_final = last_day_of_month(start)
+	month_final_str = datetime.datetime.strftime(month_final, '%Y%m%d')
+	print(f'{"="*40}\n{"=" + "GOES Satellites".center(38," ") + "="}\n{"="*40}\n1 - GOES-8 (1995 - 1998)\n2 - GOES-10 (1999 - 2009)\n3 - GOES-13 (2010 - Present) DO NOT USE!\n{"="*40}')
+	satellite_no = input('Enter GOES Satellite Option: ')
+	if satellite_no == '1':
+		satellite_no = '08'
+	if satellite_no == '2':
+		satellite_no = '10'
 
-	print(f'\n{"="*40}\n{"=" + "GOES-{satellite_no} Proton Flux".center(38," ") + "="}\n{"="*40}')
-	print(f'{"Energy Channels".center(7, " ")}\n{"-"*20}\n1: 6.5 MeV\n2: 11.6 MeV\n3: 30.6 MeV\n4: 63.1 MeV\n5: 165 MeV\n6: 433 MeV')
+
+	print(f'\n{"="*40}\n{"=" + f"GOES-{satellite_no} Time Averaged Proton Flux".center(38," ") + "="}\n{"="*40}')
+	print(f'{"Energy Channels".center(7, " ")}\n{"-"*20}\n1: 0.6 - 4.0 MeV\n2: 4.0 - 9.0 MeV\n3: 9.0 - 15.0 MeV\n4: 15.0 - 44.0 MeV\n5: 40.0 - 80.0 MeV\n6: 80.0 - 165.0 MeV\n7: 165.0 - 500.0 MeV')
 	energy_bin_set = set()
-	
 	while True: # energy_bin != 'done':
 		energy_bin = input('Enter Energy Channel(s) or "full": ')
 		if energy_bin != 'done':
@@ -128,129 +144,76 @@ if '1' in option_bin_set:
 				energy_bin_set.add('4')
 				energy_bin_set.add('5')
 				energy_bin_set.add('6')
+				energy_bin_set.add('7')
 				break
-			if int(energy_bin) < 7:
+			if int(energy_bin) < 8:
 				energy_bin_set.add(energy_bin)
 				#print(len(energy_bin_set))
-	
-				if len(energy_bin_set) >= 6:
+				if len(energy_bin_set) >= 7:
 					#print('len very long')
 					break
 		elif energy_bin == 'done':
 			break
-	
 	energy_bin_list = []
 	for i in energy_bin_set:
 		if '1' in i:
-			energy_bin_list.append(['P2W_UNCOR_FLUX','6.5 MeV', 'red'])
+			energy_bin_list.append(['p1_flux','0.6 - 4.0 MeV', 'red'])
 		elif '2' in i:
-			energy_bin_list.append(['P3W_UNCOR_FLUX','11.6 MeV','orange'])
+			energy_bin_list.append(['p2_flux','4.0 - 9.0 MeV','orange'])
 		elif '3' in i:
-			energy_bin_list.append(['P4W_UNCOR_FLUX','30.6 MeV','green'])
+			energy_bin_list.append(['p3_flux','9.0 - 15.0 MeV','green'])
 		elif '4' in i:
-			energy_bin_list.append(['P5W_UNCOR_FLUX','63.1 MeV','blue'])
+			energy_bin_list.append(['p4_flux','15.0 - 44.0 MeV','blue'])
 		elif '5' in i:
-			energy_bin_list.append(['P6W_UNCOR_FLUX','165 MeV','purple'])
+			energy_bin_list.append(['p5_flux','40.0 - 80.0 MeV','purple'])
 		elif '6' in i:
-			energy_bin_list.append(['P7W_UNCOR_FLUX','433 MeV','violet'])
-	
-	
+			energy_bin_list.append(['p6_flux','80.0 - 165.0 MeV','violet'])
+		elif '7' in i:
+			energy_bin_list.append(['p7_flux','165.0 - 500.0 MeV','limegreen'])
 	proton_df = pd.DataFrame([])
-	
+
 	for date in daterange( start, end ):
 		try:
 			event_date = str(date).replace('-','')
 			#print(event_date[0:6])
-			proton_name = f'g{satellite_no}_epead_p27w_32s_{event_date}_{event_date}.csv'
-			proton_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_full/{event_date[:4]}/{event_date[4:6]}/goes{satellite_no}/csv/{proton_name}'
+			proton_name = f'g{satellite_no}_eps_1m_{start_date[:6]}01_{month_final_str}.csv' # need to change the final date {event_date}
+			#g10_eps_1m_{event_date}_20031031.csv
+			proton_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_avg/{event_date[:4]}/{event_date[4:6]}/goes{satellite_no}/csv/{proton_name}'
+			#https://satdat.ngdc.noaa.gov/sem/goes/data/new_avg/{event_date[:4]}/{event_date[4:6]}/goes10/csv/
 			proton_in = wget.download(proton_url)
-	
 			#name_list = ['datetime'] + [ str(i) for i in sorted_nm_list]
-	
 			dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
-			proton_df_ind = pd.read_csv(f'{proton_in}', skiprows=282, date_parser=dateparse,index_col='time_tag', header=0)
+			proton_df_ind = pd.read_csv(f'{proton_in}', skiprows=214, date_parser=dateparse,index_col='time_tag', header=0)
 			proton_df = proton_df.append(proton_df_ind)
-	
 			os.remove(proton_name)
 		except:
 			print(f'\nMissing data for {date}')
 			continue
-	
-	proton_df.loc[proton_df['P2W_UNCOR_FLUX'] < 0.0] = np.nan #6.5 MeV
-	proton_df.loc[proton_df['P3W_UNCOR_FLUX'] < 0.0] = np.nan #11.6 MeV
-	proton_df.loc[proton_df['P4W_UNCOR_FLUX'] < 0.0] = np.nan #30.6 MeV
-	proton_df.loc[proton_df['P5W_UNCOR_FLUX'] < 0.0] = np.nan #63.1 MeV
-	proton_df.loc[proton_df['P6W_UNCOR_FLUX'] < 0.0] = np.nan #165 MeV
-	proton_df.loc[proton_df['P7W_UNCOR_FLUX'] < 0.0] = np.nan #433 MeV
+	proton_df.loc[proton_df['p1_flux'] < 0.0] = np.nan #6.5 MeV
+	proton_df.loc[proton_df['p2_flux'] < 0.0] = np.nan #11.6 MeV
+	proton_df.loc[proton_df['p3_flux'] < 0.0] = np.nan #30.6 MeV
+	proton_df.loc[proton_df['p4_flux'] < 0.0] = np.nan #63.1 MeV
+	proton_df.loc[proton_df['p5_flux'] < 0.0] = np.nan #165 MeV
+	proton_df.loc[proton_df['p6_flux'] < 0.0] = np.nan #433 MeV
+	proton_df.loc[proton_df['p7_flux'] < 0.0] = np.nan #433 MeV
+
+'''
+for date in daterange( start, end ):
+	event_date = str(date).replace('-','')
+	#print(event_date[0:6])
+	proton_name = f'g{satellite_no}_eps_1m_{start_date[:6]}01_{last_day_of_month(start)}.csv' # need to change the final date {event_date}
+	#g10_eps_1m_{event_date}_20031031.csv
+	proton_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_avg/{event_date[:4]}/{event_date[4:6]}/goes{satellite_no}/csv/{proton_name}'
+	#https://satdat.ngdc.noaa.gov/sem/goes/data/new_avg/{event_date[:4]}/{event_date[4:6]}/goes10/csv/
+	proton_in = wget.download(proton_url)
+	#name_list = ['datetime'] + [ str(i) for i in sorted_nm_list]
+	dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
+	proton_df_ind = pd.read_csv(f'{proton_in}', skiprows=214, date_parser=dateparse,index_col='time_tag', header=0)
+	proton_df = proton_df.append(proton_df_ind)
+	os.remove(proton_name)
+'''
 
 
-#proton flux 2003
-	if int(start_year) == 2003:
-		print(f'\n{"="*40}\n{"=" + "GOES-10 Time Averaged Proton Flux".center(38," ") + "="}\n{"="*40}')
-		print(f'{"Energy Channels".center(7, " ")}\n{"-"*20}\n1: 0.6 - 4.0 MeV\n2: 4.0 - 9.0 MeV\n3: 9.0 - 15.0 MeV\n4: 15.0 - 44.0 MeV\n5: 40.0 - 80.0 MeV\n6: 80.0 - 165.0 MeV\n7: 165.0 - 500.0 MeV')
-		energy_bin_set = set()
-		while True: # energy_bin != 'done':
-			energy_bin = input('Enter Energy Channel(s) or "full": ')
-			if energy_bin != 'done':
-				if energy_bin == 'full':
-					energy_bin_set.add('1')
-					energy_bin_set.add('2')
-					energy_bin_set.add('3')
-					energy_bin_set.add('4')
-					energy_bin_set.add('5')
-					energy_bin_set.add('6')
-					energy_bin_set.add('7')
-					break
-				if int(energy_bin) < 8:
-					energy_bin_set.add(energy_bin)
-					#print(len(energy_bin_set))
-					if len(energy_bin_set) >= 7:
-						#print('len very long')
-						break
-			elif energy_bin == 'done':
-				break
-		energy_bin_list = []
-		for i in energy_bin_set:
-			if '1' in i:
-				energy_bin_list.append(['p1_flux','0.6 - 4.0 MeV', 'red'])
-			elif '2' in i:
-				energy_bin_list.append(['p2_flux','4.0 - 9.0 MeV','orange'])
-			elif '3' in i:
-				energy_bin_list.append(['p3_flux','9.0 - 15.0 MeV','green'])
-			elif '4' in i:
-				energy_bin_list.append(['p4_flux','15.0 - 44.0 MeV','blue'])
-			elif '5' in i:
-				energy_bin_list.append(['p5_flux','40.0 - 80.0 MeV','purple'])
-			elif '6' in i:
-				energy_bin_list.append(['p6_flux','80.0 - 165.0 MeV','violet'])
-			elif '7' in i:
-				energy_bin_list.append(['p7_flux','165.0 - 500.0 MeV','limegreen'])
-		proton_df = pd.DataFrame([])
-		for date in daterange( start, end ):
-			try:
-				event_date = str(date).replace('-','')
-				#print(event_date[0:6])
-				proton_name = f'g10_eps_1m_20031001_20031031.csv' # need to change the final date {event_date}
-				#g10_eps_1m_{event_date}_20031031.csv
-				proton_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_avg/{event_date[:4]}/{event_date[4:6]}/goes10/csv/{proton_name}'
-
-				#https://satdat.ngdc.noaa.gov/sem/goes/data/new_avg/{event_date[:4]}/{event_date[4:6]}/goes10/csv/
-				proton_in = wget.download(proton_url)
-				#name_list = ['datetime'] + [ str(i) for i in sorted_nm_list]
-				dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
-				proton_df_ind = pd.read_csv(f'{proton_in}', skiprows=214, date_parser=dateparse,index_col='time_tag', header=0)
-				proton_df = proton_df.append(proton_df_ind)
-				os.remove(proton_name)
-			except:
-				print(f'\nMissing data for {date}')
-				continue
-		proton_df.loc[proton_df['p1_flux'] < 0.0] = np.nan #6.5 MeV
-		proton_df.loc[proton_df['p2_flux'] < 0.0] = np.nan #11.6 MeV
-		proton_df.loc[proton_df['p3_flux'] < 0.0] = np.nan #30.6 MeV
-		proton_df.loc[proton_df['p4_flux'] < 0.0] = np.nan #63.1 MeV
-		proton_df.loc[proton_df['p5_flux'] < 0.0] = np.nan #165 MeV
-		proton_df.loc[proton_df['p6_flux'] < 0.0] = np.nan #433 MeV
-		proton_df.loc[proton_df['p7_flux'] < 0.0] = np.nan #433 MeV
 
 '''
 GOES-8 1995-01 to 2003-06
@@ -391,9 +354,21 @@ if '4' in option_bin_set:
 			event_date = str(date).replace('-','')
 	
 			#====ACE
-			swind_ace_name = f'ac_h0_swe_{event_date}_v10.cdf'
-			swind_ace_url = f'https://cdaweb.gsfc.nasa.gov/pub/data/ace/swepam/level_2_cdaweb/swe_h0/{event_date[:4]}/{swind_ace_name}'
-			swind_ace_in = wget.download(swind_ace_url)
+			for i in range(6,10):
+				try:
+					swind_ace_name = f'ac_h0_swe_{event_date}_v0{i}.cdf'
+					swind_ace_url = f'https://cdaweb.gsfc.nasa.gov/pub/data/ace/swepam/level_2_cdaweb/swe_h0/{event_date[:4]}/{swind_ace_name}'
+					swind_ace_in = wget.download(swind_ace_url)
+				except error.HTTPError as err:
+					#print(f'\nVERSION ERROR: The version v0{i} for WIND data does not exist, attempting v0{i+1}')
+					continue
+				else:
+					break
+
+
+			#swind_ace_name = f'ac_h0_swe_{event_date}_v10.cdf'
+			#swind_ace_url = f'https://cdaweb.gsfc.nasa.gov/pub/data/ace/swepam/level_2_cdaweb/swe_h0/{event_date[:4]}/{swind_ace_name}'
+			#swind_ace_in = wget.download(swind_ace_url)
 	
 			swind_ace_cdf = pycdf.CDF(swind_ace_name) # cdf = pycdf.CDF('wi_h1_wav_20120307_v01.cdf')
 			os.remove(swind_ace_name)
@@ -464,23 +439,38 @@ if '4' in option_bin_set:
 
 #=========== 5: GOES-15 Xray Flux
 if '5' in option_bin_set:
-	print(f'\n{"="*40}\n{"=" + "GOES-15 Xray Flux".center(38," ") + "="}\n{"="*40}')
+	print(f'\n{"="*40}\n{"=" + f"GOES-{satellite_no} Time Averaged Xray Flux".center(38," ") + "="}\n{"="*40}')
+
+	month_final = last_day_of_month(start)
+	month_final_str = datetime.datetime.strftime(month_final, '%Y%m%d')
+	print(f'{"="*40}\n{"=" + "GOES Satellites".center(38," ") + "="}\n{"="*40}\n1 - GOES-8 (1995 - 1998)\n2 - GOES-10 (1999 - 2009)\n3 - GOES-13 (2010 - Present) DO NOT USE!\n{"="*40}')
+	satellite_no = input('Enter GOES Satellite Option: ')
+	if satellite_no == '1':
+		satellite_no = '08'
+	if satellite_no == '2':
+		satellite_no = '10'
+
 
 	xray_df = pd.DataFrame([])
 	
 	for date in daterange( start, end ):
 		try:
 			event_date = str(date).replace('-','')
-			#print(event_date[0:6])
-			xray_name = f'g15_xrs_2s_{event_date}_{event_date}.csv'
-			#g15_xrs_2s_20120307_20120307.csv
-			xray_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_full/{event_date[:4]}/{event_date[4:6]}/goes15/csv/{xray_name}'
+
+			#xray_name = f'g15_xrs_2s_{event_date}_{event_date}.csv'
+			#xray_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_full/{event_date[:4]}/{event_date[4:6]}/goes15/csv/{xray_name}'
+
+			xray_name = f'g{satellite_no}_xrs_1m_{start_date[:6]}01_{month_final_str}.csv' # need to change the final date {event_date}
+			xray_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_avg/{event_date[:4]}/{event_date[4:6]}/goes{satellite_no}/csv/{xray_name}'
+
+
+
 			xray_in = wget.download(xray_url)
 	
-			xray_name_list = ['time_tag','A_QUAL_FLAG','A_COUNT','A_FLUX','B_QUAL_FLAG','B_COUNT','B_FLUX']
+			xray_name_list = ['time_tag','A_FLUX','B_FLUX']
 	
 			dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
-			xray_df_ind = pd.read_csv(f'{xray_in}', skiprows=140, names=xray_name_list, date_parser=dateparse,index_col='time_tag', header=0) # 138 for 20120307
+			xray_df_ind = pd.read_csv(f'{xray_in}', skiprows=120, names=xray_name_list, date_parser=dateparse,index_col='time_tag', header=0) # 138 for 20120307
 			xray_df = xray_df.append(xray_df_ind)
 	
 			os.remove(xray_name)
@@ -536,7 +526,7 @@ if length_data == 1:
 	f, axes = plt.subplots(nrows=length_data, ncols=1, sharex=True, figsize=(10, 6), squeeze=False)
 
 
-# dataset plotting
+# proton flux plotting
 if '1' in option_bin_set:
 	next()
 	for i in sorted(energy_bin_list):
@@ -580,9 +570,9 @@ if '4' in option_bin_set:
 if '5' in option_bin_set:
 	next()
 	axes[length_data_list[j]].plot(xray_df['B_FLUX'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='blue', label='0.1-0.8 nm')
-	axes[length_data_list[j]].plot(xray_df['A_FLUX'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='red', label='0.05-0.4 nm')
+	axes[length_data_list[j]].plot(xray_df['A_FLUX'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='red', label='0.05-0.3 nm')
 	axes[length_data_list[j]].set_yscale('log')
-	axes[length_data_list[j]].set_ylabel('Xray Flux\n[Wm$^2$]', fontname="Arial", fontsize = 12)
+	axes[length_data_list[j]].set_ylabel(f'GOES-{satellite_no} Xray\nFlux [Wm$^2$]', fontname="Arial", fontsize = 12)
 	applyPlotStyle()
 
 
@@ -594,7 +584,7 @@ ax = plt.gca()
 ax.xaxis.set_major_formatter(myFmt)
 
 plt.setp(ax.xaxis.get_majorticklabels(), rotation=0, horizontalalignment='center')
-plt.suptitle(f'Space Weather Monitor\n[{event_obj_start_str} -- {event_obj_end_str}]', fontname="Arial", fontsize = 14) #, y=1.04,
+plt.suptitle(f'Legacy Space Weather Monitor\n[{event_obj_start_str} -- {event_obj_end_str}]', fontname="Arial", fontsize = 14) #, y=1.04,
 #plt.tight_layout()
 
 plt.subplots_adjust(wspace = 0, hspace = 0, top=0.91)

@@ -11,6 +11,7 @@
     - [Neutron Monitor (nm_script)](#neutron-monitor-nm_script)
     - [Remastered GOES-15 Proton Flux (prot_script_v2)](#remastered-goes-15-proton-flux-prot_script_v2)
     - [Solar Wind Speed (swind_script)](#solar-wind-speed-swind_script)
+    - [Legacy OMNI Space Weather (1995-2009)](#legacy-omni-space-weather-1995_2009)
 - [Deprecated Scripts](#deprecated-scripts)
 - [Data](#data)
   - [Data Caveats](#data-caveats)
@@ -23,28 +24,12 @@
 
 # Current Tasks
 
-- [ ] Remake GOES Proton Flux scripts
-    - [x] Automate script to download File name: g15_epead_p27e_32s_20120307_20120307 from https://satdat.ngdc.noaa.gov/sem/goes/data/new_full/2012/03/goes15/csv/ (7/10/2017)
-    - [x] Energy range flux selections (6 channels) (7/10/2017)
-    - [ ] Collect GOES data from legacy satellites if specific date is not found
-        - [ ] Integrate GOES 8-13 satellites for date ranges
-        - [ ] Collect "new_avg" data
-          - [ ] Collect the same "new_full" data in the modern proton event dates
-        - [ ] Specify energy range to be collected, must be over 100 MeV
-        - [ ] Script must be modified for changes in strings in the "new_avg" files
-          - [ ] Attempt to pull specific GOES model from file string (i.e g10, 10)
-
-
-- [ ] Collect GOES-15 Xray data
-
-
 - [ ] Collect WIND/ACE Solar Wind data
     - [x] Bulk speed (7/12/2017)
     - [ ] Temperature
     - [ ] Magnetic field components/absolute value
 
 
-- [ ] Incorporate online databases for radio and proton data
 
 # Current Errors and Pressing Tasks
 
@@ -230,6 +215,79 @@ Plotting Solar Wind Data: [20120306 00:00:00 -- 20120308 23:00:00]
 <img src="Plots/solarwind_test.png" width="500">
 
 
+
+### Legacy OMNI Space Weather (1995-2009) ([legacy_omni_script_v1](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/pandas_test_legacy.py))
+
+In [583]: **run pandas_test_legacy.py**  
+========================================  
+=               DATASETS               =  
+========================================  
+1 - GOES-8,10 Proton Flux (1995-Present)  
+2 - Wind Type III Radio Bursts (1994-Present)  
+3 - Neutron Monitor Counts  
+4 - ACE/Wind Solar Wind Speed (1998-Present)/(1994-Present)  
+5 - GOES-8,10 Xray Flux (1995-Present)  
+========================================  
+Enter Dataset Option then "done" or "all": 1  
+Enter Dataset Option then "done" or "all": 2  
+Enter Dataset Option then "done" or "all": 4  
+Enter Dataset Option then "done" or "all": 5  
+Enter Dataset Option then "done" or "all": done  
+Enter a start date (yyyymmdd): 20031028  
+Enter a end date (yyyymmdd): 20031028  
+Enter a start hour or "full": full  
+========================================  
+=           GOES Satellites            =  
+========================================  
+1 - GOES-8 (1995 - 1998)  
+2 - GOES-10 (1999 - 2009)  
+3 - GOES-13 (2010 - Present) DO NOT USE!  
+========================================  
+Enter GOES Satellite Option: 2  
+  
+========================================  
+=  GOES-10 Time Averaged Proton Flux   =  
+========================================  
+Energy Channels  
+--------------------  
+1: 0.6 - 4.0 MeV  
+2: 4.0 - 9.0 MeV  
+3: 9.0 - 15.0 MeV  
+4: 15.0 - 44.0 MeV  
+5: 40.0 - 80.0 MeV  
+6: 80.0 - 165.0 MeV  
+7: 165.0 - 500.0 MeV  
+Enter Energy Channel(s) or "full": full  
+100% [..........................................................................] 5637540 / 5637540  
+========================================  
+=      Wind Type III Radio Bursts      =  
+========================================  
+100% [..........................................................................] 3539967 / 3539967  
+Parsing Type III Data for 2003-10-28  
+  
+========================================  
+=      ACE/Wind Solar Wind Speed       =  
+========================================  
+100% [............................................................................] 165376 / 165376  
+========================================  
+=   GOES-10 Time Averaged Xray Flux    =  
+========================================  
+========================================  
+=           GOES Satellites            =  
+========================================  
+1 - GOES-8 (1995 - 1998)  
+2 - GOES-10 (1999 - 2009)  
+3 - GOES-13 (2010 - Present) DO NOT USE!  
+========================================  
+Enter GOES Satellite Option: 2  
+100% [..........................................................................] 2097840 / 2097840  
+
+
+
+<img src="Plots/omni_test_legacy.png" width="500">
+
+
+
 # Deprecated Scripts
 Deprecated [scripts](https://github.com/byamashiro/Research_Projects/tree/master/Scripts/deprecated_scripts) are kept for reference. All scripts are working, but most do not incorporate online data fetching.
  
@@ -316,7 +374,20 @@ Solar Wind Speed | N | < 0.0
     - [x] Fix all subplot axis labels and legends (7/15/2017)
     - [x] Set appropriate logscale (7/15/2017)
 
+- [x] Remake GOES Proton Flux scripts (7/18/2017)
+    - [x] Automate script to download File name: g15_epead_p27e_32s_20120307_20120307 from https://satdat.ngdc.noaa.gov/sem/goes/data/new_full/2012/03/goes15/csv/ (7/10/2017)
+    - [x] Energy range flux selections (6 channels) (7/10/2017)
+    - [x] Collect GOES data from legacy satellites if specific date is not found (7/18/2017)
+        - [x] Integrate GOES 8-13 satellites for date ranges (7/18/2017)
+        - [x] Collect "new_avg" data (7/18/2017)
+          - [x] Collect the same "new_full" data in the modern proton event dates (7/18/2017)
+        - [x] Specify energy range to be collected, must be over 100 MeV (7/18/2017)
+        - [x] Script must be modified for changes in strings in the "new_avg" files (7/18/2017)
+          - [x] Attempt to pull specific GOES model from file string (i.e g10, 10) (7/18/2017)
 
+
+- [x] Collect GOES-15 Xray data (7/18/2017)
+- [x] Incorporate online databases for radio and proton data (7/18/2017)
 
 
 
