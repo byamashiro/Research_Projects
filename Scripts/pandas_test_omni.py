@@ -23,7 +23,7 @@ def daterange( start_date, end_date ):
 print(f'{"="*40}\n{"=" + "DATASETS".center(38," ") + "="}\n{"="*40}\n1 - GOES-15 Proton Flux\n2 - Wind Type III Radio Bursts\n3 - Neutron Monitor Counts\n4 - ACE/Wind Solar Wind Speed\n5 - GOES-15 Xray Flux\n{"="*40}')
 
 '''
-1 - GOES-15 Proton Flux
+1 - GOES Proton Flux
 2 - Wind Type III Radio Bursts
 3 - Neutron Monitor Counts
 4 - ACE/Wind Solar Wind Speed'

@@ -29,8 +29,6 @@
     - [ ] Temperature
     - [ ] Magnetic field components/absolute value
 
-- [ ] Switch all GOES proton flux from GOES-15 to GOES-13
-
 - [ ] Add GOES-13 xray flux
     - [ ] Add markers and tags to certain xray flux magnitudes
 
@@ -46,6 +44,7 @@
 # Current Errors and Pressing Tasks
 
 ### GOES legacy data
+* **Resolution**: 
 - GOES proton flux data requires modifications to omni code. GOES-13 does not cover years in the early 2000's, therefore older GOES satellites must be used. Older satellites do not have full "new_data" as in the GOES-13 to GOES-15 models, therefore the time averaged data "new_avg" will be used, the specific energy range needs to be determined. Safeguards in the omni script to stop data collection from before 2011 must also be manipulated to allow for these dates. 
 
 ### Outliers and changes for Solar Wind script
@@ -401,6 +400,8 @@ Solar Wind Speed | N | < 0.0
 - [x] Collect GOES-15 Xray data (7/18/2017)
 - [x] Incorporate online databases for radio and proton data (7/18/2017)
 
+
+- [x] Switch all GOES proton flux from GOES-15 to GOES-13 (7/19/2017)
 
 
 # Resolved Errors
