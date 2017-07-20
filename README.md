@@ -29,6 +29,18 @@
     - [ ] Temperature
     - [ ] Magnetic field components/absolute value
 
+- [ ] Switch all GOES proton flux from GOES-15 to GOES-13
+
+- [ ] Add GOES-13 xray flux
+    - [ ] Add markers and tags to certain xray flux magnitudes
+
+
+- [ ] Push headers to data without forcing pandas names
+
+- [ ] Add feature to add a line for extrema (i.e max, min, etc.)
+
+
+
 
 
 # Current Errors and Pressing Tasks
