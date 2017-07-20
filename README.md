@@ -39,7 +39,7 @@
 
 - [ ] Add feature to add a line for extrema (i.e max, min, etc.)
 
-
+- [ ] Change 'for' loops into list comprehension
 
 
 
@@ -62,7 +62,7 @@
 # Required Python Modules
 Module       | Submodule(s) | as | Uses
 ------------ | ------------- | ------------- | -------------
-**pandas**       | -                | pd          | DataFrames, indexing, plotting, downloading http url data
+**pandas**       | -                | pd          | DataFrames, indexing, plotting, downloading http url data, csv_reader()
 **numpy**        | -                | np          | NaN values
 **spacepy**      | pycdf            | -           |  Reading Common Data Format
 **urllib**       | error            | -           | For HTTPError recognition
@@ -127,7 +127,7 @@ Parsing the ['OULU', 'INVK'] stations
 
 
 
-<img src="Plots/omni_test.png" width="500">
+<img src="Plots/omni_test.png" width="600">
 
 
 
@@ -296,7 +296,7 @@ Enter GOES Satellite Option: 2
 
 
 
-<img src="Plots/omni_test_legacy.png" width="500">
+<img src="Plots/omni_test_legacy.png" width="600">
 
 
 

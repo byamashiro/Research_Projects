@@ -110,9 +110,13 @@ event_obj_end_str = datetime.datetime.strftime(event_obj_end, '%Y%m%d %H:%M:%S')
 event_obj_end_str_date = datetime.datetime.strftime(event_obj_end, '%Y%m%d %H')
 
 
-#=========== 1: GOES-15 Proton Flux
+#=========== 1: GOES Proton Flux
 if '1' in option_bin_set:
 	satellite_no = input('Specify which GOES Satellite (13 or 15): ')
+	if satellite_no != '13':
+		if satellite_no != '15':
+			print('SATELLITE ERROR: Must specify either 13 or 15.')
+			sys.exit(0)
 
 	print(f'\n{"="*40}\n{"=" + "GOES-{satellite_no} Proton Flux".center(38," ") + "="}\n{"="*40}')
 	print(f'{"Energy Channels".center(7, " ")}\n{"-"*20}\n1: 6.5 MeV\n2: 11.6 MeV\n3: 30.6 MeV\n4: 63.1 MeV\n5: 165 MeV\n6: 433 MeV')
@@ -185,6 +189,7 @@ if '1' in option_bin_set:
 
 
 #proton flux 2003
+'''
 	if int(start_year) == 2003:
 		print(f'\n{"="*40}\n{"=" + "GOES-10 Time Averaged Proton Flux".center(38," ") + "="}\n{"="*40}')
 		print(f'{"Energy Channels".center(7, " ")}\n{"-"*20}\n1: 0.6 - 4.0 MeV\n2: 4.0 - 9.0 MeV\n3: 9.0 - 15.0 MeV\n4: 15.0 - 44.0 MeV\n5: 40.0 - 80.0 MeV\n6: 80.0 - 165.0 MeV\n7: 165.0 - 500.0 MeV')
@@ -251,7 +256,7 @@ if '1' in option_bin_set:
 		proton_df.loc[proton_df['p5_flux'] < 0.0] = np.nan #165 MeV
 		proton_df.loc[proton_df['p6_flux'] < 0.0] = np.nan #433 MeV
 		proton_df.loc[proton_df['p7_flux'] < 0.0] = np.nan #433 MeV
-
+'''
 '''
 GOES-8 1995-01 to 2003-06
 GOES-9 1996-04 to 1998-07
@@ -536,7 +541,7 @@ if length_data == 1:
 	f, axes = plt.subplots(nrows=length_data, ncols=1, sharex=True, figsize=(10, 6), squeeze=False)
 
 
-# dataset plotting
+#======dataset plotting
 if '1' in option_bin_set:
 	next()
 	for i in sorted(energy_bin_list):
@@ -582,7 +587,7 @@ if '5' in option_bin_set:
 	axes[length_data_list[j]].plot(xray_df['B_FLUX'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='blue', label='0.1-0.8 nm')
 	axes[length_data_list[j]].plot(xray_df['A_FLUX'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='red', label='0.05-0.4 nm')
 	axes[length_data_list[j]].set_yscale('log')
-	axes[length_data_list[j]].set_ylabel('Xray Flux\n[Wm$^2$]', fontname="Arial", fontsize = 12)
+	axes[length_data_list[j]].set_ylabel('GOES-15 Xray\nFlux [Wm$^2$]', fontname="Arial", fontsize = 12)
 	applyPlotStyle()
 
 
