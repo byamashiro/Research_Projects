@@ -35,17 +35,22 @@
 
 - [ ] Push headers to data without forcing pandas names
 
-- [ ] Add feature to add a line for extrema (i.e max, min, etc.)
 
 - [ ] Change 'for' loops into list comprehension
+
+- [ ] Integrate SOHO data
+    - [ ] SOHO proton flux bins
+    - [ ] Proton flux bin detectors
+
+- [ ] Dst and Kp data
+    - [ ] Kp data in boxes form
+    - [ ] AE index interchangeable with Dst index
+    - [ ] Gather datasets and plot individually
+    - [ ] Plot both datasets on one axis canvas
 
 
 
 # Current Errors and Pressing Tasks
-
-### GOES legacy data
-* **Resolution**: 
-- GOES proton flux data requires modifications to omni code. GOES-13 does not cover years in the early 2000's, therefore older GOES satellites must be used. Older satellites do not have full "new_data" as in the GOES-13 to GOES-15 models, therefore the time averaged data "new_avg" will be used, the specific energy range needs to be determined. Safeguards in the omni script to stop data collection from before 2011 must also be manipulated to allow for these dates. 
 
 ### Outliers and changes for Solar Wind script
 - Values significantly over 1000 km/s and single points need to be removed from the dataset. Incorporate temperature and magnetic field components from both ACE and Wind. Aesthetic fixes to the current wget downloading scheme, and find a more efficient method of downloading variant versions of .cdf files. Look for different data sources for solar wind speed with a lower time interval. Deviations are not negligible between both ACE and Wind solar wind speed measurements, see the output [figure](Plots/solarwind_test.png).
@@ -365,25 +370,14 @@ Solar Wind Speed | N | < 0.0
 
 # Completed Tasks
 
-- [x] Proton Flux (7/3/2017)
+- [x] Add feature to add a line for extrema (i.e max, min, etc.) (7/22/2017)
 
-- [x] Neutron Monitor (7/3/2017)
 
-- [x] Type III Radio Bursts (7/3/2017)
+- [x] Switch all GOES proton flux from GOES-15 to GOES-13 (7/19/2017)
 
-- [x] Fix issues with matplotlib DateFormatter "year out of range" (7/5/2017)
-  - [x] Added issue with null errors in data frames (7/5/2017)
 
-- [x] Remake Radio Burst script using CDF and online databases (7/8/2017)
-    - [x] Use pycdf **(module: spacepy)** to read CDF data (7/6/2017)
-    - [x] Push data into pandas dataframe (7/7/2017)
-    - [x] Set up automated url inputs (7/8/2017)
-
-- [x] Integrate all data into subplots (7/15/2017)
-    - [x] Incorporate all pandas data frames from other scripts into one script (7/13/2017)
-    - [x] Dynamic subplots (7/15/2017)
-    - [x] Fix all subplot axis labels and legends (7/15/2017)
-    - [x] Set appropriate logscale (7/15/2017)
+- [x] Collect GOES-15 Xray data (7/18/2017)
+- [x] Incorporate online databases for radio and proton data (7/18/2017)
 
 - [x] Remake GOES Proton Flux scripts (7/18/2017)
     - [x] Automate script to download File name: g15_epead_p27e_32s_20120307_20120307 from https://satdat.ngdc.noaa.gov/sem/goes/data/new_full/2012/03/goes15/csv/ (7/10/2017)
@@ -397,20 +391,39 @@ Solar Wind Speed | N | < 0.0
           - [x] Attempt to pull specific GOES model from file string (i.e g10, 10) (7/18/2017)
 
 
-- [x] Collect GOES-15 Xray data (7/18/2017)
-- [x] Incorporate online databases for radio and proton data (7/18/2017)
+- [x] Integrate all data into subplots (7/15/2017)
+    - [x] Incorporate all pandas data frames from other scripts into one script (7/13/2017)
+    - [x] Dynamic subplots (7/15/2017)
+    - [x] Fix all subplot axis labels and legends (7/15/2017)
+    - [x] Set appropriate logscale (7/15/2017)
+
+- [x] Remake Radio Burst script using CDF and online databases (7/8/2017)
+    - [x] Use pycdf **(module: spacepy)** to read CDF data (7/6/2017)
+    - [x] Push data into pandas dataframe (7/7/2017)
+    - [x] Set up automated url inputs (7/8/2017)
+
+- [x] Fix issues with matplotlib DateFormatter "year out of range" (7/5/2017)
+  - [x] Added issue with null errors in data frames (7/5/2017)
 
 
-- [x] Switch all GOES proton flux from GOES-15 to GOES-13 (7/19/2017)
+- [x] Proton Flux (7/3/2017)
+- [x] Neutron Monitor (7/3/2017)
+- [x] Type III Radio Bursts (7/3/2017)
 
 
 # Resolved Errors
+
+### GOES legacy data (7/22/2017)
+* **Resolution**: The GOES Proton script was broken up into two functioning scripts. Eventually the two scripts will be merged again, but since there is discrepancy between older GOES satellites, they were split. The older GOES satellites (8 and 10) do not have flux in specific energy bins, but rather energy ranges (i.e 80.0 - 165.0 MeV). This type of binning is discontinued in the GOES-13/15 satellites as each bin corresponds to one specific energy (i.e 165 MeV). Since the Wind satellite was functional in 1995 and beyond, the subplot functionality is kept with the Type III and solar wind data. Older neutron monitors were also online during the legacy period and older detectors can be selected.
+- GOES proton flux data requires modifications to omni code. GOES-13 does not cover years in the early 2000's, therefore older GOES satellites must be used. Older satellites do not have full "new_data" as in the GOES-13 to GOES-15 models, therefore the time averaged data "new_avg" will be used, the specific energy range needs to be determined. Safeguards in the omni script to stop data collection from before 2011 must also be manipulated to allow for these dates. 
+
 
 ### Dynamic subplots and modifications to the Omni script (7/15/2017)
 * **Resolution**: Set up a global variable to initialize a dynamic variable that would allow for slicing with a defined set. To make this work, the .axes slicing method was invoked, but required an overhaul on the plot function for each dataset (i.e. every plot function needed to be the same, with only the global index changing). Using the .axes slices allowed for subplots, but in turn, .plt functions did not edit all subplots. The .plt functions only edit the final added subplot, therefore changes must be added right after the plot function for each subplot using the .axes methods.
 
 - Devise a way to plot selected datasets on subplots. The script runs with all data is loaded, but breaks with selections. Although the script is dynamic, there currently must be a static plot to host the first plot, and then subplots are appended to that "anchor" plot. Therefore, if the static anchor dataset is not chosen, the script cannot build on an empty canvas. The optimal solution seems to be unpacking different subplots (i.e. fig, (ax1, ax2, ...)). This solution requires that ax1, etc. must be literals and not strings, which removes options such as "for" loops with a list. An idea was to force a string to be a variable name, but this option should not be used if possible. A lambda function was also considered, but wildcard logic doesn't seem optimal for data frames while calling .index and columnized data.
 - Minor tick gridlines for y-axis should be added with minorticks on. Add legends for each subplot and y-axis labels with units. but also reduce size of the legend and y-axis labels. Neutron monitor data seems to be cut off past the ~23 hour mark, include the rest of that data. Insert an "if" statement to deter plotting of neutron monitor data (long-term changes) and type III radio burst data (short-term changes) on the same canvas. 
+
 
 
 ### Set up online CDF reader through Python (7/8/2017)
