@@ -527,10 +527,13 @@ def next():
 		j += 1
 	#print(length_data_list[j])
 
+high_bin = sorted(energy_bin_list[-1])[1]
+
 def applyPlotStyle():
 	axes[length_data_list[j]].grid(True)
 	axes[length_data_list[j]].minorticks_on()
 	axes[length_data_list[j]].legend(loc='lower right', ncol=1,fontsize=8)# borderaxespad=0)# bbox_to_anchor=(1, 0.5)) # bbox_to_anchor=(1.02,1.0)
+	axes[length_data_list[j]].axvline(proton_df.idxmax().{high_bin}) # (proton_df.P6W_UNCOR_FLUX.max())
 
 
 if length_data > 1:
@@ -542,6 +545,8 @@ if length_data == 1:
 
 
 #======dataset plotting
+
+
 if '1' in option_bin_set:
 	next()
 	for i in sorted(energy_bin_list):
