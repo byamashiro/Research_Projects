@@ -284,7 +284,7 @@ if '2' in option_bin_set:
 			cdf = pycdf.CDF(radio_in) # cdf = pycdf.CDF('wi_h1_wav_20120307_v01.cdf')
 			os.remove(radio_name)
 		
-			print(f'\nParsing Type III Data for {date}')
+			# print(f'\nParsing Type III Data for {date}')
 			
 			time_rb = []
 			for i in cdf['Epoch']:
@@ -527,13 +527,28 @@ def next():
 		j += 1
 	#print(length_data_list[j])
 
-high_bin = sorted(energy_bin_list[-1])[1]
+#high_bin_proton = sorted(energy_bin_list[-1])[1]
+#low_bin_proton = sorted(energy_bin_list[0])[1]
+
+#high_bin_proton_str = sorted(energy_bin_list[-1])[0]
+#low_bin_proton_str = sorted(energy_bin_list[0])[0]
+
+
+
+
 
 def applyPlotStyle():
 	axes[length_data_list[j]].grid(True)
 	axes[length_data_list[j]].minorticks_on()
 	axes[length_data_list[j]].legend(loc='lower right', ncol=1,fontsize=8)# borderaxespad=0)# bbox_to_anchor=(1, 0.5)) # bbox_to_anchor=(1.02,1.0)
-	axes[length_data_list[j]].axvline(proton_df.idxmax().{high_bin}) # (proton_df.P6W_UNCOR_FLUX.max())
+	if '1' in option_bin_set:
+		high_bin_proton = sorted(energy_bin_list)[-1][0]
+		low_bin_proton = sorted(energy_bin_list)[0][0]
+
+		high_bin_proton_str = sorted(energy_bin_list)[-1][1]
+		low_bin_proton_str = sorted(energy_bin_list)[0][1]
+		axes[length_data_list[j]].axvline(proton_df[f'{low_bin_proton}'].idxmax()) # (proton_df.P6W_UNCOR_FLUX.max())
+	# axes[length_data_list[j]].axvline(proton_df.idxmax().P6W_UNCOR_FLUX) # (proton_df.P6W_UNCOR_FLUX.max())
 
 
 if length_data > 1:
