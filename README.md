@@ -78,6 +78,26 @@ Module       | Submodule(s) | as | Uses
 **os**           | -                | -           | Remove files through script
 
 
+# Data Sources
+## Currently Implemented
+Data       | Satellite | Instrument | Source | URL
+------------ | ------------- | ------------- | -------------| -------------
+**GOES Proton Flux**            | GOES-13,15        | EPEAD        | NOAA | https://satdat.ngdc.noaa.gov/sem/goes/data/new_full/
+**Legacy GOES Proton Flux**     | GOES-08,10        | EPS          | NOAA | https://satdat.ngdc.noaa.gov/sem/goes/data/new_avg/
+**TypeIII Radio Burst**         | Wind              | RAD1 (20-1040 kHz)          | CDAW | -
+**GOES Xray Flux**              | GOES-15           | XRS          |  NOAA | https://satdat.ngdc.noaa.gov/sem/goes/data/new_full/
+**Neutron Monitor Counts**      | NM Stations       | IGY, NM64    | NMDB | http://www.nmdb.eu/nest/
+**ACE Solar Wind Parameters**   | -                | -           | - | -
+**Wind Solar Wind Parameters**  | - | - | - | -
+
+
+## Prospective Datasets
+****     | -                | -           | - | -
+****          | -                | -           | - | -
+****         | -                | -           | - | -
+****           | -                | -           | - | -
+
+
 # Running Scripts
 
 ### OMNI Space Weather ([omni_script_v2](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/pandas_test_omni.py))
