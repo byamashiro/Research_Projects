@@ -82,13 +82,13 @@ Module       | Submodule(s) | as | Uses
 ## Currently Implemented
 Data       | Satellite | Instrument | Source | URL
 ------------ | ------------- | ------------- | -------------| -------------
-**GOES Proton Flux**            | GOES-13,15        | EPEAD        | NOAA | https://satdat.ngdc.noaa.gov/sem/goes/data/new_full/
-**Legacy GOES Proton Flux**     | GOES-08,10        | EPS          | NOAA | https://satdat.ngdc.noaa.gov/sem/goes/data/new_avg/
-**TypeIII Radio Burst**         | Wind              | RAD1 (20-1040 kHz)          | CDAW | -
-**GOES Xray Flux**              | GOES-15           | XRS          |  NOAA | https://satdat.ngdc.noaa.gov/sem/goes/data/new_full/
-**Neutron Monitor Counts**      | NM Stations       | IGY, NM64    | NMDB | http://www.nmdb.eu/nest/
-**ACE Solar Wind Parameters**   | -                | -           | - | -
-**Wind Solar Wind Parameters**  | - | - | - | -
+**GOES Proton Flux**            | GOES-13,15        | EPEAD               | NOAA | https://satdat.ngdc.noaa.gov/sem/goes/data/new_full/
+**Legacy GOES Proton Flux**     | GOES-08,10        | EPS                 | NOAA | https://satdat.ngdc.noaa.gov/sem/goes/data/new_avg/
+**TypeIII Radio Burst**         | Wind              | RAD1 (20-1040 kHz)  | CDAW | https://cdaweb.gsfc.nasa.gov/pub/data/wind/waves/wav_h1/
+**GOES Xray Flux**              | GOES-15           | XRS                 | NOAA | https://satdat.ngdc.noaa.gov/sem/goes/data/new_full/
+**Neutron Monitor Counts**      | NM Stations       | IGY, NM64           | NMDB | http://www.nmdb.eu/nest/
+**ACE Solar Wind Parameters**   | ACE               | SWEPAM              | CDAW | -
+**Wind Solar Wind Parameters**  | Wind              | SWE                 | CDAW | https://cdaweb.gsfc.nasa.gov/pub/data/wind/swe/swe_k0/
 
 
 ## Prospective Datasets
