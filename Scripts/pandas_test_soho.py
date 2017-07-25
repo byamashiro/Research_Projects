@@ -111,8 +111,19 @@ for date in daterange( start, end ):
 		#soho_name = f'https://srl.utu.fi/export/{event_date}_{event_date}.csv'
 		#soho_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_full/{event_date[:4]}/{event_date[4:6]}/goes15/csv/{proton_name}'
 		soho_in = wget.download()
-		soho_in = glob.glob(wget.download('http://srl.utu.fi/export/erne-1995.12.10-1996.01.31-36.tgz'))
+		soho_in = glob.glob(wget.download('http://srl.utu.fi/export/erne-1995.12.10-1996.01.31-3.tgz'))
 
+		import urllib.request
+		import tarfile
+		thetarfile = "http://srl.utu.fi/export/erne-1995.12.10-1996.01.31-36.tgz"
+		ftpstream = urllib.request.urlopen(thetarfile)
+		#thetarfile = tarfile.open(fileobj=ftpstream, mode="r|gz")
+		with tarfile.open(ftpstream) as tar:
+			hed_soho = [
+				tarinfo for tarinfo in tar.getmembers()
+				if tarinfo.name.startswith('export.src/HED')
+			]
+			tar.extractall(members=hed_soho)
 sys.exit(0)
 		#name_list = ['datetime'] + [ str(i) for i in sorted_nm_list]
 
