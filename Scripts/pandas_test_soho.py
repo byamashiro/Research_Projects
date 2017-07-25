@@ -113,17 +113,50 @@ for date in daterange( start, end ):
 		soho_in = wget.download()
 		soho_in = glob.glob(wget.download('http://srl.utu.fi/export/erne-1995.12.10-1996.01.31-3.tgz'))
 
+		
+
 		import urllib.request
 		import tarfile
+		import numpy as np
 		thetarfile = "http://srl.utu.fi/export/erne-1995.12.10-1996.01.31-36.tgz"
 		ftpstream = urllib.request.urlopen(thetarfile)
-		#thetarfile = tarfile.open(fileobj=ftpstream, mode="r|gz")
-		with tarfile.open(ftpstream) as tar:
-			hed_soho = [
+		thetarfile = tarfile.open(fileobj=ftpstream, mode="r|gz")
+		for i in thetarfile.getmembers():
+			if i.name.startswith('HED'):
+				print(i)
+
+
+
+
+		for member in thetarfile.getmembers():
+			f = thetarfile.extractfile(member)
+			#content = f.read()
+			#data = np.loadtxt(content)
+			#sys.exit(0)
+		
+
+
+
+		for member in thetarfile.getmembers():
+			hed_soho = thetarfile.extractfile(member)
+
+
+		tar.close()
+		'''
+		for member in thetarfile.getmembers():
+			if 'HED' in member.name and 'SL2' in member.name:
+				thetarfile.extract(member, '.')
+				#thetarfile.extract(member)
+		'''
+		'''
+		with tarfile.open(fileobj=ftpstream, mode="r|gz") as tar:
+
+					hed_soho = [
 				tarinfo for tarinfo in tar.getmembers()
 				if tarinfo.name.startswith('export.src/HED')
 			]
 			tar.extractall(members=hed_soho)
+		'''
 sys.exit(0)
 		#name_list = ['datetime'] + [ str(i) for i in sorted_nm_list]
 
