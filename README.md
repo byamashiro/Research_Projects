@@ -103,7 +103,7 @@ Module       | Submodule(s) | as | Uses
 
 # Data Sources
 ## Currently Implemented
-Data       | Satellite | Instrument | Source | URL
+Data       | Instrument | Detector | Source | URL
 ------------ | ------------- | ------------- | -------------| -------------
 **GOES Proton Flux**            | GOES-13,15        | EPEAD               | NOAA | https://satdat.ngdc.noaa.gov/sem/goes/data/new_full/
 **Legacy GOES Proton Flux**     | GOES-08,10        | EPS                 | NOAA | https://satdat.ngdc.noaa.gov/sem/goes/data/new_avg/
@@ -115,9 +115,12 @@ Data       | Satellite | Instrument | Source | URL
 
 
 ## Prospective Datasets
-****     | -                | -           | - | -
-****          | -                | -           | - | -
-****         | -                | -           | - | -
+**Kp Index**     | Ground Based Magnetometers                | Planetary           | NOAA | ftp://ftp.swpc.noaa.gov/pub/indices/old_indices/
+**Dst Index**          | Ground Based Magnetometers                | Kyoto           | WDC | http://wdc.kugi.kyoto-u.ac.jp/
+**AE Index**         | -                | -           | - | -
+**SOHO Proton Flux**           | SOHO                | ERNE           | SRL | https://srl.utu.fi/export/
+****           | -                | -           | - | -
+****           | -                | -           | - | -
 ****           | -                | -           | - | -
 
 
