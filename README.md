@@ -33,7 +33,9 @@
     - [ ] Add markers and tags to certain xray flux magnitudes
 
 
-- [ ] Push headers to data without forcing pandas names
+- [ ] Push headers to data without forcing pandas names with files that have different header line numbers
+    - [ ] regex? solution to accept only header and data rows
+    - [ ] python solution to differentiate between header and data rows, and commented information
 
 
 - [ ] Change 'for' loops into list comprehension
@@ -50,14 +52,28 @@
 
 
 
-# Current Errors and Pressing Tasks
+# Current Tasks and Errors
 
 ### Download SOHO proton flux data and plot
 1) SOHO data title format is not uniform (i.e erne-yyyy.mm.dd-yyyy.mm.dd-{non-uniform-number}.tgz)
 2) SOHO data is in .tgz format, with the tar files including 20+ data files in them. Only files of HED#.SL2 are of use.
 - Current options
-  - wget: Download .tgz file, extract only HED*.SL2 and push data into memory, delete local files, plot (downloading to local)
-  - urllib, tarfile: Read .tgz into memory, extract only HED*.SL2 and push data into memory, plot (time intensive, no backwards seeking)
+  - **wget**: Download .tgz file, extract only HED*.SL2 and push data into memory, delete local files, plot (downloading to local)
+  - **urllib, tarfile**: Read .tgz into memory, extract only HED*.SL2 and push data into memory, plot (time intensive, no backwards seeking)
+
+### Seeking backwards with tarfile
+- The current method is inefficient as all the files in the tarfile must be first read into memory, then applying statements. The script currently is time intensive, possibly due to the tarfile existing online. A possibility for the time inflation could be that the script iterates through every element of the tarfile to load headers, then must repeat the process to press 'if' statements.
+- Using an 'if' statement with the tarfile.open() command results in an error. This error seems to be caused because the 'if' statement reads through the entire tarfile with the cursor at the end. The action following the 'if' statement then tries to proceed, but since the cursor is at the end, the script fails when moving in the opposite direction. Potential solution is to find a .seek(0) function for the tarfile module.  
+```StreamError: seeking backwards is not allowed```  
+
+```python
+with tarfile.open(fileobj=ftpstream, mode="r|gz") as tar:
+    hed_soho = [
+      tarinfo for tarinfo in tar.getmembers()
+      if tarinfo.name.startswith('export.src/HED') # the error occurs at this point
+  ]
+  tar.extractall(members=hed_soho)
+```
 
 ### Outliers and changes for Solar Wind script
 - Values significantly over 1000 km/s and single points need to be removed from the dataset. Incorporate temperature and magnetic field components from both ACE and Wind. Aesthetic fixes to the current wget downloading scheme, and find a more efficient method of downloading variant versions of .cdf files. Look for different data sources for solar wind speed with a lower time interval. Deviations are not negligible between both ACE and Wind solar wind speed measurements, see the output [figure](Plots/solarwind_test.png).
