@@ -52,6 +52,13 @@
 
 # Current Errors and Pressing Tasks
 
+### Download SOHO proton flux data and plot
+1) SOHO data title format is not uniform (i.e erne-yyyy.mm.dd-yyyy.mm.dd-{non-uniform-number}.tgz)
+2) SOHO data is in .tgz format, with the tar files including 20+ data files in them. Only files of HED#.SL2 are of use.
+- Current options
+  - wget: Download .tgz file, extract only HED*.SL2 and push data into memory, delete local files, plot (downloading to local)
+  - urllib, tarfile: Read .tgz into memory, extract only HED*.SL2 and push data into memory, plot (time intensive, no backwards seeking)
+
 ### Outliers and changes for Solar Wind script
 - Values significantly over 1000 km/s and single points need to be removed from the dataset. Incorporate temperature and magnetic field components from both ACE and Wind. Aesthetic fixes to the current wget downloading scheme, and find a more efficient method of downloading variant versions of .cdf files. Look for different data sources for solar wind speed with a lower time interval. Deviations are not negligible between both ACE and Wind solar wind speed measurements, see the output [figure](Plots/solarwind_test.png).
 
