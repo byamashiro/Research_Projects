@@ -104,16 +104,28 @@ for i in soho_energy_bin_set:
 
 soho_df = pd.DataFrame([])
 
+thetarfile = tarfile.open(fileobj=ftpstream, mode="r|gz")
+for i in thetarfile.getmembers():
+	if i.name.startswith('HED'):
+		print(i)
+		
+sys.exit(0)
+
+
 for date in daterange( start, end ):
 	try:
 		event_date = str(date).replace('-','')
 		#print(event_date[0:6])
 		#soho_name = f'https://srl.utu.fi/export/{event_date}_{event_date}.csv'
 		#soho_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_full/{event_date[:4]}/{event_date[4:6]}/goes15/csv/{proton_name}'
-		soho_in = wget.download()
-		soho_in = glob.glob(wget.download('http://srl.utu.fi/export/erne-1995.12.10-1996.01.31-3.tgz'))
+		soho_in = wget.download('http://srl.utu.fi/export/erne-1995.12.10-1996.01.31-3.tgz')
+		# soho_in = glob.glob(wget.download('http://srl.utu.fi/export/erne-1995.12.10-1996.01.31-3.tgz'))
+		thetarfile = tarfile.open(fileobj=ftpstream, mode="r|gz")
+		for i in thetarfile.getmembers():
+			if i.name.startswith('HED'):
+				print(i)
 
-		
+
 
 		import urllib.request
 		import tarfile
