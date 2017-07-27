@@ -103,12 +103,12 @@ for i in soho_energy_bin_set:
 
 
 soho_df = pd.DataFrame([])
-
-thetarfile = tarfile.open(fileobj=ftpstream, mode="r|gz")
+soho_in = wget.download('http://srl.utu.fi/export/erne-1995.12.10-1996.01.31-36.tgz')
+thetarfile = tarfile.open(fileobj=soho_in, mode="r|gz") # ftpstream
 for i in thetarfile.getmembers():
 	if i.name.startswith('HED'):
 		print(i)
-		
+
 sys.exit(0)
 
 
