@@ -169,7 +169,9 @@ for date in daterange( start, end ):
 			]
 			tar.extractall(members=hed_soho)
 		'''
-sys.exit(0)
+
+
+#sys.exit(0)
 		#name_list = ['datetime'] + [ str(i) for i in sorted_nm_list]
 
 		dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
