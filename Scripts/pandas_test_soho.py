@@ -102,12 +102,17 @@ for i in soho_energy_bin_set:
 		soho_energy_bin_list.append(['PH10','100 - 130 MeV','violet'])
 
 
+import tarfile
 soho_df = pd.DataFrame([])
 soho_in = wget.download('http://srl.utu.fi/export/erne-1995.12.10-1996.01.31-36.tgz')
 thetarfile = tarfile.open(fileobj=soho_in, mode="r|gz") # ftpstream
 for i in thetarfile.getmembers():
 	if i.name.startswith('HED'):
 		print(i)
+
+
+# need to find a way to download without including all the low energy files
+
 
 sys.exit(0)
 
