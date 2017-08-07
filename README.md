@@ -357,7 +357,7 @@ Deprecated [scripts](https://github.com/byamashiro/Research_Projects/tree/master
 ### Old Scripts
 Filename       | Type | Run Command | Functionality
 ------------ | ------------- | ------------- | -------------
- getgoes.sh  | bash                | ./get_goes.sh          | Download datafile from GOES-13/15 (first EPEAD then HEPAD), make directory for intermediate files and final converted files, delete all header rows, collect only specified columns, delimit from ',' to ' ', move cleaned data to directory, delete intermediate files.
+ getgoes.sh  | bash                | ./get_goes.sh yyyymm yyyy mm  | Download datafile from GOES-13/15 (first EPEAD then HEPAD), make directory for intermediate files and final converted files, delete all header rows, collect only specified columns, delimit from ',' to ' ', move cleaned data to directory, delete intermediate files.
  -  | -                | -          | -
  -  | -            | -           |  -
  -  | -            | -           | -
