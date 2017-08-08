@@ -318,6 +318,7 @@ if '2' in option_bin_set:
 	
 	rb_data['avg'] = rb_data.mean(axis=1, numeric_only=True)
 
+
 	# ============ EXPERIMENTAL FITTING (DO NOT USE)
 	fit_choice = input('\nType "1 - 3" if you would like to fit: (currently in work)')
 
@@ -395,6 +396,37 @@ if '2' in option_bin_set:
 		plt.plot(rs_time, data, 'o', color='red')
 		plt.plot(rs_time, skg_result.best_fit)
 		
+		plt.show()
+
+	if fit_choice == '4': # inverse gaussian fit
+		from scipy.stats import invgauss
+
+		rb_data['d_int'] = mdates.date2num(rb_data.index.to_pydatetime())
+		rs_time = rb_data['d_int'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}']
+		n_obs = len(rb_data.loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].index)
+		data = rb_data['avg'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}']
+		data_max_index = mdates.date2num(rb_data['avg'].idxmax().to_pydatetime())
+		# X = np.arange(n_obs)
+		X = rs_time
+		x = np.sum(X * data)/np.sum(data)
+		width = np.sqrt(np.abs(np.sum((X-x)**2*data)/np.sum(data)))
+		max_data = data.max()
+		gauss_fit = lambda t : max_data*np.exp(-(t-x)**2/(2*width**2))
+		skg_model = SkewedGaussianModel()
+		skg_params = skg_model.make_params(amplitude = 147, center = 734569.0245138889, sigma = 1, gamma = 0) # sigma, gamma = 1, 0
+		# skg_params = skg_model.make_params(amplitude = data.max(), center = data_max_index, sigma = 1, gamma = 0) # sigma, gamma = 1, 0
+		skg_result = skg_model.fit(data, skg_params, x=rs_time)
+		print(skg_result.fit_report())
+
+		plt.axvline(734569.0245138889)
+
+		inv_gauss = invgauss.fit(data)
+
+		plt.plot(gauss_fit(X), '-', color='blue')
+		plt.plot(rs_time, data, 'o', color='red')
+		plt.plot(rs_time, skg_result.best_fit)
+		plt.plot(rs_time, inv_gauss, color = 'green')
+
 		plt.show()
 
 
@@ -659,9 +691,28 @@ if '1' in option_bin_set:
 
 if '2' in option_bin_set:
 	next()
-	axes[length_data_list[j]].plot(p4(xx).loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='red', label= 'Gaussian')
+	# axes[length_data_list[j]].plot(p4(xx).loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='red', label= 'Gaussian')
 	axes[length_data_list[j]].plot(rb_data['avg'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='navy', label= '20 kHz - 1040 kHz')
 	axes[length_data_list[j]].set_ylabel('Wind Type III\nRadio Burst [sfu]', fontname="Arial", fontsize = 12)
+	# axes[length_data_list[j]].plot(rb_data[int('1020')].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='red', label= '1020')
+	# wind_range = range(20,1041, 2)
+	# axes[length_data_list[j]].plot(rb_data.loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}']) # [wind_range] , color='red', label= '1020')
+
+	# rb_data.loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].plot(cmap='viridis') # using viridis
+
+	''' This is the next step of the program, uncomment when using
+	axes[length_data_list[j]].plot(rb_data[20].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='red', label= '20 kHz')
+	axes[length_data_list[j]].plot(rb_data[1040].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='green', label= '1040 kHz')
+	'''
+
+	'''
+	for i in rb_data.columns:
+		if i != 'avg':
+			axes[length_data_list[j]].plot(rb_data[i].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], label= f'i')
+	'''
+
+
+
 	applyPlotStyle()
 
 
@@ -695,7 +746,6 @@ if '5' in option_bin_set:
 	axes[length_data_list[j]].set_yscale('log')
 	axes[length_data_list[j]].set_ylabel('GOES-15 Xray\nFlux [Wm$^2$]', fontname="Arial", fontsize = 12)
 	applyPlotStyle()
-
 
 
 plt.xlabel('Time (UT)', fontname="Arial", fontsize = 12)

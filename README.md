@@ -50,9 +50,17 @@
     - [ ] Gather datasets and plot individually
     - [ ] Plot both datasets on one axis canvas
 
+- [ ] Revamp the radio burst script
+    - [ ] Plot all frequencies on separate plots
+    - [ ] Find the most optimal subplot
+
 
 
 # Current Tasks and Errors
+
+### Plot the Type III Radio Bursts in all frequencies
+- Current correlations do not agree linearly between frequencies vs. intensities.
+- Plot every frequency bin between 20 to 1040 individually.
 
 ### Download SOHO proton flux data and plot
 1) SOHO data title format is not uniform (i.e erne-yyyy.mm.dd-yyyy.mm.dd-{non-uniform-number}.tgz)
