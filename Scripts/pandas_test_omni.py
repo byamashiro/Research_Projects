@@ -318,6 +318,20 @@ if '2' in option_bin_set:
 	
 	rb_data['avg'] = rb_data.mean(axis=1, numeric_only=True)
 
+	# ============ EXPERIMENTAL FITTING (DO NOT USE)
+	fit_choice = input('Type "1" if you would like to fit: (currently in work)')
+	if fit_choice == '1':
+		rb_data['d_int'] = mdates.date2num(rb_data.index.to_pydatetime())
+		z4 = np.polyfit(rb_data['d_int'], rb_data['avg'], 3)
+		p4 = np.poly1d(z4)
+
+		xx = np.linspace(rb_data['d_int'].min(), rb_data['d_int'].max(), 100)
+		dd = mdates.num2date(xx)
+
+
+
+
+
 
 #=========== 3: Neutron Monitors
 if '3' in option_bin_set:
@@ -574,6 +588,7 @@ if '1' in option_bin_set:
 
 if '2' in option_bin_set:
 	next()
+	axes[length_data_list[j]].plot(p4(xx).loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='red', label= 'Gaussian')
 	axes[length_data_list[j]].plot(rb_data['avg'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='navy', label= '20 kHz - 1040 kHz')
 	axes[length_data_list[j]].set_ylabel('Wind Type III\nRadio Burst [sfu]', fontname="Arial", fontsize = 12)
 	applyPlotStyle()
