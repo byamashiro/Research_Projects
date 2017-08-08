@@ -319,7 +319,9 @@ if '2' in option_bin_set:
 	rb_data['avg'] = rb_data.mean(axis=1, numeric_only=True)
 
 	# ============ EXPERIMENTAL FITTING (DO NOT USE)
-	fit_choice = input('\nType "1" or "2" if you would like to fit: (currently in work)')
+	fit_choice = input('\nType "1 - 3" if you would like to fit: (currently in work)')
+
+
 	if fit_choice == '1': # curve fitting
 		rb_data['d_int'] = mdates.date2num(rb_data.index.to_pydatetime())
 
@@ -331,6 +333,8 @@ if '2' in option_bin_set:
 
 		plt.plot(dd, p4(xx), 'o')
 		plt.show()
+
+
 
 	if fit_choice == '2': # gaussian fitting
 		from astropy.modeling import models, fitting
@@ -353,9 +357,44 @@ if '2' in option_bin_set:
 		gauss_fit = lambda t : max_data*np.exp(-(t-x)**2/(2*width**2))
 
 		plt.plot(gauss_fit(X), '-', color='blue')
+		plt.plot(rs_time, data, 'o', color='red')
 		
 
 
+		plt.show()
+
+	if fit_choice == '3': # skewed gaussian fitting
+		from lmfit.models import SkewedGaussianModel
+	
+		from astropy.modeling import models, fitting
+	
+		rb_data['d_int'] = mdates.date2num(rb_data.index.to_pydatetime())
+		rs_time = rb_data['d_int'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}']
+		n_obs = len(rb_data.loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].index)
+		data = rb_data['avg'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}']
+
+		data_max_index = mdates.date2num(rb_data['avg'].idxmax().to_pydatetime())
+		# X = np.arange(n_obs)
+		X = rs_time
+		x = np.sum(X * data)/np.sum(data)
+
+		width = np.sqrt(np.abs(np.sum((X-x)**2*data)/np.sum(data)))
+		max_data = data.max()
+		gauss_fit = lambda t : max_data*np.exp(-(t-x)**2/(2*width**2))
+	
+		skg_model = SkewedGaussianModel()
+		skg_params = skg_model.make_params(amplitude = 147, center = 734569.0245138889, sigma = 1, gamma = 0) # sigma, gamma = 1, 0
+		# skg_params = skg_model.make_params(amplitude = data.max(), center = data_max_index, sigma = 1, gamma = 0) # sigma, gamma = 1, 0
+		
+
+		skg_result = skg_model.fit(data, skg_params, x=rs_time)
+		print(skg_result.fit_report())
+
+		plt.axvline(734569.0245138889)
+		plt.plot(gauss_fit(X), '-', color='blue')
+		plt.plot(rs_time, data, 'o', color='red')
+		plt.plot(rs_time, skg_result.best_fit)
+		
 		plt.show()
 
 
