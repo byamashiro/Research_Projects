@@ -319,14 +319,46 @@ if '2' in option_bin_set:
 	rb_data['avg'] = rb_data.mean(axis=1, numeric_only=True)
 
 	# ============ EXPERIMENTAL FITTING (DO NOT USE)
-	fit_choice = input('Type "1" if you would like to fit: (currently in work)')
-	if fit_choice == '1':
+	fit_choice = input('\nType "1" or "2" if you would like to fit: (currently in work)')
+	if fit_choice == '1': # curve fitting
 		rb_data['d_int'] = mdates.date2num(rb_data.index.to_pydatetime())
-		z4 = np.polyfit(rb_data['d_int'], rb_data['avg'], 3)
+
+		z4 = np.polyfit(rb_data['d_int'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], rb_data['avg'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], 3)
 		p4 = np.poly1d(z4)
 
-		xx = np.linspace(rb_data['d_int'].min(), rb_data['d_int'].max(), 100)
+		xx = np.linspace(rb_data['d_int'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].min(), rb_data['d_int'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].max(), 20)
 		dd = mdates.num2date(xx)
+
+		plt.plot(dd, p4(xx), 'o')
+		plt.show()
+
+	if fit_choice == '2': # gaussian fitting
+		from astropy.modeling import models, fitting
+
+		rb_data['d_int'] = mdates.date2num(rb_data.index.to_pydatetime())
+		rs_time = rb_data['d_int'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}']
+
+
+		n_obs = len(rb_data.loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].index)
+		data = rb_data['avg'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}']
+		# X = np.arange(n_obs)
+		X = rs_time
+
+
+		x = np.sum(X * data)/np.sum(data)
+		width = np.sqrt(np.abs(np.sum((X-x)**2*data)/np.sum(data)))
+
+		max_data = data.max()
+
+		gauss_fit = lambda t : max_data*np.exp(-(t-x)**2/(2*width**2))
+
+		plt.plot(gauss_fit(X), '-', color='blue')
+		
+
+
+		plt.show()
+
+
 
 
 
