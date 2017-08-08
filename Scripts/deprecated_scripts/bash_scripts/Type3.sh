@@ -5,10 +5,10 @@ start=$SECONDS
 
 rm 201*_*.txt #reset all of the txt files
 
-#for file in /Users/bryanyamashiro/Desktop/Type3/original/${1}.txt; do sed '1,37d' /Users/bryanyamashiro/Desktop/Type3/original/stereo${1}.txt > ${1}_1.txt; done # delete all the top row crap #on computer
+#for file in /Users/bryanyamashiro/Desktop/Type3/original/${1}.txt; do sed '1,37d' /Users/bryanyamashiro/Desktop/Type3/original/stereo${1}.txt > ${1}_1.txt; done # delete all the header rows #on computer
 
 
-for file in /Volumes/r2fisher4/type3originals/${1}.txt; do sed '1,37d' /Volumes/r2fisher4/type3originals/stereo${1}.txt > ${1}_1.txt; done # delete all the top row crap on hardrive
+for file in /Volumes/r2fisher4/type3originals/${1}.txt; do sed '1,37d' /Volumes/r2fisher4/type3originals/stereo${1}.txt > ${1}_1.txt; done # delete all header rows on hardrive
 #delete last couple lines
 
 
@@ -131,14 +131,14 @@ echo "STEREO Type 3 Loaded"
 
 #==================WIND 36-44 kHz
 
-#for file in /Users/bryanyamashiro/Desktop/Type3/original/wind${1}.txt; do sed '1,40d' /Users/bryanyamashiro/Desktop/Type3/original/wind${1}.txt > ${1}_1.txt; done #remove header shit on computer
+#for file in /Users/bryanyamashiro/Desktop/Type3/original/wind${1}.txt; do sed '1,40d' /Users/bryanyamashiro/Desktop/Type3/original/wind${1}.txt > ${1}_1.txt; done #remove header on computer
 
-for file in /Volumes/r2fisher4/type3originals/wind${1}.txt; do sed '1,39d' /Volumes/r2fisher4/type3originals/wind${1}.txt > ${1}_1.txt; done #remove header shit on hardrive
+for file in /Volumes/r2fisher4/type3originals/wind${1}.txt; do sed '1,39d' /Volumes/r2fisher4/type3originals/wind${1}.txt > ${1}_1.txt; done #remove header on hardrive
 #change to 40 in the 2011 era
 
 
 cat ${1}_1.txt | tr -s ' ' > ${1}_2.txt #delimit with space
-cut -f1-2,3-248 -d ' ' ${1}_2.txt > ${1}_3.txt #remove columns that dont mean shit
+cut -f1-2,3-248 -d ' ' ${1}_2.txt > ${1}_3.txt #remove columns that are negligible
 #cut -f1-2,23-248 -d ' ' ${1}_2.txt > ${1}_3.txt #previous freq. 100-1000 kHz
 
 awk 'BEGIN { OFS = " "; }; { if ($3 < '${2}') $3 = 1.0; else $3 = $3; }; 1' ${1}_3.txt > ${1}_4_2.txt #more inefficient threshold clipping !!! NEEDS TO BE MORE EFFICIENT
@@ -398,7 +398,7 @@ awk 'BEGIN { OFS = " "; }; { if ($248 < '${2}') $248 = 1.0; else $248 = $248; };
 cat ${1}_4_1.txt | tr -s ' ' > ${1}_5.txt #delimit...
 
 
-awk '{c=0;for(i=3;i<=248;++i){c+=$i/246};print $0, " ", c}' ${1}_5.txt > ${1}_6.txt #average all the above shit
+awk '{c=0;for(i=3;i<=248;++i){c+=$i/246};print $0, " ", c}' ${1}_5.txt > ${1}_6.txt #average all the above
 #awk '{c=0;for(i=3;i<=228;++i){c+=$i/226};print $0, " ", c}' ${1}_5.txt > ${1}_6.txt #previous freq. 100-1000 kHz
 
 cat ${1}_6.txt | tr -s ' ' > ${1}_7.txt #delimit new average columns

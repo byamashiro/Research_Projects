@@ -8,18 +8,18 @@
 
 rm 201*_*.txt #reset all of the txt files
 
-#for file in /Users/bryanyamashiro/Desktop/Type3/original/${1}.txt; do sed '1,37d' /Users/bryanyamashiro/Desktop/Type3/original/stereo${1}.txt > ${1}_1.txt; done # delete all the top row crap #on computer
+#for file in /Users/bryanyamashiro/Desktop/Type3/original/${1}.txt; do sed '1,37d' /Users/bryanyamashiro/Desktop/Type3/original/stereo${1}.txt > ${1}_1.txt; done # delete all the top rows #on computer
 #==================WIND 36-44 kHz
 
-#for file in /Users/bryanyamashiro/Desktop/Type3/original/wind${1}.txt; do sed '1,40d' /Users/bryanyamashiro/Desktop/Type3/original/wind${1}.txt > ${1}_1.txt; done #remove header shit on computer
+#for file in /Users/bryanyamashiro/Desktop/Type3/original/wind${1}.txt; do sed '1,40d' /Users/bryanyamashiro/Desktop/Type3/original/wind${1}.txt > ${1}_1.txt; done #remove header rows on computer
 
-for file in /Volumes/r2fisher4/type3originals/wind${1}.txt; do sed '1,40d' /Volumes/r2fisher4/type3originals/wind${1}.txt > ${1}_1.txt; done #remove header shit on hardrive
+for file in /Volumes/r2fisher4/type3originals/wind${1}.txt; do sed '1,40d' /Volumes/r2fisher4/type3originals/wind${1}.txt > ${1}_1.txt; done #remove header rows on hardrive
 
 #grep -e '^report\|^-th\|^-to' filename
 grep -e '^'${4}'' ${1}_1.txt > ${1}_1_1.txt
 
 cat ${1}_1_1.txt | tr -s ' ' > ${1}_2.txt #delimit with space
-cut -f1-2,3-258 -d ' ' ${1}_2.txt > ${1}_3.txt #remove columns that dont mean shit
+cut -f1-2,3-258 -d ' ' ${1}_2.txt > ${1}_3.txt #remove columns that dont are not in thresholds
 
 #======================================Over 100 intensity
 

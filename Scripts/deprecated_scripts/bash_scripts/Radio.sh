@@ -8,15 +8,15 @@ rm 201*_*.txt #reset all of the txt files
 #for file in /Users/bryanyamashiro/Desktop/Type3/original/${1}.txt; do sed '1,37d' /Users/bryanyamashiro/Desktop/Type3/original/stereo${1}.txt > ${1}_1.txt; done # delete all the top row crap #on computer
 #==================WIND 36-44 kHz
 
-#for file in /Users/bryanyamashiro/Desktop/Type3/original/wind${1}.txt; do sed '1,40d' /Users/bryanyamashiro/Desktop/Type3/original/wind${1}.txt > ${1}_1.txt; done #remove header shit on computer
+#for file in /Users/bryanyamashiro/Desktop/Type3/original/wind${1}.txt; do sed '1,40d' /Users/bryanyamashiro/Desktop/Type3/original/wind${1}.txt > ${1}_1.txt; done #remove header rows on computer
 
-for file in /Volumes/r2fisher4/type3originals/wind${1}.txt; do sed '1,40d' /Volumes/r2fisher4/type3originals/wind${1}.txt > ${1}_1.txt; done #remove header shit on hardrive
+for file in /Volumes/r2fisher4/type3originals/wind${1}.txt; do sed '1,40d' /Volumes/r2fisher4/type3originals/wind${1}.txt > ${1}_1.txt; done #remove header rows on hardrive
 
 #grep -e '^report\|^-th\|^-to' filename
 grep -e '^'${4}'' ${1}_1.txt > ${1}_1_1.txt
 
 cat ${1}_1_1.txt | tr -s ' ' > ${1}_2.txt #delimit with space
-cut -f1-2,3-248 -d ' ' ${1}_2.txt > ${1}_3.txt #remove columns that dont mean shit
+cut -f1-2,3-248 -d ' ' ${1}_2.txt > ${1}_3.txt #remove columns that are not in the threshold
 
 #======================================Over 100 intensity
 
@@ -541,11 +541,11 @@ cut -f3-248 -d ' ' /Users/bryanyamashiro/Desktop/RadioBurst/converted/${4}reduce
 
 
 #=====================averaging
-#awk '{c=0;for(i=3;i<=248;++i){c+=$i/246};print $0, " ", c}' ${1}_5.txt > ${1}_6.txt #average all the above shit
+#awk '{c=0;for(i=3;i<=248;++i){c+=$i/246};print $0, " ", c}' ${1}_5.txt > ${1}_6.txt #average all the above
 #cat ${1}_6.txt | tr -s ' ' > ${1}_7.txt #delimit new average columns
 #cut -f1-2,249 -d ' ' ${1}_7.txt > ${1}_8.txt #remove all columns except averages
 #awk '{split($1,a,"-");$1=a[3]"-"a[2]"-"a[1]}1' ${1}_8.txt > windt3_${1}.txt #remodel date to yyyy-mm-dd
 
-rm 201*_*.txt #remove excess shit
+rm 201*_*.txt #remove excess files
 #rm *.dat
 echo "WIND Type 3 Loaded"

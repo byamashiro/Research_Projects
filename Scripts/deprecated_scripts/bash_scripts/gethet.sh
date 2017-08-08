@@ -31,7 +31,7 @@ echo loaded files for analysis
 
 #=======conversion
 
-sed '1,22d' AeH1*.1m > Aeam.1m #deletes unecessary shit above the data
+sed '1,22d' AeH1*.1m > Aeam.1m #deletes unecessary headers above the data
 cat Aeam.1m | tr -s ' ' > Aeamer.1m
 cut -f2-5,12-33 -d ' ' Aeamer.1m > Aeamest.1m
 awk ' { t = $1; $1 = $2; $2 = t; print; } ' Aeamest.1m > Aeamester.1m
@@ -74,7 +74,7 @@ echo Ahead.1m files removed
 
 
 #============conversion
-sed '1,22d' BeH1*.1m > Beam.1m #deletes unecessary shit above the data
+sed '1,22d' BeH1*.1m > Beam.1m #deletes unecessary headers above the data
 cat Beam.1m | tr -s ' ' > Beamer.1m
 cut -f2-5,12-33 -d ' ' Beamer.1m > Beamest.1m
 awk ' { t = $1; $1 = $2; $2 = t; print; } ' Beamest.1m > Beamester.1m
