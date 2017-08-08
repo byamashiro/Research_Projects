@@ -126,8 +126,59 @@ rb_data['avg'] = rb_data.mean(axis=1, numeric_only=True)
 
 #=========Plotting
 print(f'\nPlotting Type III Data: [{event_obj_start_str} -- {event_obj_end_str}]')
+print('1: Subplots\n2: Averaged')
+plot_choice = input('Enter choice for plotting: ')
 
-rb_data['avg'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].plot(color='navy', label= '20 kHz - 1040 kHz')
+# =============== new plotting scheme subplots
+if plot_choice == '1':
+	from matplotlib.pyplot import cm 
+
+	myFmt = mdates.DateFormatter('%m/%d\n%H:%M')
+
+
+	wrange = range(20, 1041, 4) 
+	
+	fig, axs = plt.subplots(4, 4, sharex = True, sharey = True)
+	
+	row_count = 0
+	col_count = 0
+	
+
+	color_cm=iter(cm.rainbow(np.linspace(0,1, len(range(20,980,32)) )))
+
+
+	# one subplot for each frequency
+
+	for i in range(20,980,32): # total of 256 different frequencies
+		color_choice = next(color_cm)
+
+		axs[row_count, col_count].plot(rb_data[i].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'],color=color_choice, label= f'{i}') # axs[row, column]
+		axs[row_count, col_count].legend(loc='upper right', ncol=1,fontsize=8)
+
+
+		col_count += 1
+		if col_count == 6:
+			row_count += 1
+			col_count = 0
+
+	# plt.xaxis.set_major_formatter(myFmt)
+	plt.subplots_adjust(wspace = 0, hspace = 0, top=0.91)
+	plt.show()
+
+
+	# ========= one subplot for every 16 frequencies (total 256 frequencies)
+
+
+
+
+
+
+# ============== end new plotting scheme
+if plot_choice == '2': 
+	rb_data['avg'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].plot(color='navy', label= '20 kHz - 1040 kHz')
+
+
+
 plt.title(f'WIND Type III Radio Bursts: RAD 1\n[{event_obj_start_str} -- {event_obj_end_str}]', fontname="Arial", fontsize = 14)
 plt.xlabel('Time', fontname="Arial", fontsize = 14)
 plt.ylabel('Intensity [sfu]', fontname="Arial", fontsize = 14)
