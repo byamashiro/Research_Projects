@@ -201,6 +201,8 @@ Elapsed Time: 0.96 seconds
 
 
 <img src="Plots/remastered_radio_test.png" width="500">
+<img src="Plots/remastered_radio_full_test.png" width="700">
+
 
 
 #### Multiple Days
@@ -222,7 +224,6 @@ Elapsed Time: 3.35 seconds
 
 
 <img src="Plots/remastered_radio_multi_test.png" width="500">
-<img src="Plots/remastered_radio_full_test.png" width="500">
 
 
 
