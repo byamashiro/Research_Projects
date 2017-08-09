@@ -126,11 +126,75 @@ rb_data['avg'] = rb_data.mean(axis=1, numeric_only=True)
 
 #=========Plotting
 print(f'\nPlotting Type III Data: [{event_obj_start_str} -- {event_obj_end_str}]')
-print('1: Subplots\n2: Averaged')
+print('1: Full dataset\n2: Individual subplots (DO NOT USE)\n3: Averaged dataset')
 plot_choice = input('Enter choice for plotting: ')
 
 # =============== new plotting scheme subplots
-if plot_choice == '1':
+
+# ========= one subplot for every 16 frequencies (total 256 frequencies)
+
+if plot_choice = '1':
+	from matplotlib.pyplot import cm 
+
+	fig, axs = plt.subplots(4, 4, sharex = True, sharey = True)
+	row_count =0
+	col_count = 0
+	single_count = 0
+	list_freq = []
+		
+	color_cm=iter(cm.viridis(np.linspace(0,1, 256 )))
+
+	for i in range(20, 1041, 4):
+		color_choice = next(color_cm)
+		list_freq.append(i)
+
+		axs[row_count, col_count].plot(rb_data[i].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'],color=color_choice, label= f'{i}') # axs[row, column]
+		
+
+		single_count += 1
+
+		if single_count == 16:
+
+			# L = axs[row_count, col_count].legend()
+			# last_freq = i
+
+			# axs[row_count, col_count].set_label(f'{first_freq} - {last_freq}')
+			min_freq = min(list_freq)
+			max_freq = max(list_freq)
+
+			axs[row_count, col_count].legend(labels=[f'{min_freq} - {max_freq} kHz'], loc='upper right', ncol=3,fontsize=8)
+
+			single_count = 0
+			list_freq = []
+			col_count += 1
+			if col_count == 4:
+				row_count += 1
+				col_count = 0
+
+	plt.subplots_adjust(wspace = 0, hspace = 0, top=0.91)
+
+
+	plt.title(f'WIND Type III Radio Bursts: RAD 1\n[{event_obj_start_str} -- {event_obj_end_str}]', fontname="Arial", fontsize = 14)
+	plt.xlabel('Time', fontname="Arial", fontsize = 14)
+	plt.ylabel('Intensity [sfu]', fontname="Arial", fontsize = 14)
+	plt.minorticks_on()
+	plt.grid(True)
+	#plt.yscale('log')
+	plt.legend(loc='upper right')
+	plt.tight_layout()
+	#ax = fig.add_subplot(111)
+	ax = plt.gca()
+	myFmt = mdates.DateFormatter('%m/%d\n%H:%M')
+	ax.xaxis.set_major_formatter(myFmt)
+	plt.setp(ax.xaxis.get_majorticklabels(), rotation=0, horizontalalignment='center')
+	end_time = time.clock()
+	print(f'Elapsed Time: {round(end_time - start_time , 2)} seconds')
+	plt.savefig('remastered_radio_multi.png', format='png', dpi=900)
+	plt.show()
+
+
+# ====== individual subplots
+if plot_choice == '2':
 	from matplotlib.pyplot import cm 
 
 	myFmt = mdates.DateFormatter('%m/%d\n%H:%M')
@@ -138,7 +202,7 @@ if plot_choice == '1':
 
 	wrange = range(20, 1041, 4) 
 	
-	fig, axs = plt.subplots(4, 4, sharex = True, sharey = True)
+	fig, axs = plt.subplots(6, 5, sharex = True, sharey = True)
 	
 	row_count = 0
 	col_count = 0
@@ -166,7 +230,9 @@ if plot_choice == '1':
 	plt.show()
 
 
-	# ========= one subplot for every 16 frequencies (total 256 frequencies)
+
+
+
 
 
 
@@ -174,29 +240,29 @@ if plot_choice == '1':
 
 
 # ============== end new plotting scheme
-if plot_choice == '2': 
+if plot_choice == '3': 
 	rb_data['avg'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].plot(color='navy', label= '20 kHz - 1040 kHz')
 
 
 
-plt.title(f'WIND Type III Radio Bursts: RAD 1\n[{event_obj_start_str} -- {event_obj_end_str}]', fontname="Arial", fontsize = 14)
-plt.xlabel('Time', fontname="Arial", fontsize = 14)
-plt.ylabel('Intensity [sfu]', fontname="Arial", fontsize = 14)
-plt.minorticks_on()
-plt.grid(True)
-#plt.yscale('log')
-plt.legend(loc='upper right')
-plt.tight_layout()
-#ax = fig.add_subplot(111)
-ax = plt.gca()
-myFmt = mdates.DateFormatter('%m/%d\n%H:%M')
-
-ax.xaxis.set_major_formatter(myFmt)
-plt.setp(ax.xaxis.get_majorticklabels(), rotation=0, horizontalalignment='center')
-
-end_time = time.clock()
-print(f'Elapsed Time: {round(end_time - start_time , 2)} seconds')
-plt.savefig('remastered_radio_multi.png', format='png', dpi=900)
-
-plt.show()
+	plt.title(f'WIND Type III Radio Bursts: RAD 1\n[{event_obj_start_str} -- {event_obj_end_str}]', fontname="Arial", fontsize = 14)
+	plt.xlabel('Time', fontname="Arial", fontsize = 14)
+	plt.ylabel('Intensity [sfu]', fontname="Arial", fontsize = 14)
+	plt.minorticks_on()
+	plt.grid(True)
+	#plt.yscale('log')
+	plt.legend(loc='upper right')
+	plt.tight_layout()
+	#ax = fig.add_subplot(111)
+	ax = plt.gca()
+	myFmt = mdates.DateFormatter('%m/%d\n%H:%M')
+	
+	ax.xaxis.set_major_formatter(myFmt)
+	plt.setp(ax.xaxis.get_majorticklabels(), rotation=0, horizontalalignment='center')
+	
+	end_time = time.clock()
+	print(f'Elapsed Time: {round(end_time - start_time , 2)} seconds')
+	plt.savefig('remastered_radio_multi.png', format='png', dpi=900)
+	
+	plt.show()
 
