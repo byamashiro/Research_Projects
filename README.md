@@ -50,10 +50,6 @@
     - [ ] Gather datasets and plot individually
     - [ ] Plot both datasets on one axis canvas
 
-- [ ] Revamp the radio burst script
-    - [ ] Plot all frequencies on separate plots
-    - [ ] Find the most optimal subplot
-
 
 
 # Current Tasks and Errors
@@ -226,6 +222,8 @@ Elapsed Time: 3.35 seconds
 
 
 <img src="Plots/remastered_radio_multi_test.png" width="500">
+<img src="Plots/remastered_radio_full_test.png" width="500">
+
 
 
 ### Neutron Monitor ([nm_script](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/pandas_test_nm.py))
@@ -438,6 +436,11 @@ Solar Wind Speed | N | < 0.0
 
 
 # Completed Tasks
+
+- [x] Revamp the radio burst script (8/08/2017)
+    - [x] Plot all frequencies on separate plots (8/08/2017)
+    - [x] Find the most optimal subplot (8/08/2017)
+
 
 - [x] Add feature to add a line for extrema (i.e max, min, etc.) (7/22/2017)
 
