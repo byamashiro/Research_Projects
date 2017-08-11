@@ -54,9 +54,14 @@
 
 # Current Tasks and Errors
 
-### Plot the Type III Radio Bursts in all frequencies
-- Current correlations do not agree linearly between frequencies vs. intensities.
-- Plot every frequency bin between 20 to 1040 individually.
+### Collect science
+- Maximum: Proton flux, xray flux, solar wind speed, radio burst intensity/duration.
+- Minimum: Neutron monitor counts, dst (not currently implemented).
+- Write datetime, index, max, and min to a datafile.
+
+### Multiple event query for OMNI script
+- Current script works for a single day. Increase the functionality by allowing for a list of dates to parse.
+
 
 ### Download SOHO proton flux data and plot
 1) SOHO data title format is not uniform (i.e erne-yyyy.mm.dd-yyyy.mm.dd-{non-uniform-number}.tgz)
@@ -485,6 +490,10 @@ Solar Wind Speed | N | < 0.0
 
 
 # Resolved Errors
+
+### Plot the Type III Radio Bursts in all frequencies (8/08/2017)
+- Current correlations do not agree linearly between frequencies vs. intensities.
+- Plot every frequency bin between 20 to 1040 individually.
 
 ### GOES legacy data (7/22/2017)
 * **Resolution**: The GOES Proton script was broken up into two functioning scripts. Eventually the two scripts will be merged again, but since there is discrepancy between older GOES satellites, they were split. The older GOES satellites (8 and 10) do not have flux in specific energy bins, but rather energy ranges (i.e 80.0 - 165.0 MeV). This type of binning is discontinued in the GOES-13/15 satellites as each bin corresponds to one specific energy (i.e 165 MeV). Since the Wind satellite was functional in 1995 and beyond, the subplot functionality is kept with the Type III and solar wind data. Older neutron monitors were also online during the legacy period and older detectors can be selected.
