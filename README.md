@@ -54,6 +54,9 @@
 
 # Current Tasks and Errors
 
+### Incorporate sunpy package
+- The sunpy package may contain data sources for level 2 data. This may be faster than downloading and importing data for each datetime instance for longer time intervals
+
 ### Collect science
 - Maximum: Proton flux, xray flux, solar wind speed, radio burst intensity/duration.
 - Minimum: Neutron monitor counts, dst (not currently implemented).
