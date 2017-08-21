@@ -664,7 +664,7 @@ def applyPlotStyle():
 
 		high_bin_proton_str = sorted(energy_bin_list)[-1][1]
 		low_bin_proton_str = sorted(energy_bin_list)[0][1]
-		axes[length_data_list[j]].axvline(proton_df[f'{low_bin_proton}'].idxmax()) # (proton_df.P6W_UNCOR_FLUX.max())
+		axes[length_data_list[j]].axvline(proton_df[f'{low_bin_proton}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax()) # (proton_df.P6W_UNCOR_FLUX.max())
 	# axes[length_data_list[j]].axvline(proton_df.idxmax().P6W_UNCOR_FLUX) # (proton_df.P6W_UNCOR_FLUX.max())
 
 
