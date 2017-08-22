@@ -6,12 +6,12 @@
 - [Current Errors and Pressing Tasks](#current-errors-and-pressing-tasks)
 - [Required Python Modules](#required-python-modules)
 - [Running Scripts](#running-scripts)
-    - [OMNI Space Weather (omni_script_v2)](#omni-space-weather-omni_script_v2)
-    - [Remastered WIND Type III Radio Burst (radio_script_v2)](#remastered-wind-type-iii-radio-burst-radio_script_v2)
-    - [Neutron Monitor (nm_script)](#neutron-monitor-nm_script)
-    - [Remastered GOES-15 Proton Flux (prot_script_v2)](#remastered-goes-15-proton-flux-prot_script_v2)
-    - [Solar Wind Speed (swind_script)](#solar-wind-speed-swind_script)
-    - [Legacy OMNI Space Weather (1995-2009) (legacy_omni_script_v1)](#legacy-omni-space-weather-1995-2009-legacy_omni_script_v1)
+  - [OMNI Space Weather (omni_script_v2)](#omni-space-weather-omni_script_v2)
+  - [Remastered WIND Type III Radio Burst (radio_script_v2)](#remastered-wind-type-iii-radio-burst-radio_script_v2)
+  - [Neutron Monitor (nm_script)](#neutron-monitor-nm_script)
+  - [Remastered GOES-15 Proton Flux (prot_script_v2)](#remastered-goes-15-proton-flux-prot_script_v2)
+  - [Solar Wind Speed (swind_script)](#solar-wind-speed-swind_script)
+  - [Legacy OMNI Space Weather (1995-2009) (legacy_omni_script_v1)](#legacy-omni-space-weather-1995-2009-legacy_omni_script_v1)
 - [Deprecated Scripts](#deprecated-scripts)
 - [Data](#data)
   - [Data Caveats](#data-caveats)
@@ -25,30 +25,30 @@
 # Current Tasks
 
 - [ ] Collect WIND/ACE Solar Wind data
-    - [x] Bulk speed (7/12/2017)
-    - [ ] Temperature
-    - [ ] Magnetic field components/absolute value
+  - [x] Bulk speed (7/12/2017)
+  - [ ] Temperature
+  - [ ] Magnetic field components/absolute value
 
 - [ ] Add GOES-13 xray flux
-    - [ ] Add markers and tags to certain xray flux magnitudes
+  - [ ] Add markers and tags to certain xray flux magnitudes
 
 
 - [ ] Push headers to data without forcing pandas names with files that have different header line numbers
-    - [ ] regex? solution to accept only header and data rows
-    - [ ] python solution to differentiate between header and data rows, and commented information
+  - [ ] regex? solution to accept only header and data rows
+  - [ ] python solution to differentiate between header and data rows, and commented information
 
 
 - [ ] Change 'for' loops into list comprehension
 
 - [ ] Integrate SOHO data
-    - [ ] SOHO proton flux bins
-    - [ ] Proton flux bin detectors
+  - [ ] SOHO proton flux bins
+  - [ ] Proton flux bin detectors
 
 - [ ] Dst and Kp data
-    - [ ] Kp data in boxes form
-    - [ ] AE index interchangeable with Dst index
-    - [ ] Gather datasets and plot individually
-    - [ ] Plot both datasets on one axis canvas
+  - [ ] Kp data in boxes form
+  - [ ] AE index interchangeable with Dst index
+  - [ ] Gather datasets and plot individually
+  - [ ] Plot both datasets on one axis canvas
 
 - [ ] Create a folder for local data. (.../Research_Projects/**Data**)
   - [ ] Separate into mission names (i.e GOES, WIND, ACE, etc.)
@@ -463,8 +463,8 @@ Solar Wind Speed | N | < 0.0
 # Completed Tasks
 
 - [x] Revamp the radio burst script (8/08/2017)
-    - [x] Plot all frequencies on separate plots (8/08/2017)
-    - [x] Find the most optimal subplot (8/08/2017)
+  - [x] Plot all frequencies on separate plots (8/08/2017)
+  - [x] Find the most optimal subplot (8/08/2017)
 
 
 - [x] Add feature to add a line for extrema (i.e max, min, etc.) (7/22/2017)
@@ -477,27 +477,27 @@ Solar Wind Speed | N | < 0.0
 - [x] Incorporate online databases for radio and proton data (7/18/2017)
 
 - [x] Remake GOES Proton Flux scripts (7/18/2017)
-    - [x] Automate script to download File name: g15_epead_p27e_32s_20120307_20120307 from https://satdat.ngdc.noaa.gov/sem/goes/data/new_full/2012/03/goes15/csv/ (7/10/2017)
-    - [x] Energy range flux selections (6 channels) (7/10/2017)
-    - [x] Collect GOES data from legacy satellites if specific date is not found (7/18/2017)
-        - [x] Integrate GOES 8-13 satellites for date ranges (7/18/2017)
-        - [x] Collect "new_avg" data (7/18/2017)
-          - [x] Collect the same "new_full" data in the modern proton event dates (7/18/2017)
-        - [x] Specify energy range to be collected, must be over 100 MeV (7/18/2017)
-        - [x] Script must be modified for changes in strings in the "new_avg" files (7/18/2017)
-          - [x] Attempt to pull specific GOES model from file string (i.e g10, 10) (7/18/2017)
+  - [x] Automate script to download File name: g15_epead_p27e_32s_20120307_20120307 from https://satdat.ngdc.noaa.gov/sem/goes/data/new_full/2012/03/goes15/csv/ (7/10/2017)
+  - [x] Energy range flux selections (6 channels) (7/10/2017)
+  - [x] Collect GOES data from legacy satellites if specific date is not found (7/18/2017)
+    - [x] Integrate GOES 8-13 satellites for date ranges (7/18/2017)
+    - [x] Collect "new_avg" data (7/18/2017)
+      - [x] Collect the same "new_full" data in the modern proton event dates (7/18/2017)
+    - [x] Specify energy range to be collected, must be over 100 MeV (7/18/2017)
+    - [x] Script must be modified for changes in strings in the "new_avg" files (7/18/2017)
+      - [x] Attempt to pull specific GOES model from file string (i.e g10, 10) (7/18/2017)
 
 
 - [x] Integrate all data into subplots (7/15/2017)
-    - [x] Incorporate all pandas data frames from other scripts into one script (7/13/2017)
-    - [x] Dynamic subplots (7/15/2017)
-    - [x] Fix all subplot axis labels and legends (7/15/2017)
-    - [x] Set appropriate logscale (7/15/2017)
+  - [x] Incorporate all pandas data frames from other scripts into one script (7/13/2017)
+  - [x] Dynamic subplots (7/15/2017)
+  - [x] Fix all subplot axis labels and legends (7/15/2017)
+  - [x] Set appropriate logscale (7/15/2017)
 
 - [x] Remake Radio Burst script using CDF and online databases (7/8/2017)
-    - [x] Use pycdf **(module: spacepy)** to read CDF data (7/6/2017)
-    - [x] Push data into pandas dataframe (7/7/2017)
-    - [x] Set up automated url inputs (7/8/2017)
+  - [x] Use pycdf **(module: spacepy)** to read CDF data (7/6/2017)
+  - [x] Push data into pandas dataframe (7/7/2017)
+  - [x] Set up automated url inputs (7/8/2017)
 
 - [x] Fix issues with matplotlib DateFormatter "year out of range" (7/5/2017)
   - [x] Added issue with null errors in data frames (7/5/2017)
