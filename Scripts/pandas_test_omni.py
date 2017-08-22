@@ -320,6 +320,7 @@ if '2' in option_bin_set:
 
 
 	# ============ EXPERIMENTAL FITTING (DO NOT USE)
+	'''
 	fit_choice = input('\nType "1 - 3" if you would like to fit: (currently in work)')
 
 
@@ -430,7 +431,7 @@ if '2' in option_bin_set:
 		plt.show()
 
 
-
+''' # end experimental fitting
 
 
 

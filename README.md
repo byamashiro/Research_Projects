@@ -54,6 +54,13 @@
 
 # Current Tasks and Errors
 
+### Download local files
+- Instead of downloading data every instance of the code (i.e OMNI), store a repository of data on the local drive.
+  - If the local file does not exist, download from the web. Vice versa, if the local file exists, parse the file rather than downloading. Create the path in the script header to allow for quick changes to the local download folder.
+
+### Create data template for specific events
+
+
 ### Incorporate sunpy package
 - The sunpy package may contain data sources for level 2 data. This may be faster than downloading and importing data for each datetime instance for longer time intervals
 
