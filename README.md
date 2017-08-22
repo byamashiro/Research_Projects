@@ -50,16 +50,25 @@
     - [ ] Gather datasets and plot individually
     - [ ] Plot both datasets on one axis canvas
 
+- [ ] Create a folder for local data. (.../Research_Projects/**Data**)
+  - [ ] Separate into mission names (i.e GOES, WIND, ACE, etc.)
 
 
 # Current Tasks and Errors
+
+
+### Type III radio burst event list
+- Check events over 100 MeV threshold for GOES proton flux.
+  - Automate process and add an if statment for 1) if intensities are over ~100 sfu, and 2) specified durations of frequencies.
+- Match each Type III event with proton flux, xray flux, etc.
 
 ### Download local files
 - Instead of downloading data every instance of the code (i.e OMNI), store a repository of data on the local drive.
   - If the local file does not exist, download from the web. Vice versa, if the local file exists, parse the file rather than downloading. Create the path in the script header to allow for quick changes to the local download folder.
 
 ### Create data template for specific events
-
+- Previous versions of the code parsed two days before the event and five following the event. Make an external file that can be read in with a few parameters.
+  - Event date, which data sets
 
 ### Incorporate sunpy package
 - The sunpy package may contain data sources for level 2 data. This may be faster than downloading and importing data for each datetime instance for longer time intervals
