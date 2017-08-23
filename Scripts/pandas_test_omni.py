@@ -10,6 +10,11 @@ import random
 from spacepy import pycdf
 from urllib import error
 
+import shutil
+
+
+data_directory = '/Users/bryanyamashiro/Documents/Research_Projects/Data'
+
 
 def daterange( start_date, end_date ):
     if start_date <= end_date: #
@@ -164,18 +169,24 @@ if '1' in option_bin_set:
 	for date in daterange( start, end ):
 		try:
 			event_date = str(date).replace('-','')
+
 			#print(event_date[0:6])
 			proton_name = f'g{satellite_no}_epead_p27w_32s_{event_date}_{event_date}.csv'
-			proton_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_full/{event_date[:4]}/{event_date[4:6]}/goes{satellite_no}/csv/{proton_name}'
-			proton_in = wget.download(proton_url)
+			proton_check = os.path.isfile(f'{data_directory}/GOES/GOES_{satellite_no}/Pflux/{proton_name}')
+			if proton_check == True:
+				dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
+				proton_df_ind = pd.read_csv(f'{data_directory}/GOES/GOES_{satellite_no}/Pflux/{proton_name}', skiprows=282, date_parser=dateparse,index_col='time_tag', header=0)
+				proton_df = proton_df.append(proton_df_ind)
+
+			elif proton_check == False:
+				proton_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_full/{event_date[:4]}/{event_date[4:6]}/goes{satellite_no}/csv/{proton_name}'
+				proton_in = wget.download(proton_url)	
+				dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
+				proton_df_ind = pd.read_csv(f'{proton_in}', skiprows=282, date_parser=dateparse,index_col='time_tag', header=0)
+				proton_df = proton_df.append(proton_df_ind)
+				shutil.move(f'{proton_name}', f'{data_directory}/GOES/GOES_{satellite_no}/Pflux/')
 	
-			#name_list = ['datetime'] + [ str(i) for i in sorted_nm_list]
-	
-			dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
-			proton_df_ind = pd.read_csv(f'{proton_in}', skiprows=282, date_parser=dateparse,index_col='time_tag', header=0)
-			proton_df = proton_df.append(proton_df_ind)
-	
-			os.remove(proton_name)
+			# os.remove(proton_name)
 		except:
 			print(f'\nMissing data for {date}')
 			continue

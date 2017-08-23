@@ -52,7 +52,7 @@
 
 - [ ] Create a folder for local data. (.../Research_Projects/**Data**)
   - [ ] Separate into mission names (i.e GOES, WIND, ACE, etc.)
-  - [ ] Remove 'sample_data' folder from Scripts directory.
+  - [x] Remove 'sample_data' folder from Scripts directory. (8/22/2017)
 
 
 # Current Tasks and Errors
