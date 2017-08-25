@@ -15,7 +15,7 @@ import shutil
 
 data_directory = '/Users/bryanyamashiro/Documents/Research_Projects/Data'
 
-
+'''
 def daterange( main_event_date ):
     # if start_date <= end_date:
 	for n in range( ( main_event_date ).days + 7 ):
@@ -32,7 +32,8 @@ def daterange( start_date, end_date ):
     else:
         for n in range( ( start_date - end_date ).days + 1 ):
             yield start_date - datetime.timedelta( n )
-'''
+
+
 #==============Choosing Dataset
 print(f'{"="*40}\n{"=" + "DATASETS".center(38," ") + "="}\n{"="*40}\n1 - GOES-15 Proton Flux\n2 - Wind Type III Radio Bursts\n3 - Neutron Monitor Counts\n4 - ACE/Wind Solar Wind Speed\n5 - GOES-15 Xray Flux\n{"="*40}')
 
@@ -71,12 +72,11 @@ while True: # energy_bin != 'done':
 
 
 #===============Time frame
+'''
 start_date = input('Enter a start date (yyyymmdd): ')
 end_date = input('Enter a end date (yyyymmdd): ')
 if end_date == '':
 	end_date = start_date
-
-main_event_date = input('Enter an event date (yyyymmdd)')
 
 
 event_day = main_event_date[6:8]
@@ -91,10 +91,18 @@ end_day = end_date[6:8]
 end_month = end_date[4:6]
 end_year = end_date[:4]
 '''
+
+main_event_date = input('Enter an event date (yyyymmdd): ')
+
+
+
+'''
 if int(start_year) < 2010: # testing old 2003 data, uncomment laterß
 	print('\nDATE ERROR: Date must start after September 1, 2010')
 	sys.exit(0)
 '''
+
+''' # fix this up
 if len(start_date) != 8 or len(end_date) != 8:
 	print('\nDATE ERROR: Dates must have 8 digits.')
 	sys.exit(0)
@@ -117,18 +125,27 @@ if start_hour.isdigit() == False:
 	else:
 		print('\nTIME ERROR: Not a valid alternative hour.')
 		sys.exit(0)
-
-
-
+'''
 
 event_dtime = datetime.date( year = int(f'{main_event_date[0:4]}'), month = int(f'{main_event_date[4:6]}') , day = int(f'{main_event_date[6:8]}') )
 date_list = pd.date_range(event_dtime, periods = 7).tolist()
 
+
+
 # put date_list date into start and end
-start = datetime.date( year = int(f'{start_date[0:4]}'), month = int(f'{start_date[4:6]}') , day = int(f'{start_date[6:8]}') )
-end = datetime.date( year = int(f'{end_date[0:4]}'), month = int(f'{end_date[4:6]}') , day = int(f'{end_date[6:8]}') )
+# start = datetime.date( year = int(f'{start_date[0:4]}'), month = int(f'{start_date[4:6]}') , day = int(f'{start_date[6:8]}') )
+# end = datetime.date( year = int(f'{end_date[0:4]}'), month = int(f'{end_date[4:6]}') , day = int(f'{end_date[6:8]}') )
+
+start = datetime.date( year = date_list[0].year, month = date_list[0].month , day = date_list[0].day )
+end = datetime.date( year = date_list[-1].year, month = date_list[-1].month , day = date_list[-1].day )
 
 #=========Defining event strings
+
+start_date = str(date_list[0].date()).replace('-','')
+start_hour = '00' # str(date_list[0].hour).zfill(2)
+
+end_date = str(date_list[-1].date()).replace('-','')
+end_hour = '00' # str(date_list[-1].hour).zfill(2)
 
 event_obj_start = datetime.datetime.strptime(f'{start_date} {start_hour}', '%Y%m%d %H')
 event_obj_start_str = datetime.datetime.strftime(event_obj_start, '%Y%m%d %H:%M:%S')
@@ -701,7 +718,7 @@ def applyPlotStyle():
 
 		high_bin_proton_str = sorted(energy_bin_list)[-1][1]
 		low_bin_proton_str = sorted(energy_bin_list)[0][1]
-		axes[length_data_list[j]].axvline(proton_df[f'{low_bin_proton}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax()) # (proton_df.P6W_UNCOR_FLUX.max()) # changed maximum flux to be within time interval specified
+		axes[length_data_list[j]].axvline(proton_df[f'{low_bin_proton}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax(), zorder=0) # (proton_df.P6W_UNCOR_FLUX.max()) # changed maximum flux to be within time interval specified
 	# axes[length_data_list[j]].axvline(proton_df.idxmax().P6W_UNCOR_FLUX) # (proton_df.P6W_UNCOR_FLUX.max())
 
 
