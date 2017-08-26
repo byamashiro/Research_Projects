@@ -57,6 +57,9 @@
 
 # Current Tasks and Errors
 
+### Type III radio burst representation
+- Change the radio burst average into a spectrogram. Try the 'plt.pcolormesh(t, f, Sxx)' function into the radio burst subplot. The 't' for time, 'f' for frequency. 
+
 
 ### Type III radio burst event list
 - Check events over 100 MeV threshold for GOES proton flux.
