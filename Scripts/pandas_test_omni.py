@@ -25,7 +25,7 @@ def daterange( start_date, end_date ):
             yield start_date - datetime.timedelta( n )
 
 #==============Choosing Dataset
-print(f'{"="*40}\n{"=" + "DATASETS".center(38," ") + "="}\n{"="*40}\n1 - GOES-15 Proton Flux\n2 - Wind Type III Radio Bursts\n3 - Neutron Monitor Counts\n4 - ACE/Wind Solar Wind Speed\n5 - GOES-15 Xray Flux\n{"="*40}')
+print(f'{"="*40}\n{"=" + "DATASETS".center(38," ") + "="}\n{"="*40}\n1 - GOES-13/15 Proton Flux\n2 - Wind Type III Radio Bursts\n3 - Neutron Monitor Counts\n4 - ACE/Wind Solar Wind Speed\n5 - GOES-13/15 Xray Flux\n{"="*40}')
 
 '''
 1 - GOES Proton Flux
@@ -604,7 +604,7 @@ if '5' in option_bin_set:
 			print('SATELLITE ERROR: Must specify either 13 or 15.')
 			sys.exit(0)
 
-	print(f'\n{"="*40}\n{"=" + "GOES-15 Xray Flux".center(38," ") + "="}\n{"="*40}')
+	print(f'\n{"="*40}\n{"=" + "GOES-{satellite_no_xray} Xray Flux".center(38," ") + "="}\n{"="*40}')
 
 	xray_df = pd.DataFrame([])
 	
@@ -763,7 +763,7 @@ if '5' in option_bin_set:
 	axes[length_data_list[j]].plot(xray_df['B_FLUX'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='blue', label='0.1-0.8 nm')
 	axes[length_data_list[j]].plot(xray_df['A_FLUX'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='red', label='0.05-0.4 nm')
 	axes[length_data_list[j]].set_yscale('log')
-	axes[length_data_list[j]].set_ylabel('GOES-15 Xray\nFlux [Wm$^2$]', fontname="Arial", fontsize = 12)
+	axes[length_data_list[j]].set_ylabel('GOES-{satellite_no_xray} Xray\nFlux [Wm$^2$]', fontname="Arial", fontsize = 12)
 	applyPlotStyle()
 
 
