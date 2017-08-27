@@ -117,7 +117,7 @@ event_obj_end_str_date = datetime.datetime.strftime(event_obj_end, '%Y%m%d %H')
 
 #=========== 1: GOES Proton Flux
 if '1' in option_bin_set:
-	satellite_no = input('Specify which GOES Satellite (13 or 15): ')
+	satellite_no = input('Specify which GOES Satellite for Proton Flux (13 or 15): ')
 	if satellite_no != '13':
 		if satellite_no != '15':
 			print('SATELLITE ERROR: Must specify either 13 or 15.')
@@ -598,6 +598,12 @@ if '4' in option_bin_set:
 
 #=========== 5: GOES-15 Xray Flux
 if '5' in option_bin_set:
+	satellite_no_xray = input('Specify which GOES Satellite for Xray Flux (13 or 15): ')
+	if satellite_no_xray != '13':
+		if satellite_no_xray != '15':
+			print('SATELLITE ERROR: Must specify either 13 or 15.')
+			sys.exit(0)
+
 	print(f'\n{"="*40}\n{"=" + "GOES-15 Xray Flux".center(38," ") + "="}\n{"="*40}')
 
 	xray_df = pd.DataFrame([])
@@ -606,9 +612,9 @@ if '5' in option_bin_set:
 		try:
 			event_date = str(date).replace('-','')
 			#print(event_date[0:6])
-			xray_name = f'g15_xrs_2s_{event_date}_{event_date}.csv'
+			xray_name = f'g{satellite_no_xray}_xrs_2s_{event_date}_{event_date}.csv'
 			#g15_xrs_2s_20120307_20120307.csv
-			xray_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_full/{event_date[:4]}/{event_date[4:6]}/goes15/csv/{xray_name}'
+			xray_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_full/{event_date[:4]}/{event_date[4:6]}/goes{satellite_no_xray}/csv/{xray_name}'
 			xray_in = wget.download(xray_url)
 	
 			xray_name_list = ['time_tag','A_QUAL_FLAG','A_COUNT','A_FLUX','B_QUAL_FLAG','B_COUNT','B_FLUX']
