@@ -50,9 +50,11 @@
   - [ ] Gather datasets and plot individually
   - [ ] Plot both datasets on one axis canvas
 
-- [ ] Create a folder for local data. (.../Research_Projects/**Data**)
-  - [ ] Separate into mission names (i.e GOES, WIND, ACE, etc.)
-  - [x] Remove 'sample_data' folder from Scripts directory. (8/22/2017)
+- [ ] Create an projection of the Sun using cartopy/basemap/aitoff
+  - [ ] Sun projection from -180 to 180, including the back side
+  - [ ] Plot individual events on the Sun
+
+
 
 
 # Current Tasks and Errors
@@ -465,6 +467,11 @@ Solar Wind Speed | N | < 0.0
 
 
 # Completed Tasks
+
+- [x] Create a folder for local data. (.../Research_Projects/**Data**) (8/26/2017)
+  - [x] Separate into mission names (i.e GOES, WIND, ACE, etc.) (8/26/2017)
+  - [x] Remove 'sample_data' folder from Scripts directory. (8/22/2017)
+
 
 - [x] Revamp the radio burst script (8/08/2017)
   - [x] Plot all frequencies on separate plots (8/08/2017)
