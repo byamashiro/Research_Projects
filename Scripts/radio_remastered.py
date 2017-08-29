@@ -75,7 +75,7 @@ event_obj_end_str_date = datetime.datetime.strftime(event_obj_end, '%Y%m%d %H')
 start = datetime.date( year = int(f'{start_year}'), month = int(f'{start_month}') , day = int(f'{start_day}') )
 end = datetime.date( year = int(f'{end_year}'), month = int(f'{end_month}') , day = int(f'{end_day}') )
 
-start_time = time.clock()
+#start_time = time.clock()
 
 #==========Data
 rb_data = pd.DataFrame([])
@@ -136,6 +136,9 @@ plot_choice = input('Enter choice for plotting: ')
 
 if plot_choice == '1':
 	from matplotlib.pyplot import cm
+	import seaborn as sns
+
+
 	myFmt = mdates.DateFormatter('%m/%d %H:%M')
 
 
@@ -194,26 +197,59 @@ if plot_choice == '1':
 	
 	plt.show()
 
-	ax = sns.heatmap(rb_data.T)
+if plot_choice == '7':
+	from matplotlib.pyplot import cm
+	import seaborn as sns
 
 
-	plt.title(f'WIND Type III Radio Bursts: RAD 1\n[{event_obj_start_str} -- {event_obj_end_str}]', fontname="Arial", fontsize = 14)
-	plt.xlabel('Time', fontname="Arial", fontsize = 14)
-	plt.ylabel('Intensity [sfu]', fontname="Arial", fontsize = 14)
-	plt.minorticks_on()
-	plt.grid(True)
-	#plt.yscale('log')
-	plt.legend(loc='upper right')
-	plt.tight_layout()
-	#ax = fig.add_subplot(111)
-	ax = plt.gca()
-	myFmt = mdates.DateFormatter('%m/%d\n%H:%M')
-	ax.xaxis.set_major_formatter(myFmt)
-	plt.setp(ax.xaxis.get_majorticklabels(), rotation=0, horizontalalignment='center')
-	end_time = time.clock()
-	print(f'Elapsed Time: {round(end_time - start_time , 2)} seconds')
-	plt.savefig('remastered_radio_waves.png', format='png', dpi=900)
+	myFmt = mdates.DateFormatter('%m/%d %H:%M')
+	fig, ax = plt.subplots(figsize = (12, 7))
+	rb_data.drop('avg', axis=1, inplace=True)
+	# plt.pcolormesh(rb_data.index, rb_data.columns, rb_data)
+	radio_plot = ax.pcolormesh(rb_data.T, cmap=cm.rainbow)
+
+	plt.colorbar(radio_plot)
+	radio_plot.set_clim(vmin=-10, vmax=30)
 	plt.show()
+
+
+
+
+	''' # works but make a better solution
+	fig, ax = plt.subplots(figsize=(12, 7))
+	rb_data.drop('avg', axis=1, inplace=True)
+	ax = sns.heatmap(rb_data.loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].T, cmap=cm.viridis)
+	plt.setp(ax.xaxis.get_majorticklabels(), rotation=0, horizontalalignment='center')
+	fig.autofmt_xdate()
+	# plt.yscale('log')
+	# plt.gca().invert_yaxis()
+
+	for item in ax.get_yticklabels():
+		item.set_rotation(0)
+
+	# ax.xaxis.set_major_formatter(myFmt)
+	plt.tight_layout()
+	#plt.setp(ax.xaxis.get_majorticklabels(), rotation=0, horizontalalignment='center')
+
+	# plt.title(f'WIND Type III Radio Bursts: RAD 1\n[{event_obj_start_str} -- {event_obj_end_str}]', fontname="Arial", fontsize = 14)
+	# plt.xlabel('Time', fontname="Arial", fontsize = 14)
+	# plt.ylabel('Intensity [sfu]', fontname="Arial", fontsize = 14)
+	# plt.minorticks_on()
+	# plt.grid(True)
+	# #plt.yscale('log')
+	# plt.legend(loc='upper right')
+	# plt.tight_layout()
+	# #ax = fig.add_subplot(111)
+	# ax = plt.gca()
+	# myFmt = mdates.DateFormatter('%m/%d\n%H:%M')
+	# ax.xaxis.set_major_formatter(myFmt)
+	# plt.setp(ax.xaxis.get_majorticklabels(), rotation=0, horizontalalignment='center')
+	# #end_time = time.clock()
+	# #print(f'Elapsed Time: {round(end_time - start_time , 2)} seconds')
+	# #plt.savefig('remastered_radio_waves.png', format='png', dpi=900)
+	plt.show()
+
+	'''
 
 
 # ====== individual subplots
@@ -284,8 +320,8 @@ if plot_choice == '3':
 	ax.xaxis.set_major_formatter(myFmt)
 	plt.setp(ax.xaxis.get_majorticklabels(), rotation=0, horizontalalignment='center')
 	
-	end_time = time.clock()
-	print(f'Elapsed Time: {round(end_time - start_time , 2)} seconds')
+	#end_time = time.clock()
+	#print(f'Elapsed Time: {round(end_time - start_time , 2)} seconds')
 	plt.savefig('remastered_radio_multi.png', format='png', dpi=900)
 	
 	plt.show()
