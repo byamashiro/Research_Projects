@@ -194,6 +194,27 @@ if plot_choice == '1':
 	
 	plt.show()
 
+	ax = sns.heatmap(rb_data.T)
+
+
+	plt.title(f'WIND Type III Radio Bursts: RAD 1\n[{event_obj_start_str} -- {event_obj_end_str}]', fontname="Arial", fontsize = 14)
+	plt.xlabel('Time', fontname="Arial", fontsize = 14)
+	plt.ylabel('Intensity [sfu]', fontname="Arial", fontsize = 14)
+	plt.minorticks_on()
+	plt.grid(True)
+	#plt.yscale('log')
+	plt.legend(loc='upper right')
+	plt.tight_layout()
+	#ax = fig.add_subplot(111)
+	ax = plt.gca()
+	myFmt = mdates.DateFormatter('%m/%d\n%H:%M')
+	ax.xaxis.set_major_formatter(myFmt)
+	plt.setp(ax.xaxis.get_majorticklabels(), rotation=0, horizontalalignment='center')
+	end_time = time.clock()
+	print(f'Elapsed Time: {round(end_time - start_time , 2)} seconds')
+	plt.savefig('remastered_radio_waves.png', format='png', dpi=900)
+	plt.show()
+
 
 # ====== individual subplots
 if plot_choice == '2':
@@ -230,6 +251,7 @@ if plot_choice == '2':
 	# plt.xaxis.set_major_formatter(myFmt)
 	plt.subplots_adjust(wspace = 0, hspace = 0, top=0.91)
 	plt.show()
+
 
 
 
