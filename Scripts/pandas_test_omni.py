@@ -288,6 +288,50 @@ if '2' in option_bin_set:
 	for date in daterange( start, end ):
 		try:
 			event_date = str(date).replace('-','')
+
+			#print(event_date[0:6])
+			radio_name = f'wi_h1_wav_{event_date}_v01.cdf'
+			radio_check = os.path.isfile(f'{data_directory}/WIND/RAD1/{radio_name}')
+
+			if radio_check == True:
+				cdf = pycdf.CDF(f'{data_directory}/WIND/RAD1/{radio_name}')
+
+			elif radio_check == False:
+				radio_url = f'https://cdaweb.gsfc.nasa.gov/pub/data/wind/waves/wav_h1/{event_date[:4]}/{radio_name}'
+				radio_in = wget.download(radio_url)	
+				shutil.move(f'{radio_name}', f'{data_directory}/WIND/RAD1/')
+				cdf = pycdf.CDF(radio_in) # cdf = pycdf.CDF('wi_h1_wav_20120307_v01.cdf')
+				
+			# radio_in = wget.download(url)
+			
+			# os.remove(radio_name)
+			# print(f'\nParsing Type III Data for {date}')
+			time_rb = []
+			for i in cdf['Epoch']:
+				time_rb.append(i)
+			freq_rb = []
+			for i in cdf['Frequency_RAD1']:
+				freq_rb.append(i)
+			rad1_rb = []
+			for i in cdf['E_VOLTAGE_RAD1']:
+				rad1_rb.append(i)
+
+			data_time = pd.DataFrame(time_rb)
+			data_time.columns = ['date_time']
+
+			data_freq = pd.DataFrame(freq_rb)
+			data_freq.columns = ['freq']
+
+			data_rad1 = pd.DataFrame(rad1_rb)
+			data_rad1.columns = data_freq['freq']
+
+			rb_concat = pd.concat([data_time, data_rad1], axis=1)
+			rb_concat.set_index(['date_time'], inplace=True)
+			rb_data = rb_data.append(rb_concat)
+
+
+
+			'''
 			radio_name = f'wi_h1_wav_{event_date}_v01.cdf'
 			url = f'https://cdaweb.gsfc.nasa.gov/pub/data/wind/waves/wav_h1/{event_date[:4]}/{radio_name}'
 			radio_in = wget.download(url)
@@ -323,6 +367,7 @@ if '2' in option_bin_set:
 			rb_concat.set_index(['date_time'], inplace=True)
 		
 			rb_data = rb_data.append(rb_concat)
+			'''
 		except:
 			print(f'\nMISSING DATA FOR: {date}\n')
 			continue
@@ -710,6 +755,7 @@ if '1' in option_bin_set:
 if '2' in option_bin_set:
 	next()
 	#=============== Spectrogram testing (begin)
+	'''
 	from scipy import signal
 	from matplotlib.pyplot import cm
 	import seaborn as sns
@@ -719,18 +765,18 @@ if '2' in option_bin_set:
 	#axes[length_data_list[j]].set_ylabel('Type III Radio\nBurst Intensity [sfu]', fontname="Arial", fontsize = 12)
 
 	
-
+	'''
 	#=============== Spectrogram testing (end)
 
 
 	# axes[length_data_list[j]].plot(p4(xx).loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='red', label= 'Gaussian')
 
 	#================= Working code (uncommented) ---- begin ----
-	'''
+	
 	axes[length_data_list[j]].plot(rb_data['avg'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='navy', label= '20 kHz - 1040 kHz')
 	axes[length_data_list[j]].set_ylabel('Wind Type III\nRadio Burst [sfu]', fontname="Arial", fontsize = 12)
 	axes[length_data_list[j]].set_ylabel('Type III Radio\nBurst Intensity [sfu]', fontname="Arial", fontsize = 12)
-	'''
+	
 
 	#================= Working code (uncommented) ---- end ----
 	# axes[length_data_list[j]].plot(rb_data[int('1020')].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='red', label= '1020')
