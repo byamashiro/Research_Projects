@@ -54,6 +54,12 @@
   - [ ] Sun projection from -180 to 180, including the back side
   - [ ] Plot individual events on the Sun
 
+- [ ] Local file code conversion
+  - [x] GOES-13/15 Proton flux (8/30/2017)
+  - [x] WIND Type III Radio Burst (8/30/2017)
+  - [ ] ACE Solar Wind speed
+  - [ ] Neutron Monitor counts/s
+  - [ ] GOES-13/15 Xray flux
 
 
 

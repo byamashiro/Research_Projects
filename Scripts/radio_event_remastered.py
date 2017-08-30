@@ -14,7 +14,7 @@ import shutil
 
 data_directory = '/Users/bryanyamashiro/Documents/Research_Projects/Data'
 
-event_columns = ['event_date', 'event_st', 'event_ed', 'plot_opt']
+event_columns = ['event_date_st', 'event_date_ed', 'event_st', 'event_ed', 'plot_opt', 'full_list']
 event_input = pd.read_csv('event_lists/radio_list.txt', sep='\t', names=event_columns, comment='#')
 
 
@@ -29,14 +29,14 @@ def daterange( start_date, end_date ):
 
 for ev_i in range(len(event_input)):
 	# start_date = input('Enter start date (yyyymmdd): ')
-	start_date = str(event_input['event_date'][ev_i])
+	start_date = str(event_input['event_date_st'][ev_i])
 	start_day = start_date[6:8]
 	start_month = start_date[4:6]
 	start_year = start_date[:4]
 	#start_minute = '00'
 	
 	# end_date = input('Enter a end date (yyyymmdd): ')
-	end_date = str(event_input['event_date'][ev_i])
+	end_date = str(event_input['event_date_ed'][ev_i])
 	if end_date == '':
 		end_date = start_date
 	
