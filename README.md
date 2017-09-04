@@ -24,6 +24,14 @@
 
 # Current Tasks
 
+- [ ] Set a variable up in the preface of the code to specify if files should be saved.
+
+- [ ] Add documentation for system and specifics on set parameters.
+  - [ ] Add python version 3.0+
+  - [ ] Set parameters
+    - [ ] Paths
+    - [ ] Save settings
+
 - [ ] Collect WIND/ACE Solar Wind data
   - [x] Bulk speed (7/12/2017)
   - [ ] Temperature
