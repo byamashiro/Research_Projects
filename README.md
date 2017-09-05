@@ -24,7 +24,9 @@
 
 # Current Tasks
 
-- [ ] Set a variable up in the preface of the code to specify if files should be saved.
+- [ ] Set a variable up in the preface of the code to specify options
+  - [ ] If files should be saved
+  - [ ] The min/max parameter to draw vertical lines on each subplot
 
 - [ ] Add documentation for system and specifics on set parameters.
   - [ ] Add python version 3.0+
