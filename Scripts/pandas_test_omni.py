@@ -12,9 +12,13 @@ from urllib import error
 
 import shutil
 
+# ======= Parameters to set
 
 data_directory = '/Users/bryanyamashiro/Documents/Research_Projects/Data'
+save_option = 'yes' # either 'yes' or 'no'
 
+
+# ========== Definitions
 
 def daterange( start_date, end_date ):
     if start_date <= end_date: #
@@ -25,7 +29,7 @@ def daterange( start_date, end_date ):
             yield start_date - datetime.timedelta( n )
 
 #==============Choosing Dataset
-print(f'{"="*40}\n{"=" + "DATASETS".center(38," ") + "="}\n{"="*40}\n1 - GOES-13/15 Proton Flux\n2 - Wind Type III Radio Bursts\n3 - Neutron Monitor Counts\n4 - ACE/Wind Solar Wind Speed\n5 - GOES-13/15 Xray Flux\n{"="*40}')
+print(f'{"="*40}\n{"=" + "DATASETS".center(38," ") + "="}\n{"="*40}\n1 - GOES-13/15 Proton Flux\n2 - Wind Type III Radio Bursts\n3 - Neutron Monitor Counts (Requires Internet Connection)\n4 - ACE/Wind Solar Wind Speed\n5 - GOES-13/15 Xray Flux\n{"="*40}')
 
 '''
 1 - GOES Proton Flux
@@ -184,7 +188,10 @@ if '1' in option_bin_set:
 				dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
 				proton_df_ind = pd.read_csv(f'{proton_in}', skiprows=282, date_parser=dateparse,index_col='time_tag', header=0)
 				proton_df = proton_df.append(proton_df_ind)
-				shutil.move(f'{proton_name}', f'{data_directory}/GOES/GOES_{satellite_no}/Pflux/')
+				if save_option == 'yes':
+					shutil.move(f'{proton_name}', f'{data_directory}/GOES/GOES_{satellite_no}/Pflux/')
+				elif save_option == 'no':
+					os.remove(proton_name)
 	
 			# os.remove(proton_name)
 		except:
@@ -299,9 +306,12 @@ if '2' in option_bin_set:
 			elif radio_check == False:
 				radio_url = f'https://cdaweb.gsfc.nasa.gov/pub/data/wind/waves/wav_h1/{event_date[:4]}/{radio_name}'
 				radio_in = wget.download(radio_url)	
-				shutil.move(f'{radio_name}', f'{data_directory}/WIND/RAD1/')
 				cdf = pycdf.CDF(radio_in) # cdf = pycdf.CDF('wi_h1_wav_20120307_v01.cdf')
-				
+				if save_option == 'yes':
+					shutil.move(f'{radio_name}', f'{data_directory}/WIND/RAD1/')
+				elif save_option == 'no':
+					os.remove(radio_name)
+
 			# radio_in = wget.download(url)
 			
 			# os.remove(radio_name)
@@ -571,11 +581,21 @@ if '4' in option_bin_set:
 	
 			#====ACE
 			swind_ace_name = f'ac_h0_swe_{event_date}_v10.cdf'
-			swind_ace_url = f'https://cdaweb.gsfc.nasa.gov/pub/data/ace/swepam/level_2_cdaweb/swe_h0/{event_date[:4]}/{swind_ace_name}'
-			swind_ace_in = wget.download(swind_ace_url)
-	
-			swind_ace_cdf = pycdf.CDF(swind_ace_name) # cdf = pycdf.CDF('wi_h1_wav_20120307_v01.cdf')
-			os.remove(swind_ace_name)
+			swind_ace_check = os.path.isfile(f'{data_directory}/ACE/SWE_H0/{swind_ace_name}')
+
+			if swind_ace_check == True:
+				swind_ace_cdf = pycdf.CDF(f'{data_directory}/ACE/SWE_H0/{swind_ace_name}')
+
+			elif swind_ace_check == False:
+				swind_ace_url = f'https://cdaweb.gsfc.nasa.gov/pub/data/ace/swepam/level_2_cdaweb/swe_h0/{event_date[:4]}/{swind_ace_name}'
+				swind_ace_in = wget.download(swind_ace_url)
+				swind_ace_cdf = pycdf.CDF(swind_ace_in) # cdf = pycdf.CDF('wi_h1_wav_20120307_v01.cdf')
+				if save_option == 'yes':
+					shutil.move(f'{swind_ace_name}', f'{data_directory}/ACE/SWE_H0/')
+				elif save_option == 'no':
+					os.remove(swind_ace_name)
+
+			# os.remove(swind_ace_name)
 				
 			time_ace_swind = []
 			for i in swind_ace_cdf['Epoch']:
@@ -600,8 +620,20 @@ if '4' in option_bin_set:
 			for i in range(10):
 				try:
 					swind_wind_name = f'wi_k0_swe_{event_date}_v0{i}.cdf'
-					swind_wind_url = f'https://cdaweb.gsfc.nasa.gov/pub/data/wind/swe/swe_k0/{event_date[:4]}/{swind_wind_name}'
-					swind_wind_in = wget.download(swind_wind_url)
+					swind_wind_check = os.path.isfile(f'{data_directory}/WIND/K0/{swind_wind_name}')
+
+					if swind_wind_check == True:
+						swind_wind_cdf = pycdf.CDF(f'{data_directory}/WIND/K0/{swind_wind_name}')
+
+					elif swind_wind_check == False:
+						swind_wind_url = f'https://cdaweb.gsfc.nasa.gov/pub/data/wind/swe/swe_k0/{event_date[:4]}/{swind_wind_name}'
+						swind_wind_in = wget.download(swind_wind_url)
+						swind_wind_cdf = pycdf.CDF(swind_wind_in)
+						if save_option == 'yes':
+							shutil.move(f'{swind_wind_name}', f'{data_directory}/WIND/K0/')
+						elif save_option == 'no':
+							os.remove(swind_wind_name)
+
 				except error.HTTPError as err:
 					#print(f'\nVERSION ERROR: The version v0{i} for WIND data does not exist, attempting v0{i+1}')
 					continue
@@ -609,8 +641,8 @@ if '4' in option_bin_set:
 					break
 	
 	
-			swind_wind_cdf = pycdf.CDF(swind_wind_name) # cdf = pycdf.CDF('wi_h1_wav_20120307_v01.cdf')
-			os.remove(swind_wind_name)
+			# swind_wind_cdf = pycdf.CDF(swind_wind_name) # cdf = pycdf.CDF('wi_h1_wav_20120307_v01.cdf')
+			# os.remove(swind_wind_name)
 				
 			time_wind_swind = []
 			for i in swind_wind_cdf['Epoch']:
@@ -649,29 +681,108 @@ if '5' in option_bin_set:
 			print('SATELLITE ERROR: Must specify either 13 or 15.')
 			sys.exit(0)
 
-	print(f'\n{"="*40}\n{"=" + "GOES-{satellite_no_xray} Xray Flux".center(38," ") + "="}\n{"="*40}')
+	print(f'\n{"="*40}\n{"=" + f"GOES-{satellite_no_xray} Xray Flux".center(38," ") + "="}\n{"="*40}')
 
 	xray_df = pd.DataFrame([])
 	
 	for date in daterange( start, end ):
+		'''
 		try:
 			event_date = str(date).replace('-','')
+
 			#print(event_date[0:6])
-			xray_name = f'g{satellite_no_xray}_xrs_2s_{event_date}_{event_date}.csv'
-			#g15_xrs_2s_20120307_20120307.csv
-			xray_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_full/{event_date[:4]}/{event_date[4:6]}/goes{satellite_no_xray}/csv/{xray_name}'
-			xray_in = wget.download(xray_url)
-	
+			proton_name = f'g{satellite_no}_epead_p27w_32s_{event_date}_{event_date}.csv'
+			proton_check = os.path.isfile(f'{data_directory}/GOES/GOES_{satellite_no}/Pflux/{proton_name}')
+			if proton_check == True:
+				dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
+				proton_df_ind = pd.read_csv(f'{data_directory}/GOES/GOES_{satellite_no}/Pflux/{proton_name}', skiprows=282, date_parser=dateparse,index_col='time_tag', header=0)
+				proton_df = proton_df.append(proton_df_ind)
+
+			elif proton_check == False:
+				proton_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_full/{event_date[:4]}/{event_date[4:6]}/goes{satellite_no}/csv/{proton_name}'
+				proton_in = wget.download(proton_url)	
+				dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
+				proton_df_ind = pd.read_csv(f'{proton_in}', skiprows=282, date_parser=dateparse,index_col='time_tag', header=0)
+				proton_df = proton_df.append(proton_df_ind)
+				if save_option == 'yes':
+					shutil.move(f'{proton_name}', f'{data_directory}/GOES/GOES_{satellite_no}/Pflux/')
+				elif save_option == 'no':
+					os.remove(proton_name)
+		'''
+
+
+
+		try:
+			event_date = str(date).replace('-','')
+
+			xray_name = f'g{satellite_no_xray}_xrs_2s_{event_date}_{event_date}.csv' #g15_xrs_2s_20120307_20120307.csv
+			xray_check = os.path.isfile(f'{data_directory}/GOES/GOES_{satellite_no_xray}/XRflux/{xray_name}')
 			xray_name_list = ['time_tag','A_QUAL_FLAG','A_COUNT','A_FLUX','B_QUAL_FLAG','B_COUNT','B_FLUX']
+			#xray_name_list = ['time_tag','A_QUAL_FLAG','A_COUNT','A_FLUX','B_QUAL_FLAG','B_COUNT','B_FLUX']
+
+
+			if xray_check == True:
+				dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
+				xray_df_ind = pd.read_csv(f'{data_directory}/GOES/GOES_{satellite_no_xray}/XRflux/{xray_name}', skiprows=140, names=xray_name_list, date_parser=dateparse,index_col='time_tag', header=0)
+				xray_df = xray_df.append(xray_df_ind)
+
+
+			elif xray_check == False:
+				xray_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_full/{event_date[:4]}/{event_date[4:6]}/goes{satellite_no_xray}/csv/{xray_name}'
+				xray_in = wget.download(xray_url)
 	
-			dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
-			xray_df_ind = pd.read_csv(f'{xray_in}', skiprows=140, names=xray_name_list, date_parser=dateparse,index_col='time_tag', header=0) # 138 for 20120307
-			xray_df = xray_df.append(xray_df_ind)
-	
-			os.remove(xray_name)
+				dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
+				xray_df_ind = pd.read_csv(f'{xray_in}', skiprows=140, names=xray_name_list, date_parser=dateparse,index_col='time_tag', header=0) # 138 for 20120307
+				xray_df = xray_df.append(xray_df_ind)
+
+				if save_option == 'yes':
+					shutil.move(f'{xray_name}', f'{data_directory}/GOES/GOES_{satellite_no_xray}/XRflux/')
+				elif save_option == 'no':
+					os.remove(xray_name)
+
+
+		
+		except error.HTTPError as err:
+			
+			# print("working except error")
+			# print(f'\nVERSION ERROR: The version v0{i} for WIND data does not exist, attempting v0{i+1}')
+
+			satellite_no_xray_error = ['13', '15']
+
+			for i in satellite_no_xray_error:
+				if i == satellite_no_xray:
+					satellite_no_xray_error.remove(f'{i}')
+					satellite_no_xray = satellite_no_xray_error[0]
+					print(f'GOES-{i} data does not exist for this date ({event_date}), using data from GOES-{satellite_no_xray}.')
+
+					xray_name_error = f'g{satellite_no_xray_error[0]}_xrs_2s_{event_date}_{event_date}.csv' #g15_xrs_2s_20120307_20120307.csv
+					xray_error_check = os.path.isfile(f'{data_directory}/GOES/GOES_{satellite_no_xray_error[0]}/XRflux/{xray_name_error}')
+					
+					if xray_error_check == True:
+						dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
+						xray_df_ind = pd.read_csv(f'{data_directory}/GOES/GOES_{satellite_no_xray_error[0]}/XRflux/{xray_name_error}', skiprows=140, names=xray_name_list, date_parser=dateparse,index_col='time_tag', header=0)
+						xray_df = xray_df.append(xray_df_ind)
+
+					elif xray_error_check == False:
+						xray_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_full/{event_date[:4]}/{event_date[4:6]}/goes{satellite_no_xray_error[0]}/csv/{xray_name_error}'
+						xray_in = wget.download(xray_url)
+				
+						dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
+						xray_df_ind = pd.read_csv(f'{xray_in}', skiprows=140, names=xray_name_list, date_parser=dateparse,index_col='time_tag', header=0) # 138 for 20120307
+						xray_df = xray_df.append(xray_df_ind)
+		
+						if save_option == 'yes':
+							shutil.move(f'{xray_name_error}', f'{data_directory}/GOES/GOES_{satellite_no_xray_error[0]}/XRflux/')
+						elif save_option == 'no':
+							os.remove(xray_name)
+
 		except:
 			print(f'\nMissing data for {date}')
 			continue
+
+		else:
+			break	
+
 	
 	xray_df.loc[xray_df['A_FLUX'] < 0.0] = np.nan #6.5 MeV
 	xray_df.loc[xray_df['B_FLUX'] < 0.0] = np.nan #11.6 MeV
@@ -829,7 +940,7 @@ if '5' in option_bin_set:
 	axes[length_data_list[j]].plot(xray_df['B_FLUX'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='blue', label='0.1-0.8 nm')
 	axes[length_data_list[j]].plot(xray_df['A_FLUX'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='red', label='0.05-0.4 nm')
 	axes[length_data_list[j]].set_yscale('log')
-	axes[length_data_list[j]].set_ylabel('GOES-{satellite_no_xray} Xray\nFlux [Wm$^2$]', fontname="Arial", fontsize = 12)
+	axes[length_data_list[j]].set_ylabel(f'GOES-{satellite_no_xray} Xray\nFlux [Wm$^2$]', fontname="Arial", fontsize = 12)
 	applyPlotStyle()
 
 
