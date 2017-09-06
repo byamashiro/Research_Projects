@@ -25,7 +25,7 @@
 # Current Tasks
 
 - [ ] Set a variable up in the preface of the code to specify options
-  - [ ] If files should be saved
+  - [x] If files should be saved (9/6/2017)
   - [ ] The min/max parameter to draw vertical lines on each subplot
 
 - [ ] Add documentation for system and specifics on set parameters.
@@ -74,6 +74,10 @@
 
 
 # Current Tasks and Errors
+
+### Version check and checking if the file exists
+- When checking if a file exists, there is a slight issue when running into the loops. Currently the code will search if the file exists first, and then assigns a boolean, then runs the loop to look for versions. The loops that cycle through various versions will create a False value every time. Possibly implement a scheme that'll search for the existing file after pulling the file from online.
+```radio_check = os.path.isfile(f'{data_directory}/WIND/RAD1/{radio_name}')```
 
 ### Type III radio burst representation
 - Change the radio burst average into a spectrogram. Try the 'plt.pcolormesh(t, f, Sxx)' function into the radio burst subplot. The 't' for time, 'f' for frequency. 
