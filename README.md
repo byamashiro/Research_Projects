@@ -27,6 +27,7 @@
 - [ ] Set a variable up in the preface of the code to specify options
   - [x] If files should be saved (9/6/2017)
   - [ ] The min/max parameter to draw vertical lines on each subplot
+  - [ ] Add an option to use a list for events in OMNI
 
 - [ ] Add documentation for system and specifics on set parameters.
   - [ ] Add python version 3.0+
@@ -39,8 +40,9 @@
   - [ ] Temperature
   - [ ] Magnetic field components/absolute value
 
-- [ ] Add GOES-13 xray flux
+- [ ] GOES-13 xray flux
   - [ ] Add markers and tags to certain xray flux magnitudes
+  - [x] Add GOES-13 xray flux (9/6/2017)
 
 
 - [ ] Push headers to data without forcing pandas names with files that have different header line numbers
@@ -71,6 +73,9 @@
   - [ ] Neutron Monitor counts/s
   - [ ] GOES-13/15 Xray flux
 
+- [ ] Use itertools to sort and group
+  - [ ] Use 'itertools.groupby' to group objects of flare class intensity
+  - [ ] Reached a certain magnitude of proton flux
 
 
 # Current Tasks and Errors

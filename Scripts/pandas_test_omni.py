@@ -18,6 +18,20 @@ data_directory = '/Users/bryanyamashiro/Documents/Research_Projects/Data'
 save_option = 'yes' # either 'yes' or 'no'
 
 
+
+
+
+# ========== Event list (Still being implemented, do not uncomment)
+'''
+event_list_directory = '/Users/bryanyamashiro/Documents/Research_Projects/Scripts/event_lists'
+event_option = 'yes' # either 'yes' or 'no'
+event_list_name = 'radio_list.txt'
+
+if event_option == 'yes':
+	event_list = pd.read_csv(f'{event_list_name}', comment='#')
+
+'''
+
 # ========== Definitions
 
 def daterange( start_date, end_date ):

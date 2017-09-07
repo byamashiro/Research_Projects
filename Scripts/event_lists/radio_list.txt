@@ -1,4 +1,5 @@
 # radio event list
+# date start, date end, hour_start, hour_end, option_1, 'full'
 20110607  	20110607	6 	8 	1	'full'
 20110804  	20110804	3 	5 	1	'full'
 20110809  	20110809	7 	9 	1	'full'
