@@ -9,16 +9,19 @@ import os
 import random
 from spacepy import pycdf
 from urllib import error
+from matplotlib.pyplot import cm
 
 import shutil
 
+plt.close("all")
 # ======= Parameters to set
 
 data_directory = '/Users/bryanyamashiro/Documents/Research_Projects/Data'
 save_option = 'yes' # either 'yes' or 'no'
-event_option = 'yes' # either 'yes' or 'no'
 
 
+
+event_option = 'no' # either 'yes' or 'no'
 # ========== Event list (Still being implemented, do not uncomment)
 '''
 event_list_directory = '/Users/bryanyamashiro/Documents/Research_Projects/Scripts/event_lists'
@@ -167,7 +170,7 @@ if '1' in option_bin_set:
 				print('SATELLITE ERROR: Must specify either 13 or 15.')
 				sys.exit(0)
 
-	print(f'\n{"="*40}\n{"=" + "GOES-{satellite_no} Proton Flux".center(38," ") + "="}\n{"="*40}')
+	print(f'\n{"="*40}\n{"=" + f"GOES-{satellite_no} Proton Flux".center(38," ") + "="}\n{"="*40}')
 	print(f'{"Energy Channels".center(7, " ")}\n{"-"*20}\n1: 6.5 MeV\n2: 11.6 MeV\n3: 30.6 MeV\n4: 63.1 MeV\n5: 165 MeV\n6: 433 MeV')
 	energy_bin_set = set()
 	
@@ -176,7 +179,7 @@ if '1' in option_bin_set:
 		if event_option == 'yes':
 			energy_bin = 'full'
 
-		elif energy_option != 'yes':
+		elif event_option != 'yes':
 			energy_bin = input('Enter Energy Channel(s) or "full": ')
 
 		if energy_bin != 'done':
@@ -861,7 +864,7 @@ for i in range(length_data):
 
 
 j = -1
-def next():
+def next_global():
 	global j
 	if (j < length_data+2):
 		j += 1
@@ -903,7 +906,7 @@ if length_data == 1:
 
 
 if '1' in option_bin_set:
-	next()
+	next_global()
 	for i in sorted(energy_bin_list):
 		axes[length_data_list[j]].plot(proton_df[f'{i[0]}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color=f'{i[2]}', label= f'{i[1]}')#, logy=True)
 	axes[length_data_list[j]].set_yscale('log')
@@ -913,7 +916,7 @@ if '1' in option_bin_set:
 
 
 if '2' in option_bin_set:
-	next()
+	next_global()
 	#=============== Spectrogram testing (begin)
 	'''
 	from scipy import signal
@@ -933,13 +936,20 @@ if '2' in option_bin_set:
 
 	#================= Working code (uncommented) ---- begin ----
 	
-	axes[length_data_list[j]].plot(rb_data['avg'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='navy', label= '20 kHz - 1040 kHz')
+	#axes[length_data_list[j]].plot(rb_data['avg'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='navy', label= '20 kHz - 1040 kHz')
+	color_cm=iter(cm.viridis(np.linspace(0,1, 5 )))
+	freq_list = [100, 300, 500, 700, 900]
+	
+	for frequency in freq_list:
+		color_choice = next(color_cm)
+	
+		axes[length_data_list[j]].plot(rb_data[frequency].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color=color_choice, label= f'{frequency} kHz')
 	axes[length_data_list[j]].set_ylabel('Wind Type III\nRadio Burst [sfu]', fontname="Arial", fontsize = 12)
 	axes[length_data_list[j]].set_ylabel('Type III Radio\nBurst Int. [sfu]', fontname="Arial", fontsize = 12)
 	
 
 	#================= Working code (uncommented) ---- end ----
-	# axes[length_data_list[j]].plot(rb_data[int('1020')].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='red', label= '1020')
+	# axes[length_data_lisst[j]].plot(rb_data[int('1020')].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='red', label= '1020')
 	# wind_range = range(20,1041, 2)
 	# axes[length_data_list[j]].plot(rb_data.loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}']) # [wind_range] , color='red', label= '1020')
 
@@ -962,7 +972,7 @@ if '2' in option_bin_set:
 
 
 if '3' in option_bin_set:
-	next()
+	next_global()
 	color_count = []
 
 	for i in sorted_nm_list:
@@ -978,14 +988,14 @@ if '3' in option_bin_set:
 	applyPlotStyle()
 
 if '4' in option_bin_set:
-	next()
+	next_global()
 	axes[length_data_list[j]].plot(wind_data['wind_bulk_vel'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='red', label='Wind: Ion Bulk Flow Speed GSE')
 	axes[length_data_list[j]].plot(ace_data['ace_bulk_vel'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='blue', label='ACE: H Bulk Speed')
 	axes[length_data_list[j]].set_ylabel('Solar Wind\nSpeed [km/s]', fontname="Arial", fontsize = 12)
 	applyPlotStyle()
 
 if '5' in option_bin_set:
-	next()
+	next_global()
 	axes[length_data_list[j]].plot(xray_df['B_FLUX'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='blue', label='0.1-0.8 nm')
 	axes[length_data_list[j]].plot(xray_df['A_FLUX'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='red', label='0.05-0.4 nm')
 	axes[length_data_list[j]].set_yscale('log')

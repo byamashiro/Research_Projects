@@ -27,7 +27,7 @@
 - [ ] Set a variable up in the preface of the code to specify options
   - [x] If files should be saved (9/6/2017)
   - [ ] The min/max parameter to draw vertical lines on each subplot
-  - [ ] Add an option to use a list for events in OMNI
+  - [x] Add an option to use a list for events in OMNI (9/8/2017)
 
 - [ ] Add documentation for system and specifics on set parameters.
   - [ ] Add python version 3.0+
@@ -79,6 +79,9 @@
 
 
 # Current Tasks and Errors
+
+### Comparison check with event lists
+- Compare the files from the event list against the xflare list. Check the intensities of radio bursts and xflares, and put an indicator for xflares that coincide with the radio bursts (i.e mark with 'red').
 
 ### Version check and checking if the file exists
 - When checking if a file exists, there is a slight issue when running into the loops. Currently the code will search if the file exists first, and then assigns a boolean, then runs the loop to look for versions. The loops that cycle through various versions will create a False value every time. Possibly implement a scheme that'll search for the existing file after pulling the file from online.
