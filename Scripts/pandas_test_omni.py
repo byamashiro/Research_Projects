@@ -16,22 +16,22 @@ import shutil
 
 data_directory = '/Users/bryanyamashiro/Documents/Research_Projects/Data'
 save_option = 'yes' # either 'yes' or 'no'
-
-
-
+event_option = 'yes' # either 'yes' or 'no'
 
 
 # ========== Event list (Still being implemented, do not uncomment)
 '''
 event_list_directory = '/Users/bryanyamashiro/Documents/Research_Projects/Scripts/event_lists'
-event_option = 'yes' # either 'yes' or 'no'
-event_list_name = 'radio_list.txt'
+event_list_name = 'xflare_list.txt'
+
+
+event_columns = ['event_date_st', 'event_date_ed', 'flare_int', 'event_st_hr', 'event_ed_hr', 'opt_1', 'opt_2', 'opt_3', 'opt_4', 'prot_sat', 'xray_sat', 'prot_opt']
+
 
 if event_option == 'yes':
-	event_list = pd.read_csv(f'{event_list_name}', comment='#')
+	event_list = pd.read_csv(f'{event_list_directory}/{event_list_name}', sep = '\t', names=event_columns, comment='#')
 
 '''
-
 # ========== Definitions
 
 def daterange( start_date, end_date ):
@@ -43,6 +43,7 @@ def daterange( start_date, end_date ):
             yield start_date - datetime.timedelta( n )
 
 #==============Choosing Dataset
+
 print(f'{"="*40}\n{"=" + "DATASETS".center(38," ") + "="}\n{"="*40}\n1 - GOES-13/15 Proton Flux\n2 - Wind Type III Radio Bursts\n3 - Neutron Monitor Counts (Requires Internet Connection)\n4 - ACE/Wind Solar Wind Speed\n5 - GOES-13/15 Xray Flux\n{"="*40}')
 
 '''
@@ -56,30 +57,44 @@ print(f'{"="*40}\n{"=" + "DATASETS".center(38," ") + "="}\n{"="*40}\n1 - GOES-13
 
 option_bin_set = set()
 while True: # energy_bin != 'done':
-	option_bin = input('Enter Dataset Option then "done" or "all": ').lower()
-	if option_bin != 'done':
-		if option_bin == 'all':
-			option_bin_set.add('1')
-			option_bin_set.add('2')
-			option_bin_set.add('3')
-			option_bin_set.add('4')
-			option_bin_set.add('5')
-			break
-		
-		elif int(option_bin) < 6:
-			option_bin_set.add(option_bin)
+	if event_option == 'yes':
+		option_bin_set = {'1', '2', '4', '5'}
 
-			if len(option_bin_set) > 4:
-				print('SELECTION ERROR: Only 4 datasets are allowed per canvas.')
-				sys.exit(0)
-
-	elif option_bin == 'done':
 		break
+
+	if event_option != 'yes':
+		option_bin = input('Enter Dataset Option then "done" or "all": ').lower()
+
+		if option_bin != 'done':
+			if option_bin == 'all':
+				option_bin_set.add('1')
+				option_bin_set.add('2')
+				option_bin_set.add('3')
+				option_bin_set.add('4')
+				option_bin_set.add('5')
+				break
+			
+			elif int(option_bin) < 6:
+				option_bin_set.add(option_bin)
+	
+				if len(option_bin_set) > 4:
+					print('SELECTION ERROR: Only 4 datasets are allowed per canvas.')
+					sys.exit(0)
+	
+		elif option_bin == 'done':
+			break
 
 
 #===============Time frame
-start_date = input('Enter a start date (yyyymmdd): ')
-end_date = input('Enter a end date (yyyymmdd): ')
+if event_option == 'yes':
+	start_date = str(event_list['event_date_st'][0])
+	end_date = str(event_list['event_date_ed'][0])
+
+if event_option != 'yes':
+	start_date = input('Enter a start date (yyyymmdd): ')
+	end_date = input('Enter a end date (yyyymmdd): ')
+
+
 if end_date == '':
 	end_date = start_date
 
@@ -99,24 +114,31 @@ if len(start_date) != 8 or len(end_date) != 8:
 	print('\nDATE ERROR: Dates must have 8 digits.')
 	sys.exit(0)
 
-start_hour = input('Enter a start hour or "full": ').zfill(2)
-if start_hour.isdigit() == True:
-	end_hour = input('Enter a end hour: ').zfill(2)
-	if start_date == end_date:
-		if (int(end_hour) - int(start_hour)) < 0:
-			print('\nTIME ERROR: Difference between two hours must be greater than zero.')
-			sys.exit(0)
-	elif int(end_hour) > 24 or int(start_hour) > 23:
-		print('\nTIME ERROR: Hours must be between 0 and 23.')
-		sys.exit(0)
 
-if start_hour.isdigit() == False:
-	if start_hour == 'full':
-		start_hour = '00'.zfill(2)
-		end_hour = '23'.zfill(2)
-	else:
-		print('\nTIME ERROR: Not a valid alternative hour.')
-		sys.exit(0)
+if event_option == 'yes':
+	start_hour = str(event_list['event_st_hr'][0])
+	end_hour = str(event_list['event_ed_hr'][0])
+
+if event_option != 'yes':
+	start_hour = input('Enter a start hour or "full": ').zfill(2)
+
+	if start_hour.isdigit() == True:
+		end_hour = input('Enter a end hour: ').zfill(2)
+		if start_date == end_date:
+			if (int(end_hour) - int(start_hour)) < 0:
+				print('\nTIME ERROR: Difference between two hours must be greater than zero.')
+				sys.exit(0)
+		elif int(end_hour) > 24 or int(start_hour) > 23:
+			print('\nTIME ERROR: Hours must be between 0 and 23.')
+			sys.exit(0)
+
+	if start_hour.isdigit() == False:
+		if start_hour == 'full':
+			start_hour = '00'.zfill(2)
+			end_hour = '23'.zfill(2)
+		else:
+			print('\nTIME ERROR: Not a valid alternative hour.')
+			sys.exit(0)
 
 
 start = datetime.date( year = int(f'{start_date[0:4]}'), month = int(f'{start_date[4:6]}') , day = int(f'{start_date[6:8]}') )
@@ -135,18 +157,28 @@ event_obj_end_str_date = datetime.datetime.strftime(event_obj_end, '%Y%m%d %H')
 
 #=========== 1: GOES Proton Flux
 if '1' in option_bin_set:
-	satellite_no = input('Specify which GOES Satellite for Proton Flux (13 or 15): ')
-	if satellite_no != '13':
-		if satellite_no != '15':
-			print('SATELLITE ERROR: Must specify either 13 or 15.')
-			sys.exit(0)
+	if event_option == 'yes':
+		satellite_no = str(event_list['prot_sat'][0])
+
+	if event_option != 'yes':
+		satellite_no = input('Specify which GOES Satellite for Proton Flux (13 or 15): ')
+		if satellite_no != '13':
+			if satellite_no != '15':
+				print('SATELLITE ERROR: Must specify either 13 or 15.')
+				sys.exit(0)
 
 	print(f'\n{"="*40}\n{"=" + "GOES-{satellite_no} Proton Flux".center(38," ") + "="}\n{"="*40}')
 	print(f'{"Energy Channels".center(7, " ")}\n{"-"*20}\n1: 6.5 MeV\n2: 11.6 MeV\n3: 30.6 MeV\n4: 63.1 MeV\n5: 165 MeV\n6: 433 MeV')
 	energy_bin_set = set()
 	
 	while True: # energy_bin != 'done':
-		energy_bin = input('Enter Energy Channel(s) or "full": ')
+
+		if event_option == 'yes':
+			energy_bin = 'full'
+
+		elif energy_option != 'yes':
+			energy_bin = input('Enter Energy Channel(s) or "full": ')
+
 		if energy_bin != 'done':
 			if energy_bin == 'full':
 				energy_bin_set.add('1')
@@ -689,11 +721,14 @@ if '4' in option_bin_set:
 
 #=========== 5: GOES-15 Xray Flux
 if '5' in option_bin_set:
-	satellite_no_xray = input('Specify which GOES Satellite for Xray Flux (13 or 15): ')
-	if satellite_no_xray != '13':
-		if satellite_no_xray != '15':
-			print('SATELLITE ERROR: Must specify either 13 or 15.')
-			sys.exit(0)
+	if event_option == 'yes':
+		satellite_no_xray = str(event_list['xray_sat'][0])
+	if event_option != 'yes':
+		satellite_no_xray = input('Specify which GOES Satellite for Xray Flux (13 or 15): ')
+		if satellite_no_xray != '13':
+			if satellite_no_xray != '15':
+				print('SATELLITE ERROR: Must specify either 13 or 15.')
+				sys.exit(0)
 
 	print(f'\n{"="*40}\n{"=" + f"GOES-{satellite_no_xray} Xray Flux".center(38," ") + "="}\n{"="*40}')
 
@@ -900,7 +935,7 @@ if '2' in option_bin_set:
 	
 	axes[length_data_list[j]].plot(rb_data['avg'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='navy', label= '20 kHz - 1040 kHz')
 	axes[length_data_list[j]].set_ylabel('Wind Type III\nRadio Burst [sfu]', fontname="Arial", fontsize = 12)
-	axes[length_data_list[j]].set_ylabel('Type III Radio\nBurst Intensity [sfu]', fontname="Arial", fontsize = 12)
+	axes[length_data_list[j]].set_ylabel('Type III Radio\nBurst Int. [sfu]', fontname="Arial", fontsize = 12)
 	
 
 	#================= Working code (uncommented) ---- end ----
@@ -971,4 +1006,8 @@ plt.suptitle(f'Space Weather Monitor\n[{event_obj_start_str} -- {event_obj_end_s
 plt.subplots_adjust(wspace = 0, hspace = 0, top=0.91)
 #plt.savefig('omni_test_legacy.png', format='png', dpi=900)
 
-plt.show()
+if event_option == 'yes':
+	plt.savefig(f'xflare_events/omni_test_{event_date}.png', format='png', dpi=900)
+
+if event_option != 'yes':
+	plt.show()
