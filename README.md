@@ -66,19 +66,24 @@
   - [ ] Sun projection from -180 to 180, including the back side
   - [ ] Plot individual events on the Sun
 
-- [ ] Local file code conversion
-  - [x] GOES-13/15 Proton flux (8/30/2017)
-  - [x] WIND Type III Radio Burst (8/30/2017)
-  - [ ] ACE Solar Wind speed
-  - [ ] Neutron Monitor counts/s
-  - [ ] GOES-13/15 Xray flux
-
 - [ ] Use itertools to sort and group
   - [ ] Use 'itertools.groupby' to group objects of flare class intensity
   - [ ] Reached a certain magnitude of proton flux
 
+- [ ] GOES Event Detector
+  - [x] Download data files from web for each year (09/10/2017)
+    - [x] Incorporate both GOES-13 and GOES-15 (09/10/2017)
+  - [x] Set threshold level for each event in the >100 MeV energy range (09/10/2017)
+  - [x] Create sets to show the differences and intersections of both satellites (09/10/2017)
+  - [ ] For loops to plot data for each day to confirm proton event
+    - [ ] Indicate overlaps in events that aren't separated by over a day
+    - [ ] Create export files to be able to run with the OMNI event script
+
 
 # Current Tasks and Errors
+
+### For loops in GOES event detector
+- Create a 'for' loop to iterate through the list of event dates and plot. Use slices of each event list, getting the first and last day of each event with [0] and [-1].
 
 ### Comparison check with event lists
 - Compare the files from the event list against the xflare list. Check the intensities of radio bursts and xflares, and put an indicator for xflares that coincide with the radio bursts (i.e mark with 'red').
@@ -495,6 +500,13 @@ Solar Wind Speed | N | < 0.0
 
 
 # Completed Tasks
+
+- [x] Local file code conversion (09/10/2017)
+  - [x] GOES-13/15 Proton flux (8/30/2017)
+  - [x] WIND Type III Radio Burst (8/30/2017)
+  - [x] ACE Solar Wind speed (09/10/2017)
+  - [ ] ~~Neutron Monitor counts/s~~ (NM data is downloaded specifically for each event, therefore data is too unique to save)
+  - [x] GOES-13/15 Xray flux (09/10/2017)
 
 - [x] Create a folder for local data. (.../Research_Projects/**Data**) (8/26/2017)
   - [x] Separate into mission names (i.e GOES, WIND, ACE, etc.) (8/26/2017)
