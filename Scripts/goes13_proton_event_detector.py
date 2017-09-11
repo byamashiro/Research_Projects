@@ -163,7 +163,7 @@ if len(year_list) > 1:
 	if len(full_event) != 0:
 		full_year.append(full_event)
 
-		print(full_year)
+
 
 
 
