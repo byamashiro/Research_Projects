@@ -14,7 +14,6 @@ from matplotlib.pyplot import cm
 
 import shutil
 
-
 # ======= Parameters to set
 
 data_directory = '/Users/bryanyamashiro/Documents/Research_Projects/Data'
@@ -274,12 +273,12 @@ for event_no in range(len(event_list_file)):
 					print(f'\nMissing data for {date}')
 					continue
 			
-			proton_df.loc[proton_df['P2W_UNCOR_FLUX'] < 0.0] = np.nan #6.5 MeV
-			proton_df.loc[proton_df['P3W_UNCOR_FLUX'] < 0.0] = np.nan #11.6 MeV
-			proton_df.loc[proton_df['P4W_UNCOR_FLUX'] < 0.0] = np.nan #30.6 MeV
-			proton_df.loc[proton_df['P5W_UNCOR_FLUX'] < 0.0] = np.nan #63.1 MeV
-			proton_df.loc[proton_df['P6W_UNCOR_FLUX'] < 0.0] = np.nan #165 MeV
-			proton_df.loc[proton_df['P7W_UNCOR_FLUX'] < 0.0] = np.nan #433 MeV
+			proton_df.loc[proton_df['P2W_UNCOR_FLUX'] <= 0.0] = np.nan #6.5 MeV
+			proton_df.loc[proton_df['P3W_UNCOR_FLUX'] <= 0.0] = np.nan #11.6 MeV
+			proton_df.loc[proton_df['P4W_UNCOR_FLUX'] <= 0.0] = np.nan #30.6 MeV
+			proton_df.loc[proton_df['P5W_UNCOR_FLUX'] <= 0.0] = np.nan #63.1 MeV
+			proton_df.loc[proton_df['P6W_UNCOR_FLUX'] <= 0.0] = np.nan #165 MeV
+			proton_df.loc[proton_df['P7W_UNCOR_FLUX'] <= 0.0] = np.nan #433 MeV
 		
 		
 		#proton flux 2003
@@ -872,8 +871,8 @@ for event_no in range(len(event_list_file)):
 					break	
 		
 			
-			xray_df.loc[xray_df['A_FLUX'] < 0.0] = np.nan #6.5 MeV
-			xray_df.loc[xray_df['B_FLUX'] < 0.0] = np.nan #11.6 MeV
+			xray_df.loc[xray_df['A_FLUX'] <= 0.0] = np.nan #6.5 MeV
+			xray_df.loc[xray_df['B_FLUX'] <= 0.0] = np.nan #11.6 MeV
 		
 		
 		
@@ -931,7 +930,8 @@ for event_no in range(len(event_list_file)):
 		
 				high_bin_proton_str = sorted(energy_bin_list)[-1][1]
 				low_bin_proton_str = sorted(energy_bin_list)[0][1]
-				axes[length_data_list[j]].axvline(proton_df[f'{low_bin_proton}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax()) # (proton_df.P6W_UNCOR_FLUX.max()) # changed maximum flux to be within time interval specified
+				# axes[length_data_list[j]].set_zorder(0)
+				axes[length_data_list[j]].axvline(proton_df[f'{low_bin_proton}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax(), zorder=1) # (proton_df.P6W_UNCOR_FLUX.max()) # changed maximum flux to be within time interval specified
 			# axes[length_data_list[j]].axvline(proton_df.idxmax().P6W_UNCOR_FLUX) # (proton_df.P6W_UNCOR_FLUX.max())
 		
 		
@@ -949,10 +949,11 @@ for event_no in range(len(event_list_file)):
 		if '1' in option_bin_set:
 			next_global()
 			for i in sorted(energy_bin_list):
-				axes[length_data_list[j]].plot(proton_df[f'{i[0]}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color=f'{i[2]}', label= f'{i[1]}')#, logy=True)
+				axes[length_data_list[j]].plot(proton_df[f'{i[0]}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color=f'{i[2]}', label= f'{i[1]}', zorder=5)#, logy=True)
 			axes[length_data_list[j]].set_yscale('log')
 			axes[length_data_list[j]].set_ylabel(f'GOES-{satellite_no} Proton\nFlux [pfu]', fontname="Arial", fontsize = 12)
 			applyPlotStyle()
+
 		
 		
 		
@@ -982,7 +983,7 @@ for event_no in range(len(event_list_file)):
 	
 			for frequency in freq_list:
 				color_choice = next(color_cm)
-				axes[length_data_list[j]].plot(rb_data[frequency].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color=color_choice, label= f'{frequency} kHz')
+				axes[length_data_list[j]].plot(rb_data[frequency].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color=color_choice, label= f'{frequency} kHz', zorder=5)
 				
 			axes[length_data_list[j]].set_ylabel('Wind Type III\nRadio Burst [sfu]', fontname="Arial", fontsize = 12)
 			axes[length_data_list[j]].set_ylabel('Type III Radio\nBurst Int. [sfu]', fontname="Arial", fontsize = 12)
@@ -1023,22 +1024,23 @@ for event_no in range(len(event_list_file)):
 				rand_color = random.choice(color_list)
 				color_count.append(rand_color)
 			
-				axes[length_data_list[j]].plot(nm_data[f'{i}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color=rand_color, label=f'{i}')
+				axes[length_data_list[j]].plot(nm_data[f'{i}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color=rand_color, label=f'{i}', zorder=5)
 			axes[length_data_list[j]].set_ylabel('Neu. Monitor\n[counts/s]', fontname="Arial", fontsize = 12)
 			applyPlotStyle()
 		
 		if '4' in option_bin_set:
 			next_global()
-			axes[length_data_list[j]].plot(wind_data['wind_bulk_vel'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='red', label='Wind: Ion Bulk Flow Speed GSE')
-			axes[length_data_list[j]].plot(ace_data['ace_bulk_vel'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='blue', label='ACE: H Bulk Speed')
+			axes[length_data_list[j]].plot(wind_data['wind_bulk_vel'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='red', label='Wind: Ion Bulk Flow Speed GSE', zorder=5)
+			axes[length_data_list[j]].plot(ace_data['ace_bulk_vel'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='blue', label='ACE: H Bulk Speed', zorder=5)
 			axes[length_data_list[j]].set_ylabel('Solar Wind\nSpeed [km/s]', fontname="Arial", fontsize = 12)
 			applyPlotStyle()
 		
 		if '5' in option_bin_set:
 			next_global()
-			axes[length_data_list[j]].plot(xray_df['B_FLUX'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='blue', label='0.1-0.8 nm')
-			axes[length_data_list[j]].plot(xray_df['A_FLUX'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='red', label='0.05-0.4 nm')
+			axes[length_data_list[j]].plot(xray_df['B_FLUX'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='blue', label='0.1-0.8 nm', zorder=5)
+			axes[length_data_list[j]].plot(xray_df['A_FLUX'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='red', label='0.05-0.4 nm', zorder=5)
 			axes[length_data_list[j]].set_yscale('log')
+			axes[length_data_list[j]].set_ylim([(10**(-9)),(10**(-2))])
 			axes[length_data_list[j]].set_ylabel(f'GOES-{satellite_no_xray} Xray\nFlux [Wm$^2$]', fontname="Arial", fontsize = 12)
 			applyPlotStyle()
 		

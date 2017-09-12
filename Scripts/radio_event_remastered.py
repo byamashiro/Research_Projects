@@ -133,6 +133,7 @@ for ev_i in range(len(event_input)):
 	
 			data_rad1 = pd.DataFrame(rad1_rb)
 			data_rad1.columns = data_freq['freq']
+			# data_rad1[data_rad1 <= 0.0] = np.nan
 	
 			rb_concat = pd.concat([data_time, data_rad1], axis=1)
 			rb_concat.set_index(['date_time'], inplace=True)

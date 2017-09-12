@@ -190,7 +190,7 @@ if plot_option == 'yes':
 			# proton_check = os.path.isfile(f'{data_directory}/GOES_Detection/GOES_{sat}/{detection_year}/{proton_name}')
 	
 			proton_df = pd.read_csv(f'{data_directory}/GOES_Detection/GOES_{sat}/{event_day[0][:4]}/{proton_name}', skiprows=718, date_parser=dateparse, names=cpflux_names,index_col='time_tag', header=0)
-			proton_df.loc[proton_df['ZPGT100W'] < 0.0] = np.nan
+			proton_df.loc[proton_df['ZPGT100W'] <= 0.0] = np.nan
 			if sat == '13':
 				col_def = 'blue'
 			elif sat == '15':
@@ -201,6 +201,7 @@ if plot_option == 'yes':
 		myFmt = mdates.DateFormatter('%m/%d\n%H:%M')
 		ax = plt.gca()
 		ax.xaxis.set_major_formatter(myFmt)
+		ax.set_ylim([0.01,100.0])
 	
 		plt.axhline(detection_threshold, zorder = 1)
 		plt.yscale('log')
@@ -220,8 +221,8 @@ if plot_option == 'yes':
 		plt.ylabel('Proton Flux [pfu]', fontname="Arial", fontsize = 12)
 		plt.xlabel('Time [UT]', fontname="Arial", fontsize = 12)
 	
-		#plt.show()
-		#sys.exit(0)
+		# plt.show()
+		# sys.exit(0)
 
 		plt.savefig(f'detected_events/detected_event_{event_day[0]}.png', format='png', dpi=900)
 		#sys.exit(0)

@@ -91,6 +91,23 @@
 
 # Current Tasks and Errors
 
+### Ordinal error for radio_remastered.py script
+- Value error reached when plotting data for 20130929. This occurs when the values of the "data_rad1" is manipulated to be np.NaN values instead of 0.0. Removal of the line of code results in no errors and full script execution. Figure out why this occurs only for 20130929, possibly the values of the index are being turned into nan values.
+```data_rad1[data_rad1 <= 0.0] = np.nan```
+
+```python
+Plotting Type III Data: [20130929 21:00:00 -- 20130929 23:00:00]
+---------------------------------------------------------------------------
+ValueError                                Traceback (most recent call last)
+/Users/bryanyamashiro/Documents/Research_Projects/Scripts/radio_event_remastered.py in <module>()
+    250 
+    251                 #plt.locator_params(axis='x', nbins=5)
+--> 252                 plt.setp(ax.xaxis.get_majorticklabels(), rotation=0, horizontalalignment='center')
+
+...
+
+ValueError: ordinal must be >= 1```
+
 ### For loops in GOES event detector
 - Create a 'for' loop to iterate through the list of event dates and plot. Use slices of each event list, getting the first and last day of each event with [0] and [-1].
 
@@ -125,9 +142,6 @@
 - Maximum: Proton flux, xray flux, solar wind speed, radio burst intensity/duration.
 - Minimum: Neutron monitor counts, dst (not currently implemented).
 - Write datetime, index, max, and min to a datafile.
-
-### Multiple event query for OMNI script
-- Current script works for a single day. Increase the functionality by allowing for a list of dates to parse.
 
 
 ### Download SOHO proton flux data and plot
@@ -569,6 +583,9 @@ Solar Wind Speed | N | < 0.0
 
 
 # Resolved Errors
+
+### Multiple event query for OMNI script (9/12/2017)
+- Current script works for a single day. Increase the functionality by allowing for a list of dates to parse.
 
 ### Plot the Type III Radio Bursts in all frequencies (8/08/2017)
 - Current correlations do not agree linearly between frequencies vs. intensities.
