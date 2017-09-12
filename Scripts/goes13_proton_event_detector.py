@@ -15,11 +15,12 @@ import calendar
 
 import shutil
 
-plt.close("all")
 
 # ======= Parameters to set
 data_directory = '/Users/bryanyamashiro/Documents/Research_Projects/Data'
 save_option = 'yes' # either 'yes' or 'no'
+plot_option = 'yes'
+
 detection_threshold = 0.25
 
 
@@ -61,15 +62,14 @@ for detection_year in year_list:
 		print(f'GOES-{satellite_no} Proton Events\n{"-" * 25}')
 		for month_event in months_in_year:
 			try:
-				print(f'\r                                                                                                    ', end='\r')
-				print(f'\rParsing month - {month_event}', end="\r")
+				# print(f'\r                                                                                                    ', end="\r")
+				print(f'Parsing month - {month_event}', end="\r")
+
 				f_l_day = calendar.monthrange(int(detection_year), int(month_event))
 				event_f_day = str(f'{detection_year}{str(month_event).zfill(2)}01') # {str(f_l_day[0]).zfill(2)}
 				event_l_day = str(f'{detection_year}{str(month_event).zfill(2)}{str(f_l_day[1]).zfill(2)}')
-	
-	
-				
-					
+
+
 				dir_check = os.path.isdir(f'{data_directory}/GOES_Detection/GOES_{satellite_no}/{detection_year}')
 				if dir_check == False:
 					try:
@@ -164,12 +164,51 @@ if len(year_list) > 1:
 		full_year.append(full_event)
 
 
-
-
-
-
-
-sys.exit(0)
+if plot_option == 'yes':
+	print('Plotting all proton events.')
+	# if os.path.isfile(f'{data_directory}/GOES_Detection/GOES_{sat}/{detection_year}/{proton_name}')
+	for event_day in (full_year):
+		plt.close("all")
+		plt.figure(figsize=(10,6))
+	
+		for sat in ['13','15']:
+	
+			f_l_day = calendar.monthrange(int(f'{event_day[0][:4]}'), int(f'{event_day[0][4:6]}'))
+	
+			event_f_day = str(f'{event_day[0][:4]}{str(event_day[0][4:6]).zfill(2)}01') # {str(f_l_day[0]).zfill(2)}
+			event_l_day = str(f'{event_day[0][:4]}{str(event_day[0][4:6]).zfill(2)}{str(f_l_day[1]).zfill(2)}')
+	
+			proton_name = f'g{sat}_epead_cpflux_5m_{event_f_day}_{event_l_day}.csv' #g13_epead_cpflux_5m_20110101_20110131.csv
+			# proton_check = os.path.isfile(f'{data_directory}/GOES_Detection/GOES_{sat}/{detection_year}/{proton_name}')
+	
+			proton_df = pd.read_csv(f'{data_directory}/GOES_Detection/GOES_{sat}/{event_day[0][:4]}/{proton_name}', skiprows=718, date_parser=dateparse, names=cpflux_names,index_col='time_tag', header=0)
+			proton_df.loc[proton_df['ZPGT100W'] < 0.0] = np.nan
+			if sat == '13':
+				col_def = 'blue'
+			elif sat == '15':
+				col_def = 'red'
+	
+			plt.plot(proton_df['ZPGT100W'].loc[f'{event_day[0]}':f'{event_day[-1]}'], label = f'GOES-{sat} >100 MeV', color=col_def)
+	
+		myFmt = mdates.DateFormatter('%m/%d\n%H:%M')
+		ax = plt.gca()
+		ax.xaxis.set_major_formatter(myFmt)
+	
+		plt.axhline(detection_threshold, zorder = 1)
+		plt.yscale('log')
+		plt.setp(ax.xaxis.get_majorticklabels(), rotation=0, horizontalalignment='center')
+		plt.minorticks_on()
+		plt.grid(True)
+		plt.legend(loc='upper right', ncol=1,fontsize=8)
+	
+		plt.suptitle(f'Proton Event Detector\n[{event_day[0]} -- {event_day[-1]}] (Threshold : {detection_threshold} pfu)', fontname="Arial", fontsize = 14) #, y=1.04,
+		plt.ylabel('Proton Flux [pfu]', fontname="Arial", fontsize = 12)
+		plt.xlabel('Time [UT]', fontname="Arial", fontsize = 12)
+	
+	
+		#plt.show()
+		plt.savefig(f'detected_events/detected_event_{event_day[0]}.png', format='png', dpi=900)
+		#sys.exit(0)
 
 
 
