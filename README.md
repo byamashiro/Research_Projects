@@ -94,6 +94,7 @@
 ### Ordinal error for radio_remastered.py script
 - Value error reached when plotting data for 20130929. This occurs when the values of the "data_rad1" is manipulated to be np.NaN values instead of 0.0. Removal of the line of code results in no errors and full script execution. Figure out why this occurs only for 20130929, possibly the values of the index are being turned into nan values.
 ```data_rad1[data_rad1 <= 0.0] = np.nan```
+- Error can be emulated by running 'radio_event_remastered.py' for the day 20130929. The other events in the 'radio_list.txt' were commented out for testing.
 
 ```python
 Plotting Type III Data: [20130929 21:00:00 -- 20130929 23:00:00]
@@ -106,7 +107,8 @@ ValueError                                Traceback (most recent call last)
 
 ...
 
-ValueError: ordinal must be >= 1```
+ValueError: ordinal must be >= 1
+```
 
 ### For loops in GOES event detector
 - Create a 'for' loop to iterate through the list of event dates and plot. Use slices of each event list, getting the first and last day of each event with [0] and [-1].
