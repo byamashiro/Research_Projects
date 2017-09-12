@@ -20,6 +20,7 @@ import shutil
 data_directory = '/Users/bryanyamashiro/Documents/Research_Projects/Data'
 save_option = 'yes' # either 'yes' or 'no'
 plot_option = 'yes'
+unique_inclusion_option = 'yes'
 
 detection_threshold = 0.25
 
@@ -143,9 +144,15 @@ if len(year_list) > 1:
 	year_df['g_events'] = sorted(list(year_set_13.intersection(year_set_15)))
 
 	# year_df.to_csv('hep_events.txt', sep='\t', index=False)
+
+	if unique_inclusion_option == 'yes':
+		list_of_intersection = list(year_set_13.intersection(year_set_15).union(year_set_13.difference(year_set_15), year_set_15.difference(year_set_13)))
+	elif unique_inclusion_option == 'no':
+		list_of_intersection = list(year_set_13.intersection(year_set_15))
+
 	full_event = []
 	full_year = []
-	for i in sorted(list(year_set_13.intersection(year_set_15))):
+	for i in sorted(list_of_intersection):
 		if len(full_event) == 0:
 			full_event.append(i)
 
@@ -165,9 +172,10 @@ if len(year_list) > 1:
 
 
 if plot_option == 'yes':
-	print('Plotting all proton events.')
+	print(f'{"="*40}\n{"=" + f"Plotting Events".center(38," ") + "="}\n{"="*40}')
 	# if os.path.isfile(f'{data_directory}/GOES_Detection/GOES_{sat}/{detection_year}/{proton_name}')
 	for event_day in (full_year):
+		print(f'\rGenerating plot for {event_day}')
 		plt.close("all")
 		plt.figure(figsize=(10,6))
 	
@@ -200,13 +208,21 @@ if plot_option == 'yes':
 		plt.minorticks_on()
 		plt.grid(True)
 		plt.legend(loc='upper right', ncol=1,fontsize=8)
-	
-		plt.suptitle(f'Proton Event Detector\n[{event_day[0]} -- {event_day[-1]}] (Threshold : {detection_threshold} pfu)', fontname="Arial", fontsize = 14) #, y=1.04,
+		
+		if ''.join(event_day[0]) in list(year_set_13.difference(year_set_15)):
+			plt.title(f'Proton Event Detector [GOES-13 UNIQUE]\n[{event_day[0]} -- {event_day[-1]}] (Threshold : {detection_threshold} pfu)', fontname="Arial", fontsize = 14) #, y=1.04,
+		elif ''.join(event_day[0]) in list(year_set_15.difference(year_set_13)):
+			plt.title(f'Proton Event Detector [GOES-15 UNIQUE]\n[{event_day[0]} -- {event_day[-1]}] (Threshold : {detection_threshold} pfu)', fontname="Arial", fontsize = 14) #, y=1.04,
+		elif ''.join(event_day[0]) in list_of_intersection:
+			plt.title(f'Proton Event Detector [GOES-13/15 CONFIRMED]\n[{event_day[0]} -- {event_day[-1]}] (Threshold : {detection_threshold} pfu)', fontname="Arial", fontsize = 14) #, y=1.04,
+
+
 		plt.ylabel('Proton Flux [pfu]', fontname="Arial", fontsize = 12)
 		plt.xlabel('Time [UT]', fontname="Arial", fontsize = 12)
 	
-	
 		#plt.show()
+		#sys.exit(0)
+
 		plt.savefig(f'detected_events/detected_event_{event_day[0]}.png', format='png', dpi=900)
 		#sys.exit(0)
 

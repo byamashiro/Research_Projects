@@ -75,9 +75,18 @@
     - [x] Incorporate both GOES-13 and GOES-15 (09/10/2017)
   - [x] Set threshold level for each event in the >100 MeV energy range (09/10/2017)
   - [x] Create sets to show the differences and intersections of both satellites (09/10/2017)
-  - [ ] For loops to plot data for each day to confirm proton event
-    - [ ] Indicate overlaps in events that aren't separated by over a day
+  - [x] For loops to plot data for each day to confirm proton event (9/11/2017)
+    - [x] Indicate overlaps in events that aren't separated by over a day (9/11/2017)
     - [ ] Create export files to be able to run with the OMNI event script
+  - [ ] Devise method to mark two thresholds to show the difference between threshold levels
+  - [ ] If statement to not have to determine events every time
+    - [ ] Export file to save generated event lists for time saving
+      - [ ] Option to use an exported list for event plotting
+  - [ ] Make the y axis for pfu a constant from 0.01 to 100 to show an equal scaling
+  - [ ] Add a counter to show how many events happened for GOES-13, GOES-15, both
+    - [ ] Run same algorithm as year_full on the unique events to get a count for all total events including lists (i.e [1,2,3])
+
+
 
 
 # Current Tasks and Errors
