@@ -17,11 +17,12 @@ plt.close("all")
 # ======= Parameters to set
 
 data_directory = '/Users/bryanyamashiro/Documents/Research_Projects/Data'
-save_option = 'yes' # either 'yes' or 'no'
+save_option = 'yes' # saves the data files
+save_plot_option = 'no' # saves the plots
 
 
 
-event_option = 'no' # either 'yes' or 'no'
+event_option = 'no' # use event list to plot
 # ========== Event list (Still being implemented, do not uncomment)
 '''
 event_list_directory = '/Users/bryanyamashiro/Documents/Research_Projects/Scripts/event_lists'
@@ -951,6 +952,7 @@ if '1' in option_bin_set:
 	for i in sorted(energy_bin_list):
 		axes[length_data_list[j]].plot(proton_df[f'{i[0]}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color=f'{i[2]}', label= f'{i[1]}', zorder=5)#, logy=True)
 	axes[length_data_list[j]].set_yscale('log')
+	axes[length_data_list[j]].set_ylim((10**(-3)), (10**3))
 	axes[length_data_list[j]].set_ylabel(f'GOES-{satellite_no} Proton\nFlux [pfu]', fontname="Arial", fontsize = 12)
 	applyPlotStyle()
 
@@ -1041,7 +1043,13 @@ if '5' in option_bin_set:
 	axes[length_data_list[j]].plot(xray_df['B_FLUX'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='blue', label='0.1-0.8 nm', zorder=5)
 	axes[length_data_list[j]].plot(xray_df['A_FLUX'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='red', label='0.05-0.4 nm', zorder=5)
 	axes[length_data_list[j]].set_yscale('log')
-	axes[length_data_list[j]].set_ylim([(10**(-9)),(10**(-2))])
+	#axes[length_data_list[j]].set_ylim([(10**(-9)),(10**(-2))])
+	# start, stop = ax.get_ylim()
+	#start, stop = axes[length_data_list[j]].get_ylim()
+	#ticks = np.arange(10**-9, 10**-2, 10)
+	#axes[length_data_list[j]].set_yticks(ticks)
+	axes[length_data_list[j]].set_yticks([10**-9, 10**-8, 10**-7, 10**-6, 10**-5, 10**-4, 10**-3, 10**-2])
+	axes[length_data_list[j]].tick_params(axis='y', which='both', direction='in')
 	axes[length_data_list[j]].set_ylabel(f'GOES-{satellite_no_xray} Xray\nFlux [Wm$^2$]', fontname="Arial", fontsize = 12)
 	applyPlotStyle()
 
@@ -1062,5 +1070,8 @@ plt.subplots_adjust(wspace = 0, hspace = 0, top=0.91)
 if event_option == 'yes':
 	plt.savefig(f'xflare_events/omni_test_{event_date}.png', format='png', dpi=900)
 
-if event_option != 'yes':
+if save_plot_option == 'yes':
+	plt.savefig(f'xflare_events/omni_test_{event_date}.png', format='png', dpi=900)
+
+elif save_plot_option != 'yes':
 	plt.show()
