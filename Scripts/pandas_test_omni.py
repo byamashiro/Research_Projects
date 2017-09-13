@@ -247,12 +247,22 @@ if '1' in option_bin_set:
 			print(f'\nMissing data for {date}')
 			continue
 	
+	proton_df.drop(proton_df[proton_df['P2W_UNCOR_FLUX'] <= 0.0].index, inplace=True)
+	proton_df.drop(proton_df[proton_df['P3W_UNCOR_FLUX'] <= 0.0].index, inplace=True)
+	proton_df.drop(proton_df[proton_df['P4W_UNCOR_FLUX'] <= 0.0].index, inplace=True)
+	proton_df.drop(proton_df[proton_df['P5W_UNCOR_FLUX'] <= 0.0].index, inplace=True)
+	proton_df.drop(proton_df[proton_df['P6W_UNCOR_FLUX'] <= 0.0].index, inplace=True)
+	proton_df.drop(proton_df[proton_df['P7W_UNCOR_FLUX'] <= 0.0].index, inplace=True)
+
+	'''
 	proton_df.loc[proton_df['P2W_UNCOR_FLUX'] <= 0.0] = np.nan #6.5 MeV
 	proton_df.loc[proton_df['P3W_UNCOR_FLUX'] <= 0.0] = np.nan #11.6 MeV
 	proton_df.loc[proton_df['P4W_UNCOR_FLUX'] <= 0.0] = np.nan #30.6 MeV
 	proton_df.loc[proton_df['P5W_UNCOR_FLUX'] <= 0.0] = np.nan #63.1 MeV
 	proton_df.loc[proton_df['P6W_UNCOR_FLUX'] <= 0.0] = np.nan #165 MeV
 	proton_df.loc[proton_df['P7W_UNCOR_FLUX'] <= 0.0] = np.nan #433 MeV
+	'''
+
 
 
 #proton flux 2003
@@ -391,6 +401,7 @@ if '2' in option_bin_set:
 
 
 
+
 			'''
 			radio_name = f'wi_h1_wav_{event_date}_v01.cdf'
 			url = f'https://cdaweb.gsfc.nasa.gov/pub/data/wind/waves/wav_h1/{event_date[:4]}/{radio_name}'
@@ -432,7 +443,28 @@ if '2' in option_bin_set:
 			print(f'\nMISSING DATA FOR: {date}\n')
 			continue
 	
+	 # 256 columns (frequencies) + 1 column (average)
 	rb_data['avg'] = rb_data.mean(axis=1, numeric_only=True)
+	'''
+	for radio_line in rb_data.values:
+		# print("rad line", radio_line)
+		print(radio_line.index)
+		radio_null = 0
+		for radio_freq in radio_line:
+			if radio_freq == 0.0:
+				radio_null += 1
+		print("radionull", radio_null)
+
+		if radio_null > 200:
+			rb_data.drop(radio_line, inplace=True)
+	'''
+	# rb_data[rb_data.values == 0.0].index.values
+
+	rb_data.drop(rb_data[rb_data.values == 0.0].index, inplace=True)
+
+
+	# if radio_null > 200:
+	#	rb_data = rb_data[rb_data['avg'] != 0.0]
 
 
 	# ============ EXPERIMENTAL FITTING (DO NOT USE)
@@ -718,9 +750,13 @@ if '4' in option_bin_set:
 			continue
 	
 	
-	
+	'''
 	ace_data.loc[ace_data['ace_bulk_vel'] <= 0.0] = np.nan #6.5 MeV
 	wind_data.loc[wind_data['wind_bulk_vel'] <= 0.0] = np.nan #6.5 MeV
+	'''
+
+	ace_data.drop(ace_data[ace_data['ace_bulk_vel'] <= 0.0].index, inplace=True)
+	wind_data.drop(wind_data[wind_data['wind_bulk_vel'] <= 0.0].index, inplace=True)
 
 
 #=========== 5: GOES-15 Xray Flux
@@ -834,11 +870,15 @@ if '5' in option_bin_set:
 			continue
 
 		else:
-			break	
+			continue	
 
-	
+	'''
 	xray_df.loc[xray_df['A_FLUX'] <= 0.0] = np.nan #6.5 MeV
 	xray_df.loc[xray_df['B_FLUX'] <= 0.0] = np.nan #11.6 MeV
+	'''
+
+	xray_df.drop(xray_df[xray_df['A_FLUX'] <= 0.0].index, inplace=True)
+	xray_df.drop(xray_df[xray_df['B_FLUX'] <= 0.0].index, inplace=True)
 
 
 
@@ -945,12 +985,13 @@ if '2' in option_bin_set:
 		color_choice = next(color_cm)
 	
 		axes[length_data_list[j]].plot(rb_data[frequency].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color=color_choice, label= f'{frequency} kHz', zorder=5)
+	axes[length_data_list[j]].set_ylim(0, 500)
 	axes[length_data_list[j]].set_ylabel('Wind Type III\nRadio Burst [sfu]', fontname="Arial", fontsize = 12)
-	axes[length_data_list[j]].set_ylabel('Type III Radio\nBurst Int. [sfu]', fontname="Arial", fontsize = 12)
+	# axes[length_data_list[j]].set_ylabel('Type III Radio\nBurst Int. [sfu]', fontname="Arial", fontsize = 12)
 	
 
 	#================= Working code (uncommented) ---- end ----
-	# axes[length_data_lisst[j]].plot(rb_data[int('1020')].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='red', label= '1020')
+	# axes[length_data_list[j]].plot(rb_data[int('1020')].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='red', label= '1020')
 	# wind_range = range(20,1041, 2)
 	# axes[length_data_list[j]].plot(rb_data.loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}']) # [wind_range] , color='red', label= '1020')
 
@@ -991,7 +1032,7 @@ if '3' in option_bin_set:
 if '4' in option_bin_set:
 	next_global()
 	axes[length_data_list[j]].plot(wind_data['wind_bulk_vel'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='red', label='Wind: Ion Bulk Flow Speed GSE', zorder=5)
-	axes[length_data_list[j]].plot(ace_data['ace_bulk_vel'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='blue', label='ACE: H Bulk Speed', zorder=5)
+	axes[length_data_list[j]].plot(ace_data['ace_bulk_vel'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], '.',markersize=1, color='blue', label='ACE: H Bulk Speed', zorder=5)
 	axes[length_data_list[j]].set_ylabel('Solar Wind\nSpeed [km/s]', fontname="Arial", fontsize = 12)
 	applyPlotStyle()
 

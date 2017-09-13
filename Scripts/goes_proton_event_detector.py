@@ -18,8 +18,8 @@ import shutil
 
 # ======= Parameters to set
 data_directory = '/Users/bryanyamashiro/Documents/Research_Projects/Data'
-save_option = 'yes' # either 'yes' or 'no'
-plot_option = 'yes'
+save_option = 'no' # either 'yes' or 'no'
+plot_option = 'no'
 unique_inclusion_option = 'yes'
 
 detection_threshold = 0.25

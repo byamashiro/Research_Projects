@@ -133,7 +133,7 @@ for ev_i in range(len(event_input)):
 	
 			data_rad1 = pd.DataFrame(rad1_rb)
 			data_rad1.columns = data_freq['freq']
-			data_rad1[data_rad1 <= 0.0] = np.nan
+			# data_rad1[data_rad1 <= 0.0] = np.nan
 	
 			rb_concat = pd.concat([data_time, data_rad1], axis=1)
 			rb_concat.set_index(['date_time'], inplace=True)
@@ -182,6 +182,8 @@ for ev_i in range(len(event_input)):
 			continue
 	
 	rb_data['avg'] = rb_data.mean(axis=1, numeric_only=True)
+	rb_data.drop(rb_data[rb_data.values == 0.0].index, inplace=True)
+
 	
 	#=========Plotting
 	print(f'\nPlotting Type III Data: [{event_obj_start_str} -- {event_obj_end_str}]')
