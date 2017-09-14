@@ -926,6 +926,7 @@ def applyPlotStyle():
 	axes[length_data_list[j]].grid(True)
 	axes[length_data_list[j]].minorticks_on()
 	axes[length_data_list[j]].legend(loc='lower right', ncol=1,fontsize=8)# borderaxespad=0)# bbox_to_anchor=(1, 0.5)) # bbox_to_anchor=(1.02,1.0)
+	axes[length_data_list[j]].tick_params(axis='y', which='both', direction='in')
 	if '1' in option_bin_set:
 		high_bin_proton = sorted(energy_bin_list)[-1][0]
 		low_bin_proton = sorted(energy_bin_list)[0][0]
@@ -955,7 +956,6 @@ if '1' in option_bin_set:
 	# axes[length_data_list[j]].set_ylim((10**(-3)), (10**3))
 
 	axes[length_data_list[j]].set_yticks([10**-3, 10**-2, 10**-1, 10**0, 10**1, 10**2, 10**3])
-	axes[length_data_list[j]].tick_params(axis='y', which='both', direction='in')
 	axes[length_data_list[j]].set_ylabel(f'GOES-{satellite_no} Proton\nFlux [pfu]', fontname="Arial", fontsize = 12)
 	applyPlotStyle()
 
@@ -1042,15 +1042,42 @@ if '4' in option_bin_set:
 	applyPlotStyle()
 
 if '5' in option_bin_set:
+	def flare_class(X):
+		if X == 10**-4:
+			return "X"
+		#return ["%.3f" % z for z in V]
+
+
 	next_global()
 	axes[length_data_list[j]].plot(xray_df['B_FLUX'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='blue', label='0.1-0.8 nm', zorder=5)
 	axes[length_data_list[j]].plot(xray_df['A_FLUX'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='red', label='0.05-0.4 nm', zorder=5)
 	axes[length_data_list[j]].set_yscale('log')
 
 
+	'''
+	new_tick_locations = np.array([.2, .5, .9])
+
+	def tick_function(X):
+	    V = 1/(1+X)
+	    return ["%.3f" % z for z in V]
+
+	ax2.set_xlim(ax1.get_xlim())
+	ax2.set_xticks(new_tick_locations)
+	ax2.set_xticklabels(tick_function(new_tick_locations))
+	ax2.set_xlabel(r"Modified x-axis: $1/(1+X)$")
+	'''
+	flare_classes = ['', 'A', 'B', 'C', 'M', 'X']
 	ax2 = axes[length_data_list[j]].twinx()
+	ax2.set_yscale('log')
+	ax2.set_ylim(axes[length_data_list[j]].get_ylim())
+	ax2.set_yticks([10**-9, 10**-8, 10**-7, 10**-6, 10**-5, 10**-4, 10**-3, 10**-2])
+	ax2.set_yticklabels(labels=flare_classes)
+
+
+	# ax2.set_yticklabels(flare_class([10**-9, 10**-8, 10**-7, 10**-6, 10**-5, 10**-4, 10**-3, 10**-2]))
+
 	# ax2.set_yticks([10**-9, 10**-8, 10**-7, 10**-6, 10**-5, 10**-4, 10**-3, 10**-2])
-	ax2.tick_params(axis='y', which='both', direction='in')
+	# ax2.tick_params(axis='y', which='both', direction='in')
 
 	#axes[length_data_list[j]].set_ylim([(10**(-9)),(10**(-2))])
 	# start, stop = ax.get_ylim()
@@ -1059,7 +1086,7 @@ if '5' in option_bin_set:
 	#axes[length_data_list[j]].set_yticks(ticks)
 	axes[length_data_list[j]].set_yticks([10**-9, 10**-8, 10**-7, 10**-6, 10**-5, 10**-4, 10**-3, 10**-2])
 
-	axes[length_data_list[j]].tick_params(axis='y', which='both', direction='in')
+	# axes[length_data_list[j]].tick_params(axis='y', which='both', direction='in')
 	axes[length_data_list[j]].set_ylabel(f'GOES-{satellite_no_xray} Xray\nFlux [Wm$^2$]', fontname="Arial", fontsize = 12)
 	applyPlotStyle()
 
