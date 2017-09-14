@@ -952,7 +952,10 @@ if '1' in option_bin_set:
 	for i in sorted(energy_bin_list):
 		axes[length_data_list[j]].plot(proton_df[f'{i[0]}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color=f'{i[2]}', label= f'{i[1]}', zorder=5)#, logy=True)
 	axes[length_data_list[j]].set_yscale('log')
-	axes[length_data_list[j]].set_ylim((10**(-3)), (10**3))
+	# axes[length_data_list[j]].set_ylim((10**(-3)), (10**3))
+
+	axes[length_data_list[j]].set_yticks([10**-3, 10**-2, 10**-1, 10**0, 10**1, 10**2, 10**3])
+	axes[length_data_list[j]].tick_params(axis='y', which='both', direction='in')
 	axes[length_data_list[j]].set_ylabel(f'GOES-{satellite_no} Proton\nFlux [pfu]', fontname="Arial", fontsize = 12)
 	applyPlotStyle()
 
@@ -1043,12 +1046,19 @@ if '5' in option_bin_set:
 	axes[length_data_list[j]].plot(xray_df['B_FLUX'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='blue', label='0.1-0.8 nm', zorder=5)
 	axes[length_data_list[j]].plot(xray_df['A_FLUX'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='red', label='0.05-0.4 nm', zorder=5)
 	axes[length_data_list[j]].set_yscale('log')
+
+
+	ax2 = axes[length_data_list[j]].twinx()
+	# ax2.set_yticks([10**-9, 10**-8, 10**-7, 10**-6, 10**-5, 10**-4, 10**-3, 10**-2])
+	ax2.tick_params(axis='y', which='both', direction='in')
+
 	#axes[length_data_list[j]].set_ylim([(10**(-9)),(10**(-2))])
 	# start, stop = ax.get_ylim()
 	#start, stop = axes[length_data_list[j]].get_ylim()
 	#ticks = np.arange(10**-9, 10**-2, 10)
 	#axes[length_data_list[j]].set_yticks(ticks)
 	axes[length_data_list[j]].set_yticks([10**-9, 10**-8, 10**-7, 10**-6, 10**-5, 10**-4, 10**-3, 10**-2])
+
 	axes[length_data_list[j]].tick_params(axis='y', which='both', direction='in')
 	axes[length_data_list[j]].set_ylabel(f'GOES-{satellite_no_xray} Xray\nFlux [Wm$^2$]', fontname="Arial", fontsize = 12)
 	applyPlotStyle()
