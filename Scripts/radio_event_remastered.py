@@ -215,7 +215,7 @@ for ev_i in range(len(event_input)):
 			color_choice = next(color_cm)
 			list_freq.append(i)
 	
-			axs[row_count, col_count].plot(rb_data[i].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'],color=color_choice, label= f'{i}', zorder=3) # axs[row, column]
+			axs[row_count, col_count].plot(rb_data[i].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'],color=color_choice, zorder=3) # , label= f'{i}' # axs[row, column]
 			
 	
 			single_count += 1
@@ -224,9 +224,18 @@ for ev_i in range(len(event_input)):
 	
 				min_freq = min(list_freq)
 				max_freq = max(list_freq)
-				axs[row_count, col_count].plot(rb_data['avg'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'],color='black', linewidth=1, zorder=2)
-	
-				axs[row_count, col_count].legend(labels=[f'{min_freq} - {max_freq} kHz'], loc='upper right', ncol=3,fontsize=8)
+				
+				axs[row_count, col_count].plot(rb_data['avg'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'],color='black', linewidth=1, zorder=2, label='Avg.')
+				handles, labels = axs[row_count, col_count].get_legend_handles_labels()
+				# axs[row_count, col_count].set_label('average')
+				# axs[row_count, col_count].set_label(f'{min_freq} - {max_freq} kHz')
+				# axs[row_count, col_count].legend(loc='upper right', ncol=1,fontsize=8)
+
+				# axs[row_count, col_count].legend(labels=[f'{min_freq} - {max_freq} kHz', 'Avg.'], loc='upper right', ncol=1,fontsize=8) # working code, but no average
+				# legend = axs[row_count, col_count].legend(loc='upper right', ncol=1,fontsize=8)
+
+
+
 				axs[row_count, col_count].grid(True)
 				axs[row_count, col_count].minorticks_on()
 				# axs[row_count, col_count].locator_params(axis='x',tight=True, nbins=4)
@@ -354,12 +363,7 @@ for ev_i in range(len(event_input)):
 	
 	
 	
-	
-	
-	
-	
-	
-	
+
 	
 	
 	# ============== end new plotting scheme

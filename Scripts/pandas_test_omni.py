@@ -1072,6 +1072,7 @@ if '5' in option_bin_set:
 	ax2.set_ylim(axes[length_data_list[j]].get_ylim())
 	ax2.set_yticks([10**-9, 10**-8, 10**-7, 10**-6, 10**-5, 10**-4, 10**-3, 10**-2])
 	ax2.set_yticklabels(labels=flare_classes)
+	ax2.tick_params(axis='y', which='both', direction='in')
 
 
 	# ax2.set_yticklabels(flare_class([10**-9, 10**-8, 10**-7, 10**-6, 10**-5, 10**-4, 10**-3, 10**-2]))
