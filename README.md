@@ -82,14 +82,36 @@
   - [ ] If statement to not have to determine events every time
     - [ ] Export file to save generated event lists for time saving
       - [ ] Option to use an exported list for event plotting
-  - [ ] Make the y axis for pfu a constant from 0.01 to 100 to show an equal scaling
-  - [ ] Add a counter to show how many events happened for GOES-13, GOES-15, both
+  - [x] Make the y axis for pfu a constant from 0.01 to 100 to show an equal scaling (09/15/2017)
+  - [ ] Add a counter to show how many events happened for GOES-13, GOES-15, both 
     - [ ] Run same algorithm as year_full on the unique events to get a count for all total events including lists (i.e [1,2,3])
+
+- [ ] Type III Radio Burst Fitting Program
+  - [ ] Fit multiple models to 20120307 event
+    - [x] Skewed Gaussian (09/15/2017)
+    - [x] Exponential Gaussian (09/15/2017)
+    - [x] Donaich (09/15/2017)
+    - [ ] Log-normal
+  - [ ] Make multiple subplots, separating each fit model
 
 
 
 
 # Current Tasks and Errors
+
+### Log-normal distribution fit for radio bursts
+- Even with the "missing='drop'" parameter, the fit still detects NaN values. Although nan elements exist, the other fits allowed for removal of nans with the 'missing' method. There is a possible discrepancy in the parameters, as the Log-normal distribution does not include the gamma factor, which is present in the other three fits that work.
+```python
+ValueError                                Traceback (most recent call last)
+/Users/bryanyamashiro/Documents/Research_Projects/Scripts/pandas_test_radio_fit.py in <module>()
+    354                 params_lognorm = model_lognorm.make_params(amplitude=ymax_val, center=ymax_center, sigma=1)
+    355 
+--> 356                 log_normal = model_lognorm.fit(yvals, params_lognorm, x = xvals)
+    357                 print("Log Normal Model\n", log_normal.fit_report())
+    358 
+...
+ValueError: The input contains nan values
+```
 
 ### Fitting techniques and dropped values
 - Values of 0.0 are dropped due to the absence of physical intuition for these phenomena. This in turn allows for a continuous line while plotting from the last known value to the value after the dropped 0.0 value. This causes a problem when creating fits because a evenly spaced sequence is used, namely 'np.arange'. When the final fits are plotted, the dropped index values cause the fit to be discontinuous, illustrated by jagged edges.
