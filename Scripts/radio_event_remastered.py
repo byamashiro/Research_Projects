@@ -226,12 +226,13 @@ for ev_i in range(len(event_input)):
 				max_freq = max(list_freq)
 				
 				axs[row_count, col_count].plot(rb_data['avg'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'],color='black', linewidth=1, zorder=2, label='Avg.')
-				handles, labels = axs[row_count, col_count].get_legend_handles_labels()
+				# handles, labels = axs[row_count, col_count].get_legend_handles_labels()
+				# legend = axs[row_count, col_count].legend(labels)
+
 				# axs[row_count, col_count].set_label('average')
 				# axs[row_count, col_count].set_label(f'{min_freq} - {max_freq} kHz')
 				# axs[row_count, col_count].legend(loc='upper right', ncol=1,fontsize=8)
-
-				# axs[row_count, col_count].legend(labels=[f'{min_freq} - {max_freq} kHz', 'Avg.'], loc='upper right', ncol=1,fontsize=8) # working code, but no average
+				axs[row_count, col_count].legend(labels=[f'{min_freq} - {max_freq} kHz', 'Avg.'], loc='upper right', ncol=1,fontsize=8) # working code, but no average
 				# legend = axs[row_count, col_count].legend(loc='upper right', ncol=1,fontsize=8)
 
 

@@ -91,27 +91,8 @@
 
 # Current Tasks and Errors
 
-### Ordinal error for radio_remastered.py script
-- Value error reached when plotting data for 20130929. This occurs when the values of the "data_rad1" is manipulated to be np.NaN values instead of 0.0. Removal of the line of code results in no errors and full script execution. Figure out why this occurs only for 20130929, possibly the values of the index are being turned into nan values.
-```data_rad1[data_rad1 <= 0.0] = np.nan```
-- Error can be emulated by running 'radio_event_remastered.py' for the day 20130929. The other events in the 'radio_list.txt' were commented out for testing.
-
-```python
-Plotting Type III Data: [20130929 21:00:00 -- 20130929 23:00:00]
----------------------------------------------------------------------------
-ValueError                                Traceback (most recent call last)
-/Users/bryanyamashiro/Documents/Research_Projects/Scripts/radio_event_remastered.py in <module>()
-    250 
-    251                 #plt.locator_params(axis='x', nbins=5)
---> 252                 plt.setp(ax.xaxis.get_majorticklabels(), rotation=0, horizontalalignment='center')
-
-...
-
-ValueError: ordinal must be >= 1
-```
-
-### For loops in GOES event detector
-- Create a 'for' loop to iterate through the list of event dates and plot. Use slices of each event list, getting the first and last day of each event with [0] and [-1].
+### Fitting techniques and dropped values
+- Values of 0.0 are dropped due to the absence of physical intuition for these phenomena. This in turn allows for a continuous line while plotting from the last known value to the value after the dropped 0.0 value. This causes a problem when creating fits because a evenly spaced sequence is used, namely 'np.arange'. When the final fits are plotted, the dropped index values cause the fit to be discontinuous, illustrated by jagged edges.
 
 ### Comparison check with event lists
 - Compare the files from the event list against the xflare list. Check the intensities of radio bursts and xflares, and put an indicator for xflares that coincide with the radio bursts (i.e mark with 'red').
@@ -585,6 +566,31 @@ Solar Wind Speed | N | < 0.0
 
 
 # Resolved Errors
+
+### Ordinal error for radio_remastered.py script (09/14/2017)
+* **Resolution**: For this particular event, there is a lack of data. Instead of a '< 0' value, 0.0 is used. This creates a void in data when 0.0 values are dropped throughout the program and thus there are no ordinals for the program to plot. The program is set to plot data from the 0th hour to the 23rd hour, therefore the lack of data from 17-23 hr caused the ordinal error.
+
+- Value error reached when plotting data for 20130929. This occurs when the values of the "data_rad1" is manipulated to be np.NaN values instead of 0.0. Removal of the line of code results in no errors and full script execution. Figure out why this occurs only for 20130929, possibly the values of the index are being turned into nan values.
+```data_rad1[data_rad1 <= 0.0] = np.nan```
+- Error can be emulated by running 'radio_event_remastered.py' for the day 20130929. The other events in the 'radio_list.txt' were commented out for testing.
+
+```python
+Plotting Type III Data: [20130929 21:00:00 -- 20130929 23:00:00]
+---------------------------------------------------------------------------
+ValueError                                Traceback (most recent call last)
+/Users/bryanyamashiro/Documents/Research_Projects/Scripts/radio_event_remastered.py in <module>()
+    250 
+    251                 #plt.locator_params(axis='x', nbins=5)
+--> 252                 plt.setp(ax.xaxis.get_majorticklabels(), rotation=0, horizontalalignment='center')
+
+...
+
+ValueError: ordinal must be >= 1
+```
+
+### For loops in GOES event detector (09/14/2017)
+- Create a 'for' loop to iterate through the list of event dates and plot. Use slices of each event list, getting the first and last day of each event with [0] and [-1].
+
 
 ### Multiple event query for OMNI script (9/12/2017)
 - Current script works for a single day. Increase the functionality by allowing for a list of dates to parse.
