@@ -7,10 +7,7 @@
 - [Required Python Modules](#required-python-modules)
 - [Running Scripts](#running-scripts)
   - [OMNI Space Weather (omni_script_v2)](#omni-space-weather-omni_script_v2)
-  - [Remastered WIND Type III Radio Burst (radio_script_v2)](#remastered-wind-type-iii-radio-burst-radio_script_v2)
-  - [Neutron Monitor (nm_script)](#neutron-monitor-nm_script)
-  - [Remastered GOES-15 Proton Flux (prot_script_v2)](#remastered-goes-15-proton-flux-prot_script_v2)
-  - [Solar Wind Speed (swind_script)](#solar-wind-speed-swind_script)
+  - [Remastered WIND Type III Radio Burst (radio_script_v3)](#remastered-wind-type-iii-radio-burst-radio_script_v3)
   - [Legacy OMNI Space Weather (1995-2009) (legacy_omni_script_v1)](#legacy-omni-space-weather-1995-2009-legacy_omni_script_v1)
 - [Deprecated Scripts](#deprecated-scripts)
 - [Data](#data)
@@ -283,7 +280,7 @@ In [51]: run radio_event_remastered.py
 Plotting Type III Data: [20120307 00:00:00 -- 20120307 02:00:00]  
 Plot generated for 20120307  
 
-<img src="Plots/radio_remastered_v3.png" width="900">
+<img src="Plots/radio_remastered_test_v3.png" width="900">
 
 
 
