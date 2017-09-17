@@ -221,22 +221,29 @@ Data       | Instrument | Detector | Source | URL
 
 ### OMNI Space Weather ([omni_script_v2](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/pandas_test_omni.py))
 
-In [433]: **run pandas_test_omni.py**  
+In [53]: **run pandas_test_omni.py**  
 \========================================  
 \=               DATASETS               =  
 \========================================  
-1 - GOES-15 Proton Flux  
+1 - GOES-13/15 Proton Flux  
 2 - Wind Type III Radio Bursts  
-3 - Neutron Monitor Counts  
+3 - Neutron Monitor Counts (Requires Internet Connection)  
 4 - ACE/Wind Solar Wind Speed  
+5 - GOES-13/15 Xray Flux  
 \========================================  
-Enter Dataset Option then "done" or "all": all  
+Enter Dataset Option then "done" or "all": 1  
+Enter Dataset Option then "done" or "all": 2  
+Enter Dataset Option then "done" or "all": 4  
+Enter Dataset Option then "done" or "all": 5  
+Enter Dataset Option then "done" or "all": done  
 Enter a start date (yyyymmdd): 20120307  
 Enter a end date (yyyymmdd): 20120307  
-Enter a start hour or "full": full  
+Enter a start hour or "full": 00   
+Enter a end hour: 23  
+Specify which GOES Satellite for Proton Flux (13 or 15): 13  
   
 \========================================  
-\=         GOES-15 Proton Flux          =  
+\=         GOES-13 Proton Flux          =  
 \========================================  
 Energy Channels  
 \--------------------  
@@ -247,30 +254,22 @@ Energy Channels
 5: 165 MeV  
 6: 433 MeV  
 Enter Energy Channel(s) or "full": full  
-100% [............................................................................] 456806 / 456806  
+  
 \========================================  
 \=      Wind Type III Radio Bursts      =  
 \========================================  
-100% [..........................................................................] 3555206 / 3555206  
-Parsing Type III Data for 2012-03-07  
-  
-\========================================  
-\=           Neutron Monitors           =  
-\========================================  
-How many stations to parse: 2  
-You are parsing 2 station(s)  
-Enter station names: OULU  
-Enter station names: INVK  
-Parsing the ['OULU', 'INVK'] stations  
   
 \========================================  
 \=      ACE/Wind Solar Wind Speed       =  
 \========================================  
-100% [............................................................................] 169472 / 169472  
+Specify which GOES Satellite for Xray Flux (13 or 15): 15  
+  
+\========================================  
+\=          GOES-15 Xray Flux           =  
+\========================================  
 
 
-
-<img src="Plots/omni_test.png" width="600">
+<img src="Plots/omni_full_test_v2.png" width="600">
 
 
 ### Remastered WIND Type III Radio Burst ([radio_script_v3](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/radio_event_remastered.py))
@@ -280,7 +279,7 @@ In [51]: run radio_event_remastered.py
 Plotting Type III Data: [20120307 00:00:00 -- 20120307 02:00:00]  
 Plot generated for 20120307  
 
-<img src="Plots/radio_remastered_test_v3.png" width="900">
+<img src="Plots/remastered_radio_test_v3.png" width="900">
 
 
 
