@@ -91,6 +91,11 @@
     - [ ] Log-normal
   - [ ] Make multiple subplots, separating each fit model
 
+- [ ] STEREO-A/B Data
+  - [ ] Incorporate STEREO-A/B Data
+    - [ ] Type III Radio Bursts
+    - [ ] Proton Flux
+      - [ ] HEP
 
 
 
