@@ -276,105 +276,30 @@ Parsing the ['OULU', 'INVK'] stations
 <img src="Plots/omni_test.png" width="600">
 
 
+### Remastered WIND Type III Radio Burst ([radio_script_v3](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/radio_event_remastered.py))
 
-### Remastered WIND Type III Radio Burst ([radio_script_v2](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/radio_remastered.py))
-#### Single Day
-In [33]: **run radio_remastered.py**  
-Enter start date (yyyymmdd): 20120307  
-Enter a end date (yyyymmdd): 20120307  
-Enter a start hour or "full": 00  
-Enter a end hour: 04  
-100% [..........................................................................] 3555206 / 3555206  
-Parsing Type III Data for 2012-03-01  
-
-Plotting Type III Data: [20120307 00:00:00 -- 20120307 04:00:00]  
-Elapsed Time: 0.96 seconds  
-
-
-<img src="Plots/remastered_radio_test.png" width="500">
-<img src="Plots/remastered_radio_full_test.png" width="700">
-
-
-
-#### Multiple Days
-In [96]: **run radio_remastered.py**  
-Enter start date (yyyymmdd): 20120301  
-Enter a end date (yyyymmdd): 20120304  
-Enter a start hour or "full": full  
-100% [..........................................................................] 3555206 / 3555206  
-Parsing Type III Data for 2012-03-01  
-100% [..........................................................................] 3555206 / 3555206  
-Parsing Type III Data for 2012-03-02  
-100% [..........................................................................] 3555206 / 3555206  
-Parsing Type III Data for 2012-03-03  
-100% [..........................................................................] 3555206 / 3555206  
-Parsing Type III Data for 2012-03-04  
-
-Plotting Type III Data: [20120301 00:00:00 -- 20120304 23:00:00]  
-Elapsed Time: 3.35 seconds  
-
-
-<img src="Plots/remastered_radio_multi_test.png" width="500">
-
-
-
-### Neutron Monitor ([nm_script](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/pandas_test_nm.py))
-In [1]: **run pandas_test_nm.py**  
-Enter start date (yyyymmdd): 20120304  
-Enter a end date (yyyymmdd): 20120318  
-Enter a start hour or "full": full  
-How many stations to parse: 2  
-You are parsing 2 station(s)  
-Enter station names: INVK  
-Enter station names: OULU  
-Parsing the ['INVK', 'OULU'] stations  
-
-
-<img src="Plots/nm_data_test.png" width="500">
-
-
-
-### Remastered GOES-15 Proton Flux ([prot_script_v2](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/pandas_test_proton.py))
-In [115]: **run pandas_test_proton.py**  
-Enter a start date (yyyymmdd): 20120306  
-Enter a end date (yyyymmdd): 20120315  
-Enter a start hour or "full": full  
-Energy Channels  
-\======================  
-1: 6.5 MeV  
-2: 11.6 MeV  
-3: 30.6 MeV  
-4: 63.1 MeV  
-5: 165 MeV  
-6: 433 MeV  
-Enter Energy Channel(s) or "full": full  
-100% [............................................................................] 456593 / 456593  
-Plotting GOES-15W Proton Flux Data: [20120306 00:00:00 -- 20120315 23:00:00]  
-
-
-<img src="Plots/proton_remastered_test.png" width="500">
-
-
-
-### Solar Wind Speed ([swind_script](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/pandas_test_swind.py))
-In [25]: **run pandas_test_swind.py**  
-Enter a start date (yyyymmdd): 20120306  
-Enter a end date (yyyymmdd): 20120308  
-Enter a start hour or "full": full  
-100% [........................................................] 150195 / 150195  
-VERSION ERROR: The version v00 for WIND data does not exist, attempting v01  
-100% [........................................................] 150195 / 150195  
-VERSION ERROR: The version v00 for WIND data does not exist, attempting v01  
-100% [........................................................] 150195 / 150195  
-VERSION ERROR: The version v00 for WIND data does not exist, attempting v01  
+In [51]: run radio_event_remastered.py  
   
-VERSION ERROR: The version v01 for WIND data does not exist, attempting v02  
-100% [........................................................] 169472 / 169472  
-Plotting Solar Wind Data: [20120306 00:00:00 -- 20120308 23:00:00]  
+Plotting Type III Data: [20120307 00:00:00 -- 20120307 02:00:00]  
+Plot generated for 20120307  
+
+<img src="Plots/radio_remastered_v3.png" width="900">
 
 
-<img src="Plots/solarwind_test.png" width="500">
 
+
+### Radio Burst Fit Program ([radio_fit_v1](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/pandas_test_radio_fit.py))
+
+In [49]: **run pandas_test_radio_fit.py**  
+\========================================  
+\=       Radio Burst Fit Program        =  
+\========================================  
+Enter a start date (yyyymmdd): 20120307  
+Enter a end date (yyyymmdd): 20120307   
+Enter a start hour or "full": 00  
+Enter a end hour: 01  
+
+<img src="Plots/radio_fit_test.png" width="600">
 
 
 ### Legacy OMNI Space Weather (1995-2009) ([legacy_omni_script_v1](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/pandas_test_legacy.py))
@@ -450,7 +375,7 @@ Enter GOES Satellite Option: 2
 
 
 # Deprecated Scripts
-Deprecated [scripts](https://github.com/byamashiro/Research_Projects/tree/master/Scripts/deprecated_scripts) are kept for reference. All scripts are working, but most do not incorporate online data fetching. The first [event script](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/deprecated_scripts/deprecated_event.py) that used local files is included in the folder. The event script is highly inefficient as it reads data from year-long data files. This is not the desired method when pulling data from half a day, which in turn will read the entire year data. Old [bash scripts](https://github.com/byamashiro/Research_Projects/tree/master/Scripts/deprecated_scripts/bash_scripts) are also added to archive old/inefficient methods of collecting data and reducing.
+Deprecated [scripts](https://github.com/byamashiro/Research_Projects/tree/master/Scripts/deprecated_scripts) are kept for reference. All scripts are working, but most do not incorporate online data fetching. The first [event script](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/deprecated_scripts/deprecated_event.py) that used local files is included in the folder. The event script is highly inefficient as it reads data from year-long data files. This is not the desired method when pulling data from half a day, which in turn will read the entire year data. Old [bash scripts](https://github.com/byamashiro/Research_Projects/tree/master/Scripts/deprecated_scripts/bash_scripts) are also added to archive old/inefficient methods of collecting data and reducing. Most script descriptions were added to the deprecated folder. The omni script has the functionality of all of the deprecated scripts, and will be updated.
 
 ### Old Scripts
 Filename       | Type | Run Command | Functionality
