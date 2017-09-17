@@ -265,179 +265,213 @@ if '2' in option_bin_set:
 	#sys.exit(0)
 	'''
 
-	# ===== preliminary method end
+# ======= fit process
+
+
+ymax_ind = rb_data[300].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax()
+ymax_val = rb_data[300].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].max()
+tvals = rb_data[300].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].index
+# xvals = np.arange(len(tvals))
+
+panda_ind = pd.DataFrame([])
+panda_ind['time'] = tvals
+xvals = panda_ind.index.values
+yvals =rb_data[300].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].values
+
+ymax_center = panda_ind.index[panda_ind['time'] == ymax_ind].values
+
+# =========== Skewed Gaussian limfit Model (BEGIN)
+
+from lmfit.models import SkewedGaussianModel
+model_skg = SkewedGaussianModel(missing='drop') # when using np.nan instead of .drop # missing='drop'
+params_skg = model_skg.make_params(amplitude=ymax_val, center=ymax_center, sigma=1, gamma=0)
+
+skewed_gaussian = model_skg.fit(yvals, params_skg, x = xvals)
+print("Skewed Gaussian Model\n", skewed_gaussian.fit_report())
+
+# =========== Skewed Gaussian limfit Model (END)
+
+# =========== Exponential Gaussian limfit Model (BEGIN)
+
+from lmfit.models import ExponentialGaussianModel
+model_exg = ExponentialGaussianModel(missing='drop') # when using np.nan instead of .drop # missing='drop'
+params_exg = model_exg.make_params(amplitude=ymax_val, center=ymax_center, sigma=1, gamma=0)
+
+exponential_gaussian = model_exg.fit(yvals, params_exg, x = xvals)
+print("Exponential Gaussian Model\n", exponential_gaussian.fit_report())
+
+# =========== Exponential Gaussian limfit Model (END)
+
+# =========== Donaich limfit Model (BEGIN)
+
+from lmfit.models import DonaichModel
+model_donaich = DonaichModel(missing='drop') # when using np.nan instead of .drop # missing='drop'
+params_donaich = model_donaich.make_params(amplitude=ymax_val, center=ymax_center, sigma=1, gamma=0)
+
+donaich = model_donaich.fit(yvals, params_donaich, x = xvals)
+print("Doniach Model\n", donaich.fit_report())
+
+# =========== Donaich limfit Model (END)
+
+# =========== Moffat limfit Model (BEGIN)
+
+from lmfit.models import MoffatModel
+model_moffat = MoffatModel(missing='drop') # when using np.nan instead of .drop # missing='drop'
+params_moffat = model_moffat.make_params(amplitude=ymax_val, center=ymax_center, sigma=1, gamma=0)
+
+moffat = model_moffat.fit(yvals, params_moffat, x = xvals)
+print("Moffat Model\n", moffat.fit_report())
+
+# =========== Moffat limfit Model (END)
+
+
+# =========== Lognormal limfit Model (BEGIN) =========== DOES NOT WORK, nans
+'''
+from lmfit.models import LognormalModel
+model_lognorm = LognormalModel(missing='drop') # when using np.nan instead of .drop # missing='drop'
+params_lognorm = model_lognorm.make_params(amplitude=ymax_val, center=ymax_center, sigma=1)
+
+log_normal = model_lognorm.fit(yvals, params_lognorm, x = xvals)
+print("Log Normal Model\n", log_normal.fit_report())
+'''
+# =========== Lognormal limfit Model (END)
+
+# =========== Gaussian SCIPY (BEGIN)
+
+gaussian = lambda x: 3*np.exp(-(30-x)**2/20.)
+
+# data = gaussian(np.arange(100))
+# plt.plot(data, '.')
+
+X = xvals #np.arange(data.size)
+x = np.sum(X * yvals)/np.sum(yvals) # np.sum(X*data)/np.sum(data)
+width = np.sqrt(np.abs(np.sum((X-x)**2*yvals)/np.sum(yvals)))
+
+# max = data.max()
+
+fit = lambda t : ymax_val * np.exp(-(t-x)**2/(2*width**2)) # max
+
+
+# ======= load fits into pandas df
+
+# panda_ind['scipy_gaussian'] = fit(X)
+rb_data.drop(rb_data[rb_data.isnull().values].index, inplace=True)
+
+panda_ind_2 = pd.DataFrame([])
+panda_ind_2['time'] = rb_data[300].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].index
+
+
+panda_ind_2['lmfit_skewedgaussian'] = skewed_gaussian.best_fit
+panda_ind_2['lmfit_exponentialgaussian'] = exponential_gaussian.best_fit
+panda_ind_2['lmfit_donaich'] = donaich.best_fit
+panda_ind_2['lmfit_moffat'] = moffat.best_fit
+
+# panda_ind_2['lmfit_lognorm'] = log_normal.best_fit
+panda_ind_2.set_index('time', inplace=True)
+
+
+# panda_ind['lmfit_skewedgaussian'] = result.best_fit
+# panda_ind.set_index('time', inplace=True)
 
 
 
+# ===========Gaussian SCIPY (END)
 
-
-
-	fit_option = 'yes'
-	if fit_option == 'yes':
-		length_data = int(len(option_bin_set))
-		length_data_list = []
-		for i in range(length_data):
-			length_data_list.append(i)
-		
-		
-		j = -1
-		def next_global():
-			global j
-			if (j < length_data+2):
-				j += 1
-
-
-		def applyPlotStyle():
-			axes[length_data_list[j]].grid(True)
-			axes[length_data_list[j]].minorticks_on()
-			axes[length_data_list[j]].legend(loc='upper right', ncol=1,fontsize=8)# borderaxespad=0)# bbox_to_anchor=(1, 0.5)) # bbox_to_anchor=(1.02,1.0)
-			axes[length_data_list[j]].tick_params(axis='y', which='both', direction='in')
-			if '1' in option_bin_set:
-				high_bin_proton = sorted(energy_bin_list)[-1][0]
-				low_bin_proton = sorted(energy_bin_list)[0][0]
-		
-				high_bin_proton_str = sorted(energy_bin_list)[-1][1]
-				low_bin_proton_str = sorted(energy_bin_list)[0][1]
-				axes[length_data_list[j]].axvline(proton_df[f'{low_bin_proton}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax(), zorder=1) # (proton_df.P6W_UNCOR_FLUX.max()) # changed maximum flux to be within time interval specified
-
-
-		if length_data > 1:
-			f, axes = plt.subplots(nrows=length_data, ncols=1, sharex=True, figsize=(10, 6))
-
-		if length_data == 1:
-			length_data_list[0] = 0,0
-			f, axes = plt.subplots(nrows=length_data, ncols=1, sharex=False, figsize=(10, 6), squeeze=False)
-
-
-
-		# ======= fit process
-		
-
-		ymax_ind = rb_data[300].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax()
-		ymax_val = rb_data[300].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].max()
-		tvals = rb_data[300].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].index
-		# xvals = np.arange(len(tvals))
-
-		panda_ind = pd.DataFrame([])
-		panda_ind['time'] = tvals
-		xvals = panda_ind.index.values
-		yvals =rb_data[300].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].values
-
-		ymax_center = panda_ind.index[panda_ind['time'] == ymax_ind].values
-
-		# =========== Skewed Gaussian limfit Model (BEGIN)
-		
-		from lmfit.models import SkewedGaussianModel
-		model_skg = SkewedGaussianModel(missing='drop') # when using np.nan instead of .drop # missing='drop'
-		params_skg = model_skg.make_params(amplitude=ymax_val, center=ymax_center, sigma=1, gamma=0)
-		
-		skewed_gaussian = model_skg.fit(yvals, params_skg, x = xvals)
-		print("Skewed Gaussian Model\n", skewed_gaussian.fit_report())
-		
-		# =========== Skewed Gaussian limfit Model (END)
-
-		# =========== Exponential Gaussian limfit Model (BEGIN)
-		
-		from lmfit.models import ExponentialGaussianModel
-		model_exg = ExponentialGaussianModel(missing='drop') # when using np.nan instead of .drop # missing='drop'
-		params_exg = model_exg.make_params(amplitude=ymax_val, center=ymax_center, sigma=1, gamma=0)
-		
-		exponential_gaussian = model_exg.fit(yvals, params_exg, x = xvals)
-		print("Exponential Gaussian Model\n", exponential_gaussian.fit_report())
-		
-		# =========== Exponential Gaussian limfit Model (END)
-
-		# =========== Donaich limfit Model (BEGIN)
-		
-		from lmfit.models import DonaichModel
-		model_donaich = DonaichModel(missing='drop') # when using np.nan instead of .drop # missing='drop'
-		params_donaich = model_donaich.make_params(amplitude=ymax_val, center=ymax_center, sigma=1, gamma=0)
-		
-		donaich = model_donaich.fit(yvals, params_donaich, x = xvals)
-		print("Doniach Model\n", donaich.fit_report())
-		
-		# =========== Donaich limfit Model (END)
-
-
-		# =========== Lognormal limfit Model (BEGIN) =========== DOES NOT WORK, nans
-		'''
-		from lmfit.models import LognormalModel
-		model_lognorm = LognormalModel(missing='drop') # when using np.nan instead of .drop # missing='drop'
-		params_lognorm = model_lognorm.make_params(amplitude=ymax_val, center=ymax_center, sigma=1)
-		
-		log_normal = model_lognorm.fit(yvals, params_lognorm, x = xvals)
-		print("Log Normal Model\n", log_normal.fit_report())
-		'''
-		# =========== Lognormal limfit Model (END)
-
-		# =========== Gaussian SCIPY (BEGIN)
-
-		gaussian = lambda x: 3*np.exp(-(30-x)**2/20.)
-		
-		# data = gaussian(np.arange(100))
-		# plt.plot(data, '.')
-		
-		X = xvals #np.arange(data.size)
-		x = np.sum(X * yvals)/np.sum(yvals) # np.sum(X*data)/np.sum(data)
-		width = np.sqrt(np.abs(np.sum((X-x)**2*yvals)/np.sum(yvals)))
-		
-		# max = data.max()
-		
-		fit = lambda t : ymax_val * np.exp(-(t-x)**2/(2*width**2)) # max
-		
-
-		# ======= load fits into pandas df
-
-		# panda_ind['scipy_gaussian'] = fit(X)
-		rb_data.drop(rb_data[rb_data.isnull().values].index, inplace=True)
-
-		panda_ind_2 = pd.DataFrame([])
-		panda_ind_2['time'] = rb_data[300].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].index
-
-
-		panda_ind_2['lmfit_skewedgaussian'] = skewed_gaussian.best_fit
-		panda_ind_2['lmfit_exponentialgaussian'] = exponential_gaussian.best_fit
-		panda_ind_2['lmfit_donaich'] = donaich.best_fit
-		# panda_ind_2['lmfit_lognorm'] = log_normal.best_fit
-		panda_ind_2.set_index('time', inplace=True)
-
-
-		# panda_ind['lmfit_skewedgaussian'] = result.best_fit
-		# panda_ind.set_index('time', inplace=True)
-
-
-
-		# ===========Gaussian SCIPY (END)
-
-
-
-
-		next_global()
-		'''
-		color_cm=iter(cm.viridis(np.linspace(0,1, 5 )))
-		freq_list = [100, 300, 500, 700, 900]
-		
-		for frequency in freq_list:
-			color_choice = next(color_cm)
+fit_option = 'yes'
+if fit_option == 'yes':
+	fit_no = 3
+	length_data = fit_no # int(len(option_bin_set))
+	length_data_list = []
+	for i in range(length_data):
+		length_data_list.append(i)
 	
-			axes[length_data_list[j]].plot(rb_data[frequency].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color=color_choice, label= f'{frequency} kHz', zorder=5)
-		'''
-		# axes[length_data_list[j]].plot(rb_data[300].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='blue', label= '300 kHz', zorder=5)
-		axes[length_data_list[j]].plot(rb_data[300].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'],'o', markerfacecolor='none', markeredgecolor='blue', color='blue', label= '300 kHz', zorder=5)
-		
-		# axes[length_data_list[j]].plot(x=rb_data[300].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].index, y = result.best_fit, color='red', label= 'Best Fit', zorder=5) # x=xvals,
-		# axes[length_data_list[j]].plot(panda_ind['scipy_gaussian'], color='red', label= 'Scipy Gaussian', zorder=5) # x=xvals,
-		axes[length_data_list[j]].plot(panda_ind_2['lmfit_skewedgaussian'], color='red', label= 'LMFIT Skewed Gaussian', zorder=5, linestyle ='--', linewidth=3) # x=xvals,
-		axes[length_data_list[j]].plot(panda_ind_2['lmfit_exponentialgaussian'], color='green', label= 'LMFIT Exponential Gaussian', zorder=5, linewidth=3) # x=xvals,
-		axes[length_data_list[j]].plot(panda_ind_2['lmfit_donaich'], color='purple', label= 'LMFIT Donaich', zorder=5, linestyle='-.', linewidth=3) # x=xvals,
-		# axes[length_data_list[j]].plot(panda_ind_2['lmfit_lognorm'], color='purple', label= 'LMFIT Log-normal', zorder=5, linestyle='-.') # x=xvals,
+	
+	j = -1
+	def next_global():
+		global j
+		if (j < length_data+2):
+			j += 1
+	def applyPlotStyle():
+		axes[length_data_list[j]].grid(True)
+		axes[length_data_list[j]].minorticks_on()
+		axes[length_data_list[j]].legend(loc='upper right', ncol=1,fontsize=8)# borderaxespad=0)# bbox_to_anchor=(1, 0.5)) # bbox_to_anchor=(1.02,1.0)
+		axes[length_data_list[j]].tick_params(axis='y', which='both', direction='in')
+		if '1' in option_bin_set:
+			high_bin_proton = sorted(energy_bin_list)[-1][0]
+			low_bin_proton = sorted(energy_bin_list)[0][0]
+	
+			high_bin_proton_str = sorted(energy_bin_list)[-1][1]
+			low_bin_proton_str = sorted(energy_bin_list)[0][1]
+			axes[length_data_list[j]].axvline(proton_df[f'{low_bin_proton}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax(), zorder=1) # (proton_df.P6W_UNCOR_FLUX.max()) # changed maximum flux to be within time interval specified
+	if length_data > 1:
+		f, axes = plt.subplots(nrows=length_data, ncols=1, sharex=True, figsize=(10, 6))
+	if length_data == 1:
+		length_data_list[0] = 0,0
+		f, axes = plt.subplots(nrows=length_data, ncols=1, sharex=False, figsize=(10, 6), squeeze=False)
+	
 
 
-		# axes[length_data_list[j]].set_ylim(0, 500)
-		axes[length_data_list[j]].set_ylabel('Wind Type III\nRadio Burst [sfu]', fontname="Arial", fontsize = 12)
+	# ================
+	next_global()
+	'''
+	color_cm=iter(cm.viridis(np.linspace(0,1, 5 )))
+	freq_list = [100, 300, 500, 700, 900]
+	
+	for frequency in freq_list:
+		color_choice = next(color_cm)
 
+		axes[length_data_list[j]].plot(rb_data[frequency].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color=color_choice, label= f'{frequency} kHz', zorder=5)
+	'''
+	# axes[length_data_list[j]].plot(rb_data[300].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='blue', label= '300 kHz', zorder=5)
+	axes[length_data_list[j]].plot(rb_data[300].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'],'o', markerfacecolor='none', markeredgecolor='blue', color='blue', label= '300 kHz', zorder=5)
+	# axes[length_data_list[j]].plot(x=rb_data[300].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].index, y = result.best_fit, color='red', label= 'Best Fit', zorder=5) # x=xvals,
+	# axes[length_data_list[j]].plot(panda_ind['scipy_gaussian'], color='red', label= 'Scipy Gaussian', zorder=5) # x=xvals,
+	axes[length_data_list[j]].plot(panda_ind_2['lmfit_skewedgaussian'], color='red', label= 'LMFIT Skewed Gaussian', zorder=5, linestyle ='--', linewidth=3) # x=xvals,
+	# axes[length_data_list[j]].plot(panda_ind_2['lmfit_exponentialgaussian'], color='green', label= 'LMFIT Exponential Gaussian', zorder=5, linewidth=3) # x=xvals,
+	# axes[length_data_list[j]].plot(panda_ind_2['lmfit_donaich'], color='purple', label= 'LMFIT Donaich', zorder=5, linestyle='-.', linewidth=3) # x=xvals,
+	# axes[length_data_list[j]].plot(panda_ind_2['lmfit_lognorm'], color='purple', label= 'LMFIT Log-normal', zorder=5, linestyle='-.') # x=xvals,
+	# axes[length_data_list[j]].set_ylim(0, 500)
+	axes[length_data_list[j]].set_ylabel('Wind Type III\nRadio Burst [sfu]', fontname="Arial", fontsize = 12)
+	applyPlotStyle()
+
+	next_global()
+	
+	axes[length_data_list[j]].plot(rb_data[300].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'],'o', markerfacecolor='none', markeredgecolor='blue', color='blue', label= '300 kHz', zorder=5)
+	# axes[length_data_list[j]].plot(x=rb_data[300].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].index, y = result.best_fit, color='red', label= 'Best Fit', zorder=5) # x=xvals,
+	# axes[length_data_list[j]].plot(panda_ind['scipy_gaussian'], color='red', label= 'Scipy Gaussian', zorder=5) # x=xvals,
+	axes[length_data_list[j]].plot(panda_ind_2['lmfit_exponentialgaussian'], color='green', label= 'LMFIT Exponential Gaussian', zorder=5, linewidth=3) # x=xvals,
+	# axes[length_data_list[j]].plot(panda_ind_2['lmfit_lognorm'], color='purple', label= 'LMFIT Log-normal', zorder=5, linestyle='-.') # x=xvals,
+	# axes[length_data_list[j]].set_ylim(0, 500)
+	axes[length_data_list[j]].set_ylabel('Wind Type III\nRadio Burst [sfu]', fontname="Arial", fontsize = 12)
+	applyPlotStyle()
+	'''
+	next_global()
+	
+	axes[length_data_list[j]].plot(rb_data[300].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'],'o', markerfacecolor='none', markeredgecolor='blue', color='blue', label= '300 kHz', zorder=5)
+	# axes[length_data_list[j]].plot(x=rb_data[300].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].index, y = result.best_fit, color='red', label= 'Best Fit', zorder=5) # x=xvals,
+	# axes[length_data_list[j]].plot(panda_ind['scipy_gaussian'], color='red', label= 'Scipy Gaussian', zorder=5) # x=xvals,
+	axes[length_data_list[j]].plot(panda_ind_2['lmfit_donaich'], color='purple', label= 'LMFIT Donaich', zorder=5, linestyle='-.', linewidth=3) # x=xvals,
+	# axes[length_data_list[j]].plot(panda_ind_2['lmfit_exponentialgaussian'], color='green', label= 'LMFIT Exponential Gaussian', zorder=5, linewidth=3) # x=xvals,
+	# axes[length_data_list[j]].plot(panda_ind_2['lmfit_lognorm'], color='purple', label= 'LMFIT Log-normal', zorder=5, linestyle='-.') # x=xvals,
+	# axes[length_data_list[j]].set_ylim(0, 500)
+	axes[length_data_list[j]].set_ylabel('Wind Type III\nRadio Burst [sfu]', fontname="Arial", fontsize = 12)
+	applyPlotStyle()
+	'''
+
+	next_global()
+	
+	axes[length_data_list[j]].plot(rb_data[300].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'],'o', markerfacecolor='none', markeredgecolor='blue', color='blue', label= '300 kHz', zorder=5)
+	# axes[length_data_list[j]].plot(x=rb_data[300].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].index, y = result.best_fit, color='red', label= 'Best Fit', zorder=5) # x=xvals,
+	# axes[length_data_list[j]].plot(panda_ind['scipy_gaussian'], color='red', label= 'Scipy Gaussian', zorder=5) # x=xvals,
+	axes[length_data_list[j]].plot(panda_ind_2['lmfit_moffat'], color='purple', label= 'LMFIT Moffat', zorder=5, linestyle='-.', linewidth=3) # x=xvals,
+	# axes[length_data_list[j]].plot(panda_ind_2['lmfit_exponentialgaussian'], color='green', label= 'LMFIT Exponential Gaussian', zorder=5, linewidth=3) # x=xvals,
+	# axes[length_data_list[j]].plot(panda_ind_2['lmfit_lognorm'], color='purple', label= 'LMFIT Log-normal', zorder=5, linestyle='-.') # x=xvals,
+	# axes[length_data_list[j]].set_ylim(0, 500)
+	axes[length_data_list[j]].set_ylabel('Wind Type III\nRadio Burst [sfu]', fontname="Arial", fontsize = 12)
 
 	applyPlotStyle()
+
+
 	plt.xlabel('Time (UT)', fontname="Arial", fontsize = 12)
 
 	myFmt = mdates.DateFormatter('%m/%d\n%H:%M')
@@ -451,16 +485,14 @@ if '2' in option_bin_set:
 	plt.subplots_adjust(wspace = 0, hspace = 0, top=0.91)
 	#plt.savefig('omni_test_legacy.png', format='png', dpi=900)
 	
-	if event_option == 'yes':
-		plt.savefig(f'xflare_events/omni_test_{event_date}.png', format='png', dpi=900)
 	
 	if save_plot_option == 'yes':
-		plt.savefig(f'xflare_events/omni_test_{event_date}.png', format='png', dpi=900)
+		plt.savefig(f't3_fits/omni_test_t3fit_{event_date}.png', format='png', dpi=900)
 	
 	elif save_plot_option != 'yes':
 		plt.show()
 
-	plt.show()
+
 	sys.exit(0)
 
 
