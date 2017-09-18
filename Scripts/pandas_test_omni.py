@@ -10,6 +10,7 @@ import random
 from spacepy import pycdf
 from urllib import error
 from matplotlib.pyplot import cm
+import calendar
 
 import shutil
 
@@ -62,7 +63,7 @@ print(f'{"="*40}\n{"=" + "DATASETS".center(38," ") + "="}\n{"="*40}\n1 - GOES-13
 option_bin_set = set()
 while True: # energy_bin != 'done':
 	if event_option == 'yes':
-		option_bin_set = {'1', '2', '4', '5'}
+		option_bin_set = {'1', '2', '4', '5', '6'}
 
 		break
 
@@ -76,6 +77,7 @@ while True: # energy_bin != 'done':
 				option_bin_set.add('3')
 				option_bin_set.add('4')
 				option_bin_set.add('5')
+				option_bin_set.add('6')
 				break
 			
 			elif int(option_bin) < 6:
@@ -884,10 +886,106 @@ if '5' in option_bin_set:
 
 
 
-''' Templates for new data
-#===========
-print(f'\n{"="*40}\nNew Dataset Name Goes Here\n{"="*40}')
+# Templates for new data
+#=========== 6: STEREO-A/B
+# print(f'\n{"="*40}\nNew Dataset Name Goes Here\n{"="*40}')
+if '6' in option_bin_set:
+	if event_option == 'yes':
+		satellite_no_xray = str(event_list['xray_sat'][0])
+	if event_option != 'yes':
+		satellite_no_st = input('Specify which STEREO Satellite for Proton Flux (A or B): ').upper()
+		if satellite_no_st != 'A':
+			if satellite_no_xray != 'B':
+				print('SATELLITE ERROR: Must specify either A or B.')
+				sys.exit(0)
 
+	print(f'\n{"="*40}\n{"=" + f"GOES-{satellite_no_xray} Xray Flux".center(38," ") + "="}\n{"="*40}')
+
+	sta_df = pd.DataFrame([])
+	
+	for date in daterange( start, end ):
+
+		try:
+			event_date = str(date).replace('-','')
+
+			sta_name = f'{satellite_no_st}eH{event_date[2:4]}{calendar.month_name[int(event_date[4:6])][:3]}.1m' #g15_xrs_2s_20120307_20120307.csv
+			sta_check = os.path.isfile(f'{data_directory}/GOES/GOES_{satellite_no_xray}/XRflux/{xray_name}')
+			sta_name_list = ['time_tag','A_QUAL_FLAG','A_COUNT','A_FLUX','B_QUAL_FLAG','B_COUNT','B_FLUX']
+			#xray_name_list = ['time_tag','A_QUAL_FLAG','A_COUNT','A_FLUX','B_QUAL_FLAG','B_COUNT','B_FLUX']
+
+
+			if xray_check == True:
+				dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
+				xray_df_ind = pd.read_csv(f'{data_directory}/GOES/GOES_{satellite_no_xray}/XRflux/{xray_name}', skiprows=140, names=xray_name_list, date_parser=dateparse,index_col='time_tag', header=0)
+				xray_df = xray_df.append(xray_df_ind)
+
+
+			elif xray_check == False:
+				xray_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_full/{event_date[:4]}/{event_date[4:6]}/goes{satellite_no_xray}/csv/{xray_name}'
+				xray_in = wget.download(xray_url)
+	
+				dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
+				xray_df_ind = pd.read_csv(f'{xray_in}', skiprows=140, names=xray_name_list, date_parser=dateparse,index_col='time_tag', header=0) # 138 for 20120307
+				xray_df = xray_df.append(xray_df_ind)
+
+				if save_option == 'yes':
+					shutil.move(f'{xray_name}', f'{data_directory}/GOES/GOES_{satellite_no_xray}/XRflux/')
+				elif save_option == 'no':
+					os.remove(xray_name)
+
+
+		
+		except error.HTTPError as err:
+			
+			# print("working except error")
+			# print(f'\nVERSION ERROR: The version v0{i} for WIND data does not exist, attempting v0{i+1}')
+
+			satellite_no_xray_error = ['13', '15']
+
+			for i in satellite_no_xray_error:
+				if i == satellite_no_xray:
+					satellite_no_xray_error.remove(f'{i}')
+					satellite_no_xray = satellite_no_xray_error[0]
+					print(f'GOES-{i} data does not exist for this date ({event_date}), using data from GOES-{satellite_no_xray}.')
+
+					xray_name_error = f'g{satellite_no_xray_error[0]}_xrs_2s_{event_date}_{event_date}.csv' #g15_xrs_2s_20120307_20120307.csv
+					xray_error_check = os.path.isfile(f'{data_directory}/GOES/GOES_{satellite_no_xray_error[0]}/XRflux/{xray_name_error}')
+					
+					if xray_error_check == True:
+						dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
+						xray_df_ind = pd.read_csv(f'{data_directory}/GOES/GOES_{satellite_no_xray_error[0]}/XRflux/{xray_name_error}', skiprows=140, names=xray_name_list, date_parser=dateparse,index_col='time_tag', header=0)
+						xray_df = xray_df.append(xray_df_ind)
+
+					elif xray_error_check == False:
+						xray_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_full/{event_date[:4]}/{event_date[4:6]}/goes{satellite_no_xray_error[0]}/csv/{xray_name_error}'
+						xray_in = wget.download(xray_url)
+				
+						dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
+						xray_df_ind = pd.read_csv(f'{xray_in}', skiprows=140, names=xray_name_list, date_parser=dateparse,index_col='time_tag', header=0) # 138 for 20120307
+						xray_df = xray_df.append(xray_df_ind)
+		
+						if save_option == 'yes':
+							shutil.move(f'{xray_name_error}', f'{data_directory}/GOES/GOES_{satellite_no_xray_error[0]}/XRflux/')
+						elif save_option == 'no':
+							os.remove(xray_name)
+
+		except:
+			print(f'\nMissing data for {date}')
+			continue
+
+		else:
+			continue	
+
+	'''
+	xray_df.loc[xray_df['A_FLUX'] <= 0.0] = np.nan #6.5 MeV
+	xray_df.loc[xray_df['B_FLUX'] <= 0.0] = np.nan #11.6 MeV
+	'''
+
+	xray_df.drop(xray_df[xray_df['A_FLUX'] <= 0.0].index, inplace=True)
+	xray_df.drop(xray_df[xray_df['B_FLUX'] <= 0.0].index, inplace=True)
+
+
+'''
 #===========
 print(f'\n{"="*40}\nNew Dataset Name Goes Here\n{"="*40}')
 '''
