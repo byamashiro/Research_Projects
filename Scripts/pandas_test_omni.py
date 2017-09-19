@@ -916,7 +916,7 @@ if '6' in option_bin_set:
 
 			if sta_check == True:
 				dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
-				sta_df_ind = pd.read_csv(f'{data_directory}/STEREO/STEREO_{satellite_no_st}/{sta_name}', skiprows=22, delim_whitespace=True, names=sta_name_list, parse_dates=[[1,2,3,4]], index_col='1_2_3_4')
+				sta_df_ind = pd.read_csv(f'{data_directory}/STEREO/STEREO_{satellite_no_st}/{sta_name}', skiprows=22, delim_whitespace=True, names=sta_name_list)# , parse_dates=[[1,2,3,4]], index_col='1_2_3_4')
 				sta_df = sta_df.append(sta_df_ind)
 
 
@@ -926,7 +926,7 @@ if '6' in option_bin_set:
 				sta_in = wget.download(sta_url)
 	
 				dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
-				sta_df_ind = pd.read_csv(f'{sta_in}', skiprows=22, delim_whitespace=True, names=sta_name_list, parse_dates=[[1,2,3,4]], index_col='1_2_3_4') # 138 for 20120307
+				sta_df_ind = pd.read_csv(f'{sta_in}', skiprows=22, delim_whitespace=True, names=sta_name_list) # 138 for 20120307, parse_dates=[[1,2,3,4]], index_col='1_2_3_4'
 				# sta_df_ind = pd.read_csv('AeH07Jan.1m.txt', skiprows=22, delim_whitespace=True, names=sta_name_list, parse_dates=[[1,2,3,4]], header = False, index_col='1_2_3_4')
 				sta_df = sta_df.append(sta_df_ind)
 
@@ -934,6 +934,8 @@ if '6' in option_bin_set:
 					shutil.move(f'{sta_name}', f'{data_directory}/STEREO/STEREO_{satellite_no_st}/')
 				elif save_option == 'no':
 					os.remove(sta_name)
+
+		
 
 
 		
@@ -985,7 +987,7 @@ if '6' in option_bin_set:
 
 	# xray_df.drop(xray_df[xray_df['A_FLUX'] <= 0.0].index, inplace=True)
 	# xray_df.drop(xray_df[xray_df['B_FLUX'] <= 0.0].index, inplace=True)
-
+	sys.exit(0)
 	sta_df.drop(sta_df[sta_df[31] <= 0.0].index, inplace=True)
 	sta_df.drop(sta_df[sta_df[29] <= 0.0].index, inplace=True)
 	sta_df.drop(sta_df[sta_df[27] <= 0.0].index, inplace=True)
