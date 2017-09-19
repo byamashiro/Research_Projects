@@ -92,11 +92,16 @@
   - [ ] Make multiple subplots, separating each fit model
 
 - [ ] STEREO-A/B Data
-  - [ ] Incorporate STEREO-A/B Data
+  - [ ] Incorporate STEREO-A Data
     - [ ] Type III Radio Bursts
     - [ ] Proton Flux
-      - [ ] HEP
-
+      - [x] HET (09/18/2017)
+      - [ ] LET
+  - [ ] Incorporate STEREO-B Data
+    - [ ] Type III Radio Bursts
+    - [ ] Proton Flux
+      - [x] HET (09/18/2017)
+      - [ ] LET
 
 
 # Current Tasks and Errors

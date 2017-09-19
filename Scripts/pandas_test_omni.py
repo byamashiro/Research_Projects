@@ -49,7 +49,7 @@ def daterange( start_date, end_date ):
 
 #==============Choosing Dataset
 
-print(f'{"="*40}\n{"=" + "DATASETS".center(38," ") + "="}\n{"="*40}\n1 - GOES-13/15 Proton Flux\n2 - Wind Type III Radio Bursts\n3 - Neutron Monitor Counts (Requires Internet Connection)\n4 - ACE/Wind Solar Wind Speed\n5 - GOES-13/15 Xray Flux\n6 - STEREO-A/B Proton Flux\n{"="*40}')
+print(f'{"="*40}\n{"=" + "DATASETS".center(38," ") + "="}\n{"="*40}\n1 - GOES-13/15 Proton Flux\n2 - Wind Type III Radio Bursts\n3 - Neutron Monitor Counts (Requires Internet Connection)\n4 - ACE/Wind Solar Wind Speed\n5 - GOES-13/15 Xray Flux\n6 - STEREO-A Proton Flux\n7 - STEREO-B Proton Flux\n{"="*40}')
 
 '''
 1 - GOES Proton Flux
@@ -63,7 +63,7 @@ print(f'{"="*40}\n{"=" + "DATASETS".center(38," ") + "="}\n{"="*40}\n1 - GOES-13
 option_bin_set = set()
 while True: # energy_bin != 'done':
 	if event_option == 'yes':
-		option_bin_set = {'1', '2', '4', '5', '6'}
+		option_bin_set = {'1', '2', '4', '5', '6', '7'}
 
 		break
 
@@ -78,9 +78,10 @@ while True: # energy_bin != 'done':
 				option_bin_set.add('4')
 				option_bin_set.add('5')
 				option_bin_set.add('6')
+				option_bin_set.add('7')
 				break
 			
-			elif int(option_bin) < 7:
+			elif int(option_bin) < 8:
 				option_bin_set.add(option_bin)
 	
 				if len(option_bin_set) > 4:
@@ -767,7 +768,7 @@ if '5' in option_bin_set:
 	if event_option == 'yes':
 		satellite_no_xray = str(event_list['xray_sat'][0])
 	if event_option != 'yes':
-		satellite_no_xray = input('Specify which GOES Satellite for Xray Flux (13 or 15): ')
+		satellite_no_xray = input('\nSpecify which GOES Satellite for Xray Flux (13 or 15): ')
 		if satellite_no_xray != '13':
 			if satellite_no_xray != '15':
 				print('SATELLITE ERROR: Must specify either 13 or 15.')
@@ -884,16 +885,12 @@ if '5' in option_bin_set:
 	xray_df.drop(xray_df[xray_df['B_FLUX'] <= 0.0].index, inplace=True)
 
 
-
-
-# Templates for new data
-#=========== 6: STEREO-A/B
-# print(f'\n{"="*40}\nNew Dataset Name Goes Here\n{"="*40}')
+#=========== 6: STEREO-A Proton Flux
 if '6' in option_bin_set:
 	if event_option == 'yes':
 		satellite_no_st = str(event_list['xray_sat'][0])
 	if event_option != 'yes':
-		satellite_no_st = input('Specify which STEREO Satellite for Proton Flux (A or B): ').upper()
+		satellite_no_st = 'A' # input('\nSpecify which STEREO Satellite for Proton Flux (A or B): ').upper()
 		if satellite_no_st != 'A':
 			if satellite_no_st != 'B':
 				print('SATELLITE ERROR: Must specify either A or B.')
@@ -902,6 +899,7 @@ if '6' in option_bin_set:
 	print(f'\n{"="*40}\n{"=" + f"STEREO-{satellite_no_st} Proton Flux".center(38," ") + "="}\n{"="*40}')
 
 	sta_df = pd.DataFrame([])
+	curr_month = 'none'
 	
 	for date in daterange( start, end ):
 
@@ -914,26 +912,30 @@ if '6' in option_bin_set:
 			sta_name_list = list(np.arange(33))
 
 
+
 			if sta_check == True:
-				dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
-				sta_df_ind = pd.read_csv(f'{data_directory}/STEREO/STEREO_{satellite_no_st}/{sta_name}', skiprows=22, delim_whitespace=True, names=sta_name_list)# , parse_dates=[[1,2,3,4]], index_col='1_2_3_4')
-				sta_df = sta_df.append(sta_df_ind)
+				if curr_month != event_date[4:6]:
+					curr_month = event_date[4:6]
+					dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
+					sta_df_ind = pd.read_csv(f'{data_directory}/STEREO/STEREO_{satellite_no_st}/{sta_name}', skiprows=22, delim_whitespace=True, names=sta_name_list, parse_dates=[[1,2,3,4]], index_col='1_2_3_4')
+					sta_df = sta_df.append(sta_df_ind)
 
 
 			elif sta_check == False:
-				# xray_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_full/{event_date[:4]}/{event_date[4:6]}/goes{satellite_no_xray}/csv/{xray_name}'
-				sta_url = f'http://www.srl.caltech.edu/STEREO/DATA/HET/Ahead/1minute/{sta_name}'
-				sta_in = wget.download(sta_url)
+				if curr_month != event_date[4:6]:
+					# xray_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_full/{event_date[:4]}/{event_date[4:6]}/goes{satellite_no_xray}/csv/{xray_name}'
+					sta_url = f'http://www.srl.caltech.edu/STEREO/DATA/HET/Ahead/1minute/{sta_name}'
+					sta_in = wget.download(sta_url)
+		
+					dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
+					sta_df_ind = pd.read_csv(f'{sta_in}', skiprows=22, delim_whitespace=True, names=sta_name_list) # 138 for 20120307, parse_dates=[[1,2,3,4]], index_col='1_2_3_4'
+					# sta_df_ind = pd.read_csv('AeH07Jan.1m.txt', skiprows=22, delim_whitespace=True, names=sta_name_list, parse_dates=[[1,2,3,4]], header = False, index_col='1_2_3_4')
+					sta_df = sta_df.append(sta_df_ind)
 	
-				dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
-				sta_df_ind = pd.read_csv(f'{sta_in}', skiprows=22, delim_whitespace=True, names=sta_name_list) # 138 for 20120307, parse_dates=[[1,2,3,4]], index_col='1_2_3_4'
-				# sta_df_ind = pd.read_csv('AeH07Jan.1m.txt', skiprows=22, delim_whitespace=True, names=sta_name_list, parse_dates=[[1,2,3,4]], header = False, index_col='1_2_3_4')
-				sta_df = sta_df.append(sta_df_ind)
-
-				if save_option == 'yes':
-					shutil.move(f'{sta_name}', f'{data_directory}/STEREO/STEREO_{satellite_no_st}/')
-				elif save_option == 'no':
-					os.remove(sta_name)
+					if save_option == 'yes':
+						shutil.move(f'{sta_name}', f'{data_directory}/STEREO/STEREO_{satellite_no_st}/')
+					elif save_option == 'no':
+						os.remove(sta_name)
 
 		
 
@@ -980,20 +982,115 @@ if '6' in option_bin_set:
 		else:
 			continue	
 
-	'''
-	xray_df.loc[xray_df['A_FLUX'] <= 0.0] = np.nan #6.5 MeV
-	xray_df.loc[xray_df['B_FLUX'] <= 0.0] = np.nan #11.6 MeV
-	'''
-
-	# xray_df.drop(xray_df[xray_df['A_FLUX'] <= 0.0].index, inplace=True)
-	# xray_df.drop(xray_df[xray_df['B_FLUX'] <= 0.0].index, inplace=True)
-	sys.exit(0)
 	sta_df.drop(sta_df[sta_df[31] <= 0.0].index, inplace=True)
 	sta_df.drop(sta_df[sta_df[29] <= 0.0].index, inplace=True)
 	sta_df.drop(sta_df[sta_df[27] <= 0.0].index, inplace=True)
 
 
+#=========== 7: STEREO-B Proton Flux
+if '7' in option_bin_set:
+	if event_option == 'yes':
+		satellite_no_st = str(event_list['xray_sat'][0])
+	if event_option != 'yes':
+		satellite_no_st = 'B' # input('\nSpecify which STEREO Satellite for Proton Flux (A or B): ').upper()
+		if satellite_no_st != 'B':
+			if satellite_no_st != 'A':
+				print('SATELLITE ERROR: Must specify either A or B.')
+				sys.exit(0)
+
+	print(f'\n{"="*40}\n{"=" + f"STEREO-{satellite_no_st} Proton Flux".center(38," ") + "="}\n{"="*40}')
+
+	stb_df = pd.DataFrame([])
+	curr_month = 'none'
+	
+	for date in daterange( start, end ):
+
+		try:
+			event_date = str(date).replace('-','')
+
+			stb_name = f'{satellite_no_st}eH{event_date[2:4]}{calendar.month_name[int(event_date[4:6])][:3]}.1m' #g15_xrs_2s_20120307_20120307.csv
+			stb_check = os.path.isfile(f'{data_directory}/STEREO/STEREO_{satellite_no_st}/{stb_name}')
+			# sta_name_list = ['time_tag','A_QUAL_FLAG','A_COUNT','A_FLUX','B_QUAL_FLAG','B_COUNT','B_FLUX']
+			stb_name_list = list(np.arange(33))
+
+
+
+			if stb_check == True:
+				if curr_month != event_date[4:6]:
+					curr_month = event_date[4:6]
+					dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
+					stb_df_ind = pd.read_csv(f'{data_directory}/STEREO/STEREO_{satellite_no_st}/{stb_name}', skiprows=22, delim_whitespace=True, names=stb_name_list, parse_dates=[[1,2,3,4]], index_col='1_2_3_4')
+					stb_df = stb_df.append(stb_df_ind)
+
+
+			elif stb_check == False:
+				if curr_month != event_date[4:6]:
+					# xray_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_full/{event_date[:4]}/{event_date[4:6]}/goes{satellite_no_xray}/csv/{xray_name}'
+					stb_url = f'http://www.srl.caltech.edu/STEREO/DATA/HET/Behind/1minute/{stb_name}'
+					stb_in = wget.download(stb_url)
+		
+					dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
+					stb_df_ind = pd.read_csv(f'{stb_in}', skiprows=22, delim_whitespace=True, names=stb_name_list, parse_dates=[[1,2,3,4]], index_col='1_2_3_4') # 138 for 20120307
+					# sta_df_ind = pd.read_csv('AeH07Jan.1m.txt', skiprows=22, delim_whitespace=True, names=sta_name_list, parse_dates=[[1,2,3,4]], header = False, index_col='1_2_3_4')
+					stb_df = stb_df.append(stb_df_ind)
+	
+					if save_option == 'yes':
+						shutil.move(f'{stb_name}', f'{data_directory}/STEREO/STEREO_{satellite_no_st}/')
+					elif save_option == 'no':
+						os.remove(stb_name)
+
+		
+
+
+		
+		except error.HTTPError as err:
+			
+			# print("working except error")
+			# print(f'\nVERSION ERROR: The version v0{i} for WIND data does not exist, attempting v0{i+1}')
+
+			satellite_no_xray_error = ['13', '15']
+
+			for i in satellite_no_xray_error:
+				if i == satellite_no_xray:
+					satellite_no_xray_error.remove(f'{i}')
+					satellite_no_xray = satellite_no_xray_error[0]
+					print(f'GOES-{i} data does not exist for this date ({event_date}), using data from GOES-{satellite_no_xray}.')
+
+					xray_name_error = f'g{satellite_no_xray_error[0]}_xrs_2s_{event_date}_{event_date}.csv' #g15_xrs_2s_20120307_20120307.csv
+					xray_error_check = os.path.isfile(f'{data_directory}/GOES/GOES_{satellite_no_xray_error[0]}/XRflux/{xray_name_error}')
+					
+					if xray_error_check == True:
+						dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
+						xray_df_ind = pd.read_csv(f'{data_directory}/GOES/GOES_{satellite_no_xray_error[0]}/XRflux/{xray_name_error}', skiprows=140, names=xray_name_list, date_parser=dateparse,index_col='time_tag', header=0)
+						xray_df = xray_df.append(xray_df_ind)
+
+					elif xray_error_check == False:
+						xray_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_full/{event_date[:4]}/{event_date[4:6]}/goes{satellite_no_xray_error[0]}/csv/{xray_name_error}'
+						xray_in = wget.download(xray_url)
+				
+						dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
+						xray_df_ind = pd.read_csv(f'{xray_in}', skiprows=140, names=xray_name_list, date_parser=dateparse,index_col='time_tag', header=0) # 138 for 20120307
+						xray_df = xray_df.append(xray_df_ind)
+		
+						if save_option == 'yes':
+							shutil.move(f'{xray_name_error}', f'{data_directory}/GOES/GOES_{satellite_no_xray_error[0]}/XRflux/')
+						elif save_option == 'no':
+							os.remove(xray_name)
+
+		except:
+			print(f'\nMissing data for {date}')
+			continue
+
+		else:
+			continue	
+
+	stb_df.drop(stb_df[stb_df[31] <= 0.0].index, inplace=True)
+	stb_df.drop(stb_df[stb_df[29] <= 0.0].index, inplace=True)
+	stb_df.drop(stb_df[stb_df[27] <= 0.0].index, inplace=True)
+
 '''
+# Templates for new data
+
 #===========
 print(f'\n{"="*40}\nNew Dataset Name Goes Here\n{"="*40}')
 '''
@@ -1201,24 +1298,23 @@ if '5' in option_bin_set:
 if '6' in option_bin_set:
 
 	next_global()
-	axes[length_data_list[j]].plot(sta_df[27].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='red', label='35.5-40.5 MeV', zorder=5)
-	axes[length_data_list[j]].plot(sta_df[29].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='blue', label='40.0-60.0 MeV', zorder=5)
-	axes[length_data_list[j]].plot(sta_df[31].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='green', label='60.0-100.0 MeV', zorder=5)
+	axes[length_data_list[j]].plot(sta_df[27].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='darkred', label='35.5-40.5 MeV', zorder=5)
+	axes[length_data_list[j]].plot(sta_df[29].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='red', label='40.0-60.0 MeV', zorder=5)
+	axes[length_data_list[j]].plot(sta_df[31].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='orange', label='60.0-100.0 MeV', zorder=5)
 	axes[length_data_list[j]].set_yscale('log')
 
-	'''
-	flare_classes = ['', 'A', 'B', 'C', 'M', 'X']
-	ax2 = axes[length_data_list[j]].twinx()
-	ax2.set_yscale('log')
-	ax2.set_ylim(axes[length_data_list[j]].get_ylim())
-	ax2.set_yticks([10**-9, 10**-8, 10**-7, 10**-6, 10**-5, 10**-4, 10**-3, 10**-2])
-	ax2.set_yticklabels(labels=flare_classes)
-	ax2.tick_params(axis='y', which='both', direction='in')
+	axes[length_data_list[j]].set_ylabel(f'ST-{satellite_no_st} Proton\nFlux [pfu]', fontname="Arial", fontsize = 12)
+	applyPlotStyle()
 
-	axes[length_data_list[j]].set_yticks([10**-9, 10**-8, 10**-7, 10**-6, 10**-5, 10**-4, 10**-3, 10**-2])
-	'''
+if '7' in option_bin_set:
 
-	axes[length_data_list[j]].set_ylabel(f'STEREO-{satellite_no_st} Proton\nFlux [pfu]', fontname="Arial", fontsize = 12)
+	next_global()
+	axes[length_data_list[j]].plot(stb_df[27].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='green', label='35.5-40.5 MeV', zorder=5)
+	axes[length_data_list[j]].plot(stb_df[29].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='blue', label='40.0-60.0 MeV', zorder=5)
+	axes[length_data_list[j]].plot(stb_df[31].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='darkmagenta', label='60.0-100.0 MeV', zorder=5)
+	axes[length_data_list[j]].set_yscale('log')
+
+	axes[length_data_list[j]].set_ylabel(f'ST-{satellite_no_st} Proton\nFlux [pfu]', fontname="Arial", fontsize = 12)
 	applyPlotStyle()
 
 
