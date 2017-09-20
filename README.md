@@ -229,9 +229,9 @@ Data       | Instrument | Detector | Source | URL
 
 # Running Scripts
 
-### OMNI Space Weather ([omni_script_v2](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/pandas_test_omni.py))
+### OMNI Space Weather ([omni_script_v3](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/pandas_test_omni.py))
 
-In [53]: **run pandas_test_omni.py**  
+In [8]: **run pandas_test_omni.py**  
 \========================================  
 \=               DATASETS               =  
 \========================================  
@@ -240,16 +240,13 @@ In [53]: **run pandas_test_omni.py**
 3 - Neutron Monitor Counts (Requires Internet Connection)  
 4 - ACE/Wind Solar Wind Speed  
 5 - GOES-13/15 Xray Flux  
+6 - STEREO-A Proton Flux  
+7 - STEREO-B Proton Flux  
 \========================================  
-Enter Dataset Option then "done" or "all": 1  
-Enter Dataset Option then "done" or "all": 2  
-Enter Dataset Option then "done" or "all": 4  
-Enter Dataset Option then "done" or "all": 5  
-Enter Dataset Option then "done" or "all": done  
+Enter Dataset Option then "done" or "all": all  
 Enter a start date (yyyymmdd): 20120307  
 Enter a end date (yyyymmdd): 20120307  
-Enter a start hour or "full": 00   
-Enter a end hour: 23  
+Enter a start hour or "full": full  
 Specify which GOES Satellite for Proton Flux (13 or 15): 13  
   
 \========================================  
@@ -270,16 +267,35 @@ Enter Energy Channel(s) or "full": full
 \========================================  
   
 \========================================  
+\=           Neutron Monitors           =  
+\========================================  
+How many stations to parse: 1  
+You are parsing 1 station(s)  
+Enter station names: OULU  
+Parsing the ['OULU'] stations  
+  
+\========================================  
 \=      ACE/Wind Solar Wind Speed       =  
 \========================================  
+  
 Specify which GOES Satellite for Xray Flux (13 or 15): 15  
   
 \========================================  
 \=          GOES-15 Xray Flux           =  
 \========================================  
+  
+\========================================  
+\=         STEREO-A Proton Flux         =  
+\========================================  
+  
+\========================================  
+\=         STEREO-B Proton Flux         =  
+\========================================  
 
 
-<img src="Plots/omni_full_test_v2.png" width="600">
+
+<img src="Plots/omni_full_test_v3.png" width="700">
+
 
 
 ### Remastered WIND Type III Radio Burst ([radio_script_v3](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/radio_event_remastered.py))
