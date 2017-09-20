@@ -106,6 +106,9 @@
 
 # Current Tasks and Errors
 
+### Change long plot option
+- Change the current 'long_plot_option' to be an automated feature. Instead of setting a long plot, set up a statement that, 'if' there are more than 4 options, default the figure size from (10,6) to (10,12).
+
 ### Log-normal distribution fit for radio bursts
 - Even with the "missing='drop'" parameter, the fit still detects NaN values. Although nan elements exist, the other fits allowed for removal of nans with the 'missing' method. There is a possible discrepancy in the parameters, as the Log-normal distribution does not include the gamma factor, which is present in the other three fits that work.
 ```python
