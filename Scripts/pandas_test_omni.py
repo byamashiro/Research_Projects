@@ -20,7 +20,7 @@ plt.close("all")
 data_directory = '/Users/bryanyamashiro/Documents/Research_Projects/Data'
 save_option = 'yes' # saves the data files
 save_plot_option = 'yes' # saves the plots
-long_plot_option = 'yes'
+# long_plot_option = 'yes'
 
 
 
@@ -84,10 +84,11 @@ while True: # energy_bin != 'done':
 			
 			elif int(option_bin) < 8:
 				option_bin_set.add(option_bin)
-	
+				'''
 				if len(option_bin_set) > 4 and long_plot_option == 'no':
 					print('SELECTION ERROR: Only 4 datasets are allowed per canvas.')
 					sys.exit(0)
+				'''
 	
 		elif option_bin == 'done':
 			break
@@ -1142,9 +1143,9 @@ def applyPlotStyle():
 
 
 if length_data > 1:
-	if long_plot_option != 'yes':
+	if len(option_bin_set) <= 4:
 		f, axes = plt.subplots(nrows=length_data, ncols=1, sharex=True, figsize=(10, 6))
-	elif long_plot_option == 'yes':
+	elif len(option_bin_set) > 4:
 		f, axes = plt.subplots(nrows=length_data, ncols=1, sharex=True, figsize=(10, 12))
 
 if length_data == 1:
@@ -1340,11 +1341,11 @@ plt.subplots_adjust(wspace = 0, hspace = 0, top=0.91)
 if event_option == 'yes':
 	plt.savefig(f'xflare_events/omni_test_{event_date}.png', format='png', dpi=900)
 
-if save_plot_option == 'yes' and long_plot_option != 'yes':
+if save_plot_option == 'yes' and len(option_bin_set) <= 4:
 	plt.savefig(f'xflare_events/omni_test_{event_date}.png', format='png', dpi=900)
 
-elif save_plot_option == 'yes' and long_plot_option == 'yes':
-	plt.savefig(f'full_omni_plots/omni_test_{event_date}.png', format='png', dpi=900)
+elif save_plot_option == 'yes' and len(option_bin_set) > 4:
+	plt.savefig(f'full_omni_plots/omni_full_test_{event_date}.png', format='png', dpi=900)
 
 elif save_plot_option != 'yes':
 	plt.show()

@@ -106,9 +106,6 @@
 
 # Current Tasks and Errors
 
-### Change long plot option
-- Change the current 'long_plot_option' to be an automated feature. Instead of setting a long plot, set up a statement that, 'if' there are more than 4 options, default the figure size from (10,6) to (10,12).
-
 ### Log-normal distribution fit for radio bursts
 - Even with the "missing='drop'" parameter, the fit still detects NaN values. Although nan elements exist, the other fits allowed for removal of nans with the 'missing' method. There is a possible discrepancy in the parameters, as the Log-normal distribution does not include the gamma factor, which is present in the other three fits that work.
 ```python
@@ -538,6 +535,11 @@ Solar Wind Speed | N | < 0.0
 
 
 # Resolved Errors
+
+
+### Change long plot option (09/20/2017)
+* **Resolution**: Made an 'if' statement to change figure sizes according to the amount of datasets chosen. If there are more than 4 options, change the figure size.
+- Change the current 'long_plot_option' to be an automated feature. Instead of setting a long plot, set up a statement that, 'if' there are more than 4 options, default the figure size from (10,6) to (10,12).
 
 ### Ordinal error for radio_remastered.py script (09/14/2017)
 * **Resolution**: For this particular event, there is a lack of data. Instead of a '< 0' value, 0.0 is used. This creates a void in data when 0.0 values are dropped throughout the program and thus there are no ordinals for the program to plot. The program is set to plot data from the 0th hour to the 23rd hour, therefore the lack of data from 17-23 hr caused the ordinal error.
