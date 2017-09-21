@@ -1325,7 +1325,8 @@ if '7' in option_bin_set:
 
 
 
-plt.xlabel('Time (UT)', fontname="Arial", fontsize = 12)
+# plt.xlabel('Time [UT]', fontname="Arial", fontsize = 12)
+axes[length_data_list[j]].set_xlabel('Time [UT]', fontname="Arial", fontsize = 12)
 
 myFmt = mdates.DateFormatter('%m/%d\n%H:%M')
 ax = plt.gca()
