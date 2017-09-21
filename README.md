@@ -6,7 +6,7 @@
 - [Current Errors and Pressing Tasks](#current-errors-and-pressing-tasks)
 - [Required Python Modules](#required-python-modules)
 - [Running Scripts](#running-scripts)
-  - [OMNI Space Weather (omni_script_v2)](#omni-space-weather-omni_script_v2)
+  - [OMNI Space Weather (omni_script_v3)](#omni-space-weather-omni_script_v3)
   - [Remastered WIND Type III Radio Burst (radio_script_v3)](#remastered-wind-type-iii-radio-burst-radio_script_v3)
   - [Legacy OMNI Space Weather (1995-2009) (legacy_omni_script_v1)](#legacy-omni-space-weather-1995-2009-legacy_omni_script_v1)
 - [Deprecated Scripts](#deprecated-scripts)
