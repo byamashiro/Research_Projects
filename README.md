@@ -90,6 +90,14 @@
     - [x] Donaich (09/15/2017)
     - [ ] Log-normal
   - [ ] Make multiple subplots, separating each fit model
+  - [ ] Create new fitting algorithm that accounts for double peaks (i.e multiple events stack on each other)
+  - [ ] Average the background for multiple days before the event to determine a steady background fit
+
+- [ ] Data analysis of Type III radio bursts (fluence and correction)
+  - [ ] Incorporate a program/function to calculate agreement with Parker Spiral equations
+  - [ ] Agreement plots
+    - [ ] Peak proton flux
+    - [ ] AR Magnetic flux/area
 
 - [ ] STEREO-A/B Data
   - [ ] Incorporate STEREO-A Data
