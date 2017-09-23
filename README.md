@@ -114,6 +114,41 @@
 
 # Current Tasks and Errors
 
+### OMNI script crash with multiple dates and downloads
+- When retrieving data for plots, that do not exist locally, a key error is produced while plotting. This value error does not trigger when local files exist. 
+```python
+...
+\========================================
+\=         STEREO-B Proton Flux         =
+\========================================
+100% [....................................................] 13073516 / 13073516\---------------------------------------------------------------------------
+ValueError                                Traceback (most recent call last)
+/Users/bryanyamashiro/miniconda3/envs/classUHenv/lib/python3.6/site-packages/pandas/core/indexes/base.py in get_slice_bound(self, label, side, kind)
+   3434             try:
+-> 3435                 return self._searchsorted_monotonic(label, side)
+   3436             except ValueError:
+
+/Users/bryanyamashiro/miniconda3/envs/classUHenv/lib/python3.6/site-packages/pandas/core/indexes/base.py in _searchsorted_monotonic(self, label, side)
+   3393 
+-> 3394         raise ValueError('index must be monotonic increasing or decreasing')
+   3395 
+
+ValueError: index must be monotonic increasing or decreasing
+
+During handling of the above exception, another exception occurred:
+
+KeyError                                  Traceback (most recent call last)
+/Users/bryanyamashiro/Documents/Research_Projects/Scripts/pandas_test_omni.py in <module>()
+   1304 
+   1305         next_global()
+-> 1306         axes[length_data_list[j]].plot(sta_df[27].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='darkred', label='35.5-40.5 MeV', zorder=5)
+   1307         axes[length_data_list[j]].plot(sta_df[29].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='red', label='40.0-60.0 MeV', zorder=5)
+   1308         axes[length_data_list[j]].plot(sta_df[31].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='orange', label='60.0-100.0 MeV', zorder=5)
+...
+
+KeyError: '20130929 00'
+```
+
 ### Neutron monitor data retrieval failsafe for OMNI script
 - Current neutron monitor dataset relies on internet connection, therefore local files are not saved. This is because different slices of neutron monitor data, using the start and end hours, will result in data that is not uniform unless using the 'full' day. 1) Save neutron monitor data only when full day is obtained, but data outages will lead to script errors when taking slices of local files. 2) Create a check to determine if data can be downloaded (i.e connection == True, no HTTPError), if not, remove from 'option_bin_set' and let the figure loading reflect the change in 'option_bin_set' length.
 
