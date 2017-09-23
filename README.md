@@ -118,10 +118,10 @@
 - When retrieving data for plots, that do not exist locally, a key error is produced while plotting. This value error does not trigger when local files exist. 
 ```python
 ...
-\========================================
-\=         STEREO-B Proton Flux         =
-\========================================
-100% [....................................................] 13073516 / 13073516\---------------------------------------------------------------------------
+========================================
+=         STEREO-B Proton Flux         =
+========================================
+100% [....................................................] 13073516 / 13073516---------------------------------------------------------------------------
 ValueError                                Traceback (most recent call last)
 /Users/bryanyamashiro/miniconda3/envs/classUHenv/lib/python3.6/site-packages/pandas/core/indexes/base.py in get_slice_bound(self, label, side, kind)
    3434             try:
