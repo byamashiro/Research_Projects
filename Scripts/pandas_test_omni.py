@@ -22,6 +22,8 @@ save_option = 'yes' # saves the data files
 save_plot_option = 'yes' # saves the plots
 # long_plot_option = 'yes'
 
+data_collection_option = 'no'
+
 
 
 event_option = 'no' # use event list to plot
@@ -929,8 +931,8 @@ if '6' in option_bin_set:
 					sta_url = f'http://www.srl.caltech.edu/STEREO/DATA/HET/Ahead/1minute/{sta_name}'
 					sta_in = wget.download(sta_url)
 		
-					dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
-					sta_df_ind = pd.read_csv(f'{sta_in}', skiprows=22, delim_whitespace=True, names=sta_name_list) # 138 for 20120307, parse_dates=[[1,2,3,4]], index_col='1_2_3_4'
+					# dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
+					sta_df_ind = pd.read_csv(f'{sta_in}', skiprows=22, delim_whitespace=True, names=sta_name_list, parse_dates=[[1,2,3,4]], index_col='1_2_3_4') # 138 for 20120307, parse_dates=[[1,2,3,4]], index_col='1_2_3_4'
 					# sta_df_ind = pd.read_csv('AeH07Jan.1m.txt', skiprows=22, delim_whitespace=True, names=sta_name_list, parse_dates=[[1,2,3,4]], header = False, index_col='1_2_3_4')
 					sta_df = sta_df.append(sta_df_ind)
 	
@@ -1096,6 +1098,18 @@ if '7' in option_bin_set:
 #===========
 print(f'\n{"="*40}\nNew Dataset Name Goes Here\n{"="*40}')
 '''
+
+
+
+
+
+
+#=========== Data prints
+
+# Xray
+xray_df['B_FLUX'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax()
+xray_df['A_FLUX'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax()
+
 
 #=========== Plotting Data
 '''
