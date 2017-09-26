@@ -1107,9 +1107,10 @@ print(f'\n{"="*40}\nNew Dataset Name Goes Here\n{"="*40}')
 #=========== Data prints
 
 # Xray
+'''
 xray_df['B_FLUX'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax()
 xray_df['A_FLUX'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax()
-
+'''
 
 #=========== Plotting Data
 '''
