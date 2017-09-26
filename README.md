@@ -82,6 +82,8 @@
   - [x] Make the y axis for pfu a constant from 0.01 to 100 to show an equal scaling (09/15/2017)
   - [ ] Add a counter to show how many events happened for GOES-13, GOES-15, both 
     - [ ] Run same algorithm as year_full on the unique events to get a count for all total events including lists (i.e [1,2,3])
+  - [x] Add a purge option to remove data files that have incomplete data due to real time retrieval (09/25/2017)
+  - [ ] Create an algorithm that will differentiate between two events that are merged in one (i.e 20140106)
 
 - [ ] Type III Radio Burst Fitting Program
   - [ ] Fit multiple models to 20120307 event
@@ -237,6 +239,8 @@ with tarfile.open(fileobj=ftpstream, mode="r|gz") as tar:
 - Some neutron monitors do not have data and will return NaN values. When the script runs and the NaN values are added, the title columns will be shifted since there is no data in those columns. Essentially, 3 labels will be made for 2 columns, and the headers might not match the correlated data.
 
 # Required Python Modules
+## Current Python: Version 3.6.1
+
 Module       | Submodule(s) | as | Uses
 ------------ | ------------- | ------------- | -------------
 **pandas**       | -                | pd          | DataFrames, indexing, plotting, downloading http url data, csv_reader()
@@ -255,13 +259,15 @@ Module       | Submodule(s) | as | Uses
 ## Currently Implemented
 Data       | Instrument | Detector | Source | URL
 ------------ | ------------- | ------------- | -------------| -------------
-**GOES Proton Flux**            | GOES-13,15        | EPEAD               | NOAA | https://satdat.ngdc.noaa.gov/sem/goes/data/new_full/
-**Legacy GOES Proton Flux**     | GOES-08,10        | EPS                 | NOAA | https://satdat.ngdc.noaa.gov/sem/goes/data/new_avg/
-**TypeIII Radio Burst**         | Wind              | RAD1 (20-1040 kHz)  | CDAW | https://cdaweb.gsfc.nasa.gov/pub/data/wind/waves/wav_h1/
-**GOES Xray Flux**              | GOES-15           | XRS                 | NOAA | https://satdat.ngdc.noaa.gov/sem/goes/data/new_full/
-**Neutron Monitor Counts**      | NM Stations       | IGY, NM64           | NMDB | http://www.nmdb.eu/nest/
-**ACE Solar Wind Parameters**   | ACE               | SWEPAM              | CDAW | https://cdaweb.gsfc.nasa.gov/pub/data/ace/swepam/level_2_cdaweb/swe_h0/
-**Wind Solar Wind Parameters**  | Wind              | SWE                 | CDAW | https://cdaweb.gsfc.nasa.gov/pub/data/wind/swe/swe_k0/
+**GOES Proton Flux**            | GOES-13,15        | EPEAD               | NOAA   | https://satdat.ngdc.noaa.gov/sem/goes/data/new_full/
+**Legacy GOES Proton Flux**     | GOES-08,10        | EPS                 | NOAA   | https://satdat.ngdc.noaa.gov/sem/goes/data/new_avg/
+**TypeIII Radio Burst**         | Wind              | RAD1 (20-1040 kHz)  | CDAW   | https://cdaweb.gsfc.nasa.gov/pub/data/wind/waves/wav_h1/
+**GOES Xray Flux**              | GOES-15           | XRS                 | NOAA   | https://satdat.ngdc.noaa.gov/sem/goes/data/new_full/
+**Neutron Monitor Counts**      | NM Stations       | IGY, NM64           | NMDB   | http://www.nmdb.eu/nest/
+**ACE Solar Wind Parameters**   | ACE               | SWEPAM              | CDAW   | https://cdaweb.gsfc.nasa.gov/pub/data/ace/swepam/level_2_cdaweb/swe_h0/
+**Wind Solar Wind Parameters**  | Wind              | SWE                 | CDAW   | https://cdaweb.gsfc.nasa.gov/pub/data/wind/swe/swe_k0/
+**STEREO-A/B Proton Flux**      | STEREO            | HET                 | IMPACT | http://stereo.ssl.berkeley.edu/
+
 
 
 ## Prospective Datasets
@@ -450,22 +456,13 @@ Deprecated [scripts](https://github.com/byamashiro/Research_Projects/tree/master
 Filename       | Type | Run Command | Functionality
 ------------ | ------------- | ------------- | -------------
 [getgoes.sh](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/deprecated_scripts/bash_scripts/getgoes.sh)  | bash                | ./get_goes.sh yyyymm yyyy mm  | Download datafile from GOES-13/15 (first EPEAD then HEPAD), make directory for intermediate files and final converted files, delete all header rows, collect only specified columns, delimit from ',' to ' ', move cleaned data to directory, delete intermediate files.
- -  | -                | -          | -
- -  | -            | -           |  -
- -  | -            | -           | -
- -  | -                | -           | -
- -  | - | - | -
- -  | -                | -           | -
- -  | -                | -           | - 
- -  | -                | -           | - 
- -  | -                | -           | - 
  
 
 # Data
 The data consists of mainly flux data from instruments on the ground, Earth orbit, and at the L1 Lagrange point. The data includes a sample from (2012 March), not normalized, and complete in intervals of about 30 seconds to a minute. Data values that were not accepted are denoted at extreme negative values around -9999. The specifics of each data set is commented in each header.
 
 ### Data Caveats
-Corrupted data is labeled as -99999.0, and 0.0 flux is most probable to be corrupted as well. Corrupted data is changed using the pandas replace function to np.nan.
+Data labeled as -99999.0 and 0.0 are converted to 'np.nan' values for all current working scripts.
 
 ### Data Originals
 GOES-13 Proton Flux  
