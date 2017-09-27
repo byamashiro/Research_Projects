@@ -22,7 +22,7 @@ save_option = 'yes' # saves the data files
 save_plot_option = 'yes' # saves the plots
 # long_plot_option = 'yes'
 
-data_collection_option = 'yes'
+data_collection_option = 'no'
 
 
 
@@ -1078,7 +1078,8 @@ if data_collection_option == 'yes':
 			print(f"GOES-{satellite_no_xray} Peak Xray Flux (0.1-0.8 nm): A{fint_exp[:3]} ({fint_exp} Wm^2)")
 		
 		xray_df['A_FLUX'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax()
-sys.exit(0)
+
+	sys.exit(0)
 
 #=========== Plotting Data
 '''
