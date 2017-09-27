@@ -1054,10 +1054,29 @@ print(f'\n{"="*40}\nNew Dataset Name Goes Here\n{"="*40}')
 
 if data_collection_option == 'yes':
 # Xray
+
+	if '1' in option_bin_set:
+		for i in sorted(energy_bin_list):
+			pmaxflux = proton_df[f'{i[0]}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].max()
+			pmaxflux_exp = "%0.3E" % pmaxflux
+			print(f"GOES-{satellite_no} Peak Proton Flux ({i[1]}): {pmaxflux_exp} [pfu]")
+
+
 	if '5' in option_bin_set:
 		xray_df['B_FLUX'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax()
-		flare_intensity = xray_df['B_FLUX'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].max()
-		print("%0.3E" % flare_intensity)
+		fint = xray_df['B_FLUX'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].max()
+		fint_exp = "%0.2E" % fint
+		if int(str(fint_exp[-3:])) >= -4:
+			print(f"GOES-{satellite_no_xray} Peak Xray Flux (0.1-0.8 nm): X{fint_exp[:3]} ({fint_exp} Wm^2)")
+		elif int(str(fint_exp[-3:])) >= -5 and int(str(fint_exp[-3:])) < -4:
+			print(f"GOES-{satellite_no_xray} Peak Xray Flux (0.1-0.8 nm): M{fint_exp[:3]} ({fint_exp} Wm^2)")
+		elif int(str(fint_exp[-3:])) >= -6 and int(str(fint_exp[-3:])) < -5:
+			print(f"GOES-{satellite_no_xray} Peak Xray Flux (0.1-0.8 nm): C{fint_exp[:3]} ({fint_exp} Wm^2)")
+		elif int(str(fint_exp[-3:])) >= -7 and int(str(fint_exp[-3:])) < -6:
+			print(f"GOES-{satellite_no_xray} Peak Xray Flux (0.1-0.8 nm): B{fint_exp[:3]} ({fint_exp} Wm^2)")
+		elif int(str(fint_exp[-3:])) < -7:
+			print(f"GOES-{satellite_no_xray} Peak Xray Flux (0.1-0.8 nm): A{fint_exp[:3]} ({fint_exp} Wm^2)")
+		
 		xray_df['A_FLUX'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax()
 sys.exit(0)
 
