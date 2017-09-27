@@ -22,7 +22,7 @@ save_option = 'yes' # saves the data files
 save_plot_option = 'yes' # saves the plots
 # long_plot_option = 'yes'
 
-data_collection_option = 'no'
+data_collection_option = 'yes'
 
 
 
@@ -75,13 +75,13 @@ while True: # energy_bin != 'done':
 
 		if option_bin != 'done':
 			if option_bin == 'all':
-				option_bin_set.add('1')
-				option_bin_set.add('2')
-				option_bin_set.add('3')
-				option_bin_set.add('4')
-				option_bin_set.add('5')
-				option_bin_set.add('6')
-				option_bin_set.add('7')
+				option_bin_set.add('1')	# 1 - GOES-13/15 Proton Flux
+				option_bin_set.add('2')	# 2 - Wind Type III Radio Bursts
+				option_bin_set.add('3')	# 3 - Neutron Monitor Counts (Requires Internet Connection)
+				option_bin_set.add('4')	# 4 - ACE/Wind Solar Wind Speed
+				option_bin_set.add('5')	# 5 - GOES-13/15 Xray Flux
+				option_bin_set.add('6')	# 6 - STEREO-A Proton Flux
+				option_bin_set.add('7')	# 7 - STEREO-B Proton Flux
 				break
 			
 			elif int(option_bin) < 8:
@@ -946,38 +946,7 @@ if '6' in option_bin_set:
 
 		
 		except error.HTTPError as err:
-			
-			# print("working except error")
-			# print(f'\nVERSION ERROR: The version v0{i} for WIND data does not exist, attempting v0{i+1}')
-
-			satellite_no_xray_error = ['13', '15']
-
-			for i in satellite_no_xray_error:
-				if i == satellite_no_xray:
-					satellite_no_xray_error.remove(f'{i}')
-					satellite_no_xray = satellite_no_xray_error[0]
-					print(f'GOES-{i} data does not exist for this date ({event_date}), using data from GOES-{satellite_no_xray}.')
-
-					xray_name_error = f'g{satellite_no_xray_error[0]}_xrs_2s_{event_date}_{event_date}.csv' #g15_xrs_2s_20120307_20120307.csv
-					xray_error_check = os.path.isfile(f'{data_directory}/GOES/GOES_{satellite_no_xray_error[0]}/XRflux/{xray_name_error}')
-					
-					if xray_error_check == True:
-						dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
-						xray_df_ind = pd.read_csv(f'{data_directory}/GOES/GOES_{satellite_no_xray_error[0]}/XRflux/{xray_name_error}', skiprows=140, names=xray_name_list, date_parser=dateparse,index_col='time_tag', header=0)
-						xray_df = xray_df.append(xray_df_ind)
-
-					elif xray_error_check == False:
-						xray_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_full/{event_date[:4]}/{event_date[4:6]}/goes{satellite_no_xray_error[0]}/csv/{xray_name_error}'
-						xray_in = wget.download(xray_url)
-				
-						dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
-						xray_df_ind = pd.read_csv(f'{xray_in}', skiprows=140, names=xray_name_list, date_parser=dateparse,index_col='time_tag', header=0) # 138 for 20120307
-						xray_df = xray_df.append(xray_df_ind)
-		
-						if save_option == 'yes':
-							shutil.move(f'{xray_name_error}', f'{data_directory}/GOES/GOES_{satellite_no_xray_error[0]}/XRflux/')
-						elif save_option == 'no':
-							os.remove(xray_name)
+			print(f'\nHTTP ERROR: Missing data for {date}')
 
 		except:
 			print(f'\nMissing data for {date}')
@@ -1048,38 +1017,7 @@ if '7' in option_bin_set:
 
 		
 		except error.HTTPError as err:
-			
-			# print("working except error")
-			# print(f'\nVERSION ERROR: The version v0{i} for WIND data does not exist, attempting v0{i+1}')
-
-			satellite_no_xray_error = ['13', '15']
-
-			for i in satellite_no_xray_error:
-				if i == satellite_no_xray:
-					satellite_no_xray_error.remove(f'{i}')
-					satellite_no_xray = satellite_no_xray_error[0]
-					print(f'GOES-{i} data does not exist for this date ({event_date}), using data from GOES-{satellite_no_xray}.')
-
-					xray_name_error = f'g{satellite_no_xray_error[0]}_xrs_2s_{event_date}_{event_date}.csv' #g15_xrs_2s_20120307_20120307.csv
-					xray_error_check = os.path.isfile(f'{data_directory}/GOES/GOES_{satellite_no_xray_error[0]}/XRflux/{xray_name_error}')
-					
-					if xray_error_check == True:
-						dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
-						xray_df_ind = pd.read_csv(f'{data_directory}/GOES/GOES_{satellite_no_xray_error[0]}/XRflux/{xray_name_error}', skiprows=140, names=xray_name_list, date_parser=dateparse,index_col='time_tag', header=0)
-						xray_df = xray_df.append(xray_df_ind)
-
-					elif xray_error_check == False:
-						xray_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_full/{event_date[:4]}/{event_date[4:6]}/goes{satellite_no_xray_error[0]}/csv/{xray_name_error}'
-						xray_in = wget.download(xray_url)
-				
-						dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
-						xray_df_ind = pd.read_csv(f'{xray_in}', skiprows=140, names=xray_name_list, date_parser=dateparse,index_col='time_tag', header=0) # 138 for 20120307
-						xray_df = xray_df.append(xray_df_ind)
-		
-						if save_option == 'yes':
-							shutil.move(f'{xray_name_error}', f'{data_directory}/GOES/GOES_{satellite_no_xray_error[0]}/XRflux/')
-						elif save_option == 'no':
-							os.remove(xray_name)
+			print(f'\nHTTP ERROR: Missing data for {date}')
 
 		except:
 			print(f'\nMissing data for {date}')
@@ -1105,12 +1043,23 @@ print(f'\n{"="*40}\nNew Dataset Name Goes Here\n{"="*40}')
 
 
 #=========== Data prints
+# 1 - GOES-13/15 Proton Flux
+# 2 - Wind Type III Radio Bursts
+# 3 - Neutron Monitor Counts (Requires Internet Connection)
+# 4 - ACE/Wind Solar Wind Speed
+# 5 - GOES-13/15 Xray Flux
+# 6 - STEREO-A Proton Flux
+# 7 - STEREO-B Proton Flux
 
+
+if data_collection_option == 'yes':
 # Xray
-'''
-xray_df['B_FLUX'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax()
-xray_df['A_FLUX'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax()
-'''
+	if '5' in option_bin_set:
+		xray_df['B_FLUX'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax()
+		flare_intensity = xray_df['B_FLUX'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].max()
+		print("%0.3E" % flare_intensity)
+		xray_df['A_FLUX'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax()
+sys.exit(0)
 
 #=========== Plotting Data
 '''
