@@ -23,7 +23,7 @@ save_option = 'yes' # either 'yes' or 'no'
 plot_option = 'yes'
 unique_inclusion_option = 'yes'
 
-detection_threshold = 0.20
+detection_threshold = 0.25
 
 
 # ================ 

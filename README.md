@@ -113,6 +113,10 @@
       - [x] HET (09/18/2017)
       - [ ] LET
 
+- [ ] ACE Magnetic field Data
+  - [ ] Magnetic field intensity
+  - [ ] Magnetic field density
+
 
 # Current Tasks and Errors
 
@@ -377,6 +381,20 @@ Enter a end hour: 01
 <img src="Plots/radio_fit_test.png" width="600">
 
 
+### Bartels' Rotation Number ([bartels_v1](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/bartels.py))
+
+In [148]: **run bartels.py**  
+  
+\========================================  
+\=       Bartels Rotation Number        =  
+\========================================  
+Input Start Date (yyyymmdd): 20120303  
+Input End Date (yyyymmdd): 20120313  
+Bartels Rotation (2012-03-03):  2436  
+Bartels Rotation (2012-03-13):  2437  
+
+
+
 ### Legacy OMNI Space Weather (1995-2009) ([legacy_omni_script_v1](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/pandas_test_legacy.py))
 
 In [583]: **run pandas_test_legacy.py**  
@@ -519,6 +537,9 @@ Solar Wind Speed | N | < 0.0
 
 
 # Completed Tasks
+
+- [x] Bartels' Rotation Converter (09/27/2017)
+  - [x] Function to convert date to Bartels' rotation number (09/27/2017)
 
 - [x] Local file code conversion (09/10/2017)
   - [x] GOES-13/15 Proton flux (8/30/2017)
