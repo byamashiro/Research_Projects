@@ -8,6 +8,8 @@
 - [Running Scripts](#running-scripts)
   - [OMNI Space Weather (omni_script_v3)](#omni-space-weather-omni_script_v3)
   - [Remastered WIND Type III Radio Burst (radio_script_v3)](#remastered-wind-type-iii-radio-burst-radio_script_v3)
+  - [Radio Burst Fit Program (radio_fit_v1)](#radio-burst-fit-program-radio_fit_v1)
+  - [Bartels' Rotation Number (bartels_v1)](#bartels-rotation-number-bartels_v1)
   - [Legacy OMNI Space Weather (1995-2009) (legacy_omni_script_v1)](#legacy-omni-space-weather-1995-2009-legacy_omni_script_v1)
 - [Deprecated Scripts](#deprecated-scripts)
 - [Data](#data)
@@ -114,133 +116,10 @@
       - [ ] LET
 
 - [ ] ACE Magnetic field Data
-  - [ ] Magnetic field intensity
-  - [ ] Magnetic field density
+  - [ ] Create an alogorithm to decode .hdf files
+    - [ ] Magnetic field intensity
+    - [ ] Magnetic field density
 
-
-# Current Tasks and Errors
-
-### OMNI script crash with multiple dates and downloads
-- When retrieving data for plots, that do not exist locally, a key error is produced while plotting. This value error does not trigger when local files exist. 
-```python
-...
-========================================
-=         STEREO-B Proton Flux         =
-========================================
-100% [....................................................] 13073516 / 13073516---------------------------------------------------------------------------
-ValueError                                Traceback (most recent call last)
-/Users/bryanyamashiro/miniconda3/envs/classUHenv/lib/python3.6/site-packages/pandas/core/indexes/base.py in get_slice_bound(self, label, side, kind)
-   3434             try:
--> 3435                 return self._searchsorted_monotonic(label, side)
-   3436             except ValueError:
-
-/Users/bryanyamashiro/miniconda3/envs/classUHenv/lib/python3.6/site-packages/pandas/core/indexes/base.py in _searchsorted_monotonic(self, label, side)
-   3393 
--> 3394         raise ValueError('index must be monotonic increasing or decreasing')
-   3395 
-
-ValueError: index must be monotonic increasing or decreasing
-
-During handling of the above exception, another exception occurred:
-
-KeyError                                  Traceback (most recent call last)
-/Users/bryanyamashiro/Documents/Research_Projects/Scripts/pandas_test_omni.py in <module>()
-   1304 
-   1305         next_global()
--> 1306         axes[length_data_list[j]].plot(sta_df[27].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='darkred', label='35.5-40.5 MeV', zorder=5)
-   1307         axes[length_data_list[j]].plot(sta_df[29].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='red', label='40.0-60.0 MeV', zorder=5)
-   1308         axes[length_data_list[j]].plot(sta_df[31].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='orange', label='60.0-100.0 MeV', zorder=5)
-...
-
-KeyError: '20130929 00'
-```
-
-### Neutron monitor data retrieval failsafe for OMNI script
-- Current neutron monitor dataset relies on internet connection, therefore local files are not saved. This is because different slices of neutron monitor data, using the start and end hours, will result in data that is not uniform unless using the 'full' day. 1) Save neutron monitor data only when full day is obtained, but data outages will lead to script errors when taking slices of local files. 2) Create a check to determine if data can be downloaded (i.e connection == True, no HTTPError), if not, remove from 'option_bin_set' and let the figure loading reflect the change in 'option_bin_set' length.
-
-
-### Log-normal distribution fit for radio bursts
-- Even with the "missing='drop'" parameter, the fit still detects NaN values. Although nan elements exist, the other fits allowed for removal of nans with the 'missing' method. There is a possible discrepancy in the parameters, as the Log-normal distribution does not include the gamma factor, which is present in the other three fits that work.
-```python
-ValueError                                Traceback (most recent call last)
-/Users/bryanyamashiro/Documents/Research_Projects/Scripts/pandas_test_radio_fit.py in <module>()
-    354                 params_lognorm = model_lognorm.make_params(amplitude=ymax_val, center=ymax_center, sigma=1)
-    355 
---> 356                 log_normal = model_lognorm.fit(yvals, params_lognorm, x = xvals)
-    357                 print("Log Normal Model\n", log_normal.fit_report())
-    358 
-...
-ValueError: The input contains nan values
-```
-
-### Fitting techniques and dropped values
-- Values of 0.0 are dropped due to the absence of physical intuition for these phenomena. This in turn allows for a continuous line while plotting from the last known value to the value after the dropped 0.0 value. This causes a problem when creating fits because a evenly spaced sequence is used, namely 'np.arange'. When the final fits are plotted, the dropped index values cause the fit to be discontinuous, illustrated by jagged edges.
-
-### Comparison check with event lists
-- Compare the files from the event list against the xflare list. Check the intensities of radio bursts and xflares, and put an indicator for xflares that coincide with the radio bursts (i.e mark with 'red').
-
-### Version check and checking if the file exists
-- When checking if a file exists, there is a slight issue when running into the loops. Currently the code will search if the file exists first, and then assigns a boolean, then runs the loop to look for versions. The loops that cycle through various versions will create a False value every time. Possibly implement a scheme that'll search for the existing file after pulling the file from online.
-```radio_check = os.path.isfile(f'{data_directory}/WIND/RAD1/{radio_name}')```
-
-### Type III radio burst representation
-- Change the radio burst average into a spectrogram. Try the 'plt.pcolormesh(t, f, Sxx)' function into the radio burst subplot. The 't' for time, 'f' for frequency. 
-
-
-### Type III radio burst event list
-- Check events over 100 MeV threshold for GOES proton flux.
-  - Automate process and add an if statment for 1) if intensities are over ~100 sfu, and 2) specified durations of frequencies.
-- Match each Type III event with proton flux, xray flux, etc.
-
-### Download local files
-- Instead of downloading data every instance of the code (i.e OMNI), store a repository of data on the local drive.
-  - If the local file does not exist, download from the web. Vice versa, if the local file exists, parse the file rather than downloading. Create the path in the script header to allow for quick changes to the local download folder.
-
-### Create data template for specific events
-- Previous versions of the code parsed two days before the event and five following the event. Make an external file that can be read in with a few parameters.
-  - Event date, which data sets
-
-### Incorporate sunpy package
-- The sunpy package may contain data sources for level 2 data. This may be faster than downloading and importing data for each datetime instance for longer time intervals
-
-### Collect science
-- Maximum: Proton flux, xray flux, solar wind speed, radio burst intensity/duration.
-- Minimum: Neutron monitor counts, dst (not currently implemented).
-- Write datetime, index, max, and min to a datafile.
-
-
-### Download SOHO proton flux data and plot
-1) SOHO data title format is not uniform (i.e erne-yyyy.mm.dd-yyyy.mm.dd-{non-uniform-number}.tgz)
-2) SOHO data is in .tgz format, with the tar files including 20+ data files in them. Only files of HED#.SL2 are of use.
-- Current options
-  - **wget**: Download .tgz file, extract only HED*.SL2 and push data into memory, delete local files, plot (downloading to local)
-  - **urllib, tarfile**: Read .tgz into memory, extract only HED*.SL2 and push data into memory, plot (time intensive, no backwards seeking)
-3) Download only the HED without the wget function extracting the low energy files.
-
-### Seeking backwards with tarfile
-- The current method is inefficient as all the files in the tarfile must be first read into memory, then applying statements. The script currently is time intensive, possibly due to the tarfile existing online. A possibility for the time inflation could be that the script iterates through every element of the tarfile to load headers, then must repeat the process to press 'if' statements.
-- Using an 'if' statement with the tarfile.open() command results in an error. This error seems to be caused because the 'if' statement reads through the entire tarfile with the cursor at the end. The action following the 'if' statement then tries to proceed, but since the cursor is at the end, the script fails when moving in the opposite direction. Potential solution is to find a .seek(0) function for the tarfile module.  
-```StreamError: seeking backwards is not allowed```  
-
-```python
-with tarfile.open(fileobj=ftpstream, mode="r|gz") as tar:
-    hed_soho = [
-      tarinfo for tarinfo in tar.getmembers()
-      if tarinfo.name.startswith('export.src/HED') # the error occurs at this point
-  ]
-  tar.extractall(members=hed_soho)
-```
-
-### Outliers and changes for Solar Wind script
-- Values significantly over 1000 km/s and single points need to be removed from the dataset. Incorporate temperature and magnetic field components from both ACE and Wind. Aesthetic fixes to the current wget downloading scheme, and find a more efficient method of downloading variant versions of .cdf files. Look for different data sources for solar wind speed with a lower time interval. Deviations are not negligible between both ACE and Wind solar wind speed measurements, see the output [figure](Plots/solarwind_test.png).
-
-
-### Outliers for Radio Burst script
-- Values ~300 sfu that seem to be outliers. Values will be removed, but each spike includes more than 1 point, therefore a single max threshold will not suffice.
-
-
-### NaN values for Neutron Monitor script for lack of data
-- Some neutron monitors do not have data and will return NaN values. When the script runs and the NaN values are added, the title columns will be shifted since there is no data in those columns. Essentially, 3 labels will be made for 2 columns, and the headers might not match the correlated data.
 
 # Required Python Modules
 ## Current Python: Version 3.6.1
@@ -533,6 +412,134 @@ Xray Flux | N | -99999.0, 0.0
 Neutron Monitor Rate | N | n/a 
 Radio Burst | N | n/a
 Solar Wind Speed | N | < 0.0
+
+
+
+# Current Tasks and Errors
+
+### OMNI script crash with multiple dates and downloads
+- When retrieving data for plots, that do not exist locally, a key error is produced while plotting. This value error does not trigger when local files exist. 
+```python
+...
+========================================
+=         STEREO-B Proton Flux         =
+========================================
+100% [....................................................] 13073516 / 13073516---------------------------------------------------------------------------
+ValueError                                Traceback (most recent call last)
+/Users/bryanyamashiro/miniconda3/envs/classUHenv/lib/python3.6/site-packages/pandas/core/indexes/base.py in get_slice_bound(self, label, side, kind)
+   3434             try:
+-> 3435                 return self._searchsorted_monotonic(label, side)
+   3436             except ValueError:
+
+/Users/bryanyamashiro/miniconda3/envs/classUHenv/lib/python3.6/site-packages/pandas/core/indexes/base.py in _searchsorted_monotonic(self, label, side)
+   3393 
+-> 3394         raise ValueError('index must be monotonic increasing or decreasing')
+   3395 
+
+ValueError: index must be monotonic increasing or decreasing
+
+During handling of the above exception, another exception occurred:
+
+KeyError                                  Traceback (most recent call last)
+/Users/bryanyamashiro/Documents/Research_Projects/Scripts/pandas_test_omni.py in <module>()
+   1304 
+   1305         next_global()
+-> 1306         axes[length_data_list[j]].plot(sta_df[27].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='darkred', label='35.5-40.5 MeV', zorder=5)
+   1307         axes[length_data_list[j]].plot(sta_df[29].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='red', label='40.0-60.0 MeV', zorder=5)
+   1308         axes[length_data_list[j]].plot(sta_df[31].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='orange', label='60.0-100.0 MeV', zorder=5)
+...
+
+KeyError: '20130929 00'
+```
+
+### Neutron monitor data retrieval failsafe for OMNI script
+- Current neutron monitor dataset relies on internet connection, therefore local files are not saved. This is because different slices of neutron monitor data, using the start and end hours, will result in data that is not uniform unless using the 'full' day. 1) Save neutron monitor data only when full day is obtained, but data outages will lead to script errors when taking slices of local files. 2) Create a check to determine if data can be downloaded (i.e connection == True, no HTTPError), if not, remove from 'option_bin_set' and let the figure loading reflect the change in 'option_bin_set' length.
+
+
+### Log-normal distribution fit for radio bursts
+- Even with the "missing='drop'" parameter, the fit still detects NaN values. Although nan elements exist, the other fits allowed for removal of nans with the 'missing' method. There is a possible discrepancy in the parameters, as the Log-normal distribution does not include the gamma factor, which is present in the other three fits that work.
+```python
+ValueError                                Traceback (most recent call last)
+/Users/bryanyamashiro/Documents/Research_Projects/Scripts/pandas_test_radio_fit.py in <module>()
+    354                 params_lognorm = model_lognorm.make_params(amplitude=ymax_val, center=ymax_center, sigma=1)
+    355 
+--> 356                 log_normal = model_lognorm.fit(yvals, params_lognorm, x = xvals)
+    357                 print("Log Normal Model\n", log_normal.fit_report())
+    358 
+...
+ValueError: The input contains nan values
+```
+
+### Fitting techniques and dropped values
+- Values of 0.0 are dropped due to the absence of physical intuition for these phenomena. This in turn allows for a continuous line while plotting from the last known value to the value after the dropped 0.0 value. This causes a problem when creating fits because a evenly spaced sequence is used, namely 'np.arange'. When the final fits are plotted, the dropped index values cause the fit to be discontinuous, illustrated by jagged edges.
+
+### Comparison check with event lists
+- Compare the files from the event list against the xflare list. Check the intensities of radio bursts and xflares, and put an indicator for xflares that coincide with the radio bursts (i.e mark with 'red').
+
+### Version check and checking if the file exists
+- When checking if a file exists, there is a slight issue when running into the loops. Currently the code will search if the file exists first, and then assigns a boolean, then runs the loop to look for versions. The loops that cycle through various versions will create a False value every time. Possibly implement a scheme that'll search for the existing file after pulling the file from online.
+```radio_check = os.path.isfile(f'{data_directory}/WIND/RAD1/{radio_name}')```
+
+### Type III radio burst representation
+- Change the radio burst average into a spectrogram. Try the 'plt.pcolormesh(t, f, Sxx)' function into the radio burst subplot. The 't' for time, 'f' for frequency. 
+
+
+### Type III radio burst event list
+- Check events over 100 MeV threshold for GOES proton flux.
+  - Automate process and add an if statment for 1) if intensities are over ~100 sfu, and 2) specified durations of frequencies.
+- Match each Type III event with proton flux, xray flux, etc.
+
+### Download local files
+- Instead of downloading data every instance of the code (i.e OMNI), store a repository of data on the local drive.
+  - If the local file does not exist, download from the web. Vice versa, if the local file exists, parse the file rather than downloading. Create the path in the script header to allow for quick changes to the local download folder.
+
+### Create data template for specific events
+- Previous versions of the code parsed two days before the event and five following the event. Make an external file that can be read in with a few parameters.
+  - Event date, which data sets
+
+### Incorporate sunpy package
+- The sunpy package may contain data sources for level 2 data. This may be faster than downloading and importing data for each datetime instance for longer time intervals
+
+### Collect science
+- Maximum: Proton flux, xray flux, solar wind speed, radio burst intensity/duration.
+- Minimum: Neutron monitor counts, dst (not currently implemented).
+- Write datetime, index, max, and min to a datafile.
+
+
+### Download SOHO proton flux data and plot
+1) SOHO data title format is not uniform (i.e erne-yyyy.mm.dd-yyyy.mm.dd-{non-uniform-number}.tgz)
+2) SOHO data is in .tgz format, with the tar files including 20+ data files in them. Only files of HED#.SL2 are of use.
+- Current options
+  - **wget**: Download .tgz file, extract only HED*.SL2 and push data into memory, delete local files, plot (downloading to local)
+  - **urllib, tarfile**: Read .tgz into memory, extract only HED*.SL2 and push data into memory, plot (time intensive, no backwards seeking)
+3) Download only the HED without the wget function extracting the low energy files.
+
+### Seeking backwards with tarfile
+- The current method is inefficient as all the files in the tarfile must be first read into memory, then applying statements. The script currently is time intensive, possibly due to the tarfile existing online. A possibility for the time inflation could be that the script iterates through every element of the tarfile to load headers, then must repeat the process to press 'if' statements.
+- Using an 'if' statement with the tarfile.open() command results in an error. This error seems to be caused because the 'if' statement reads through the entire tarfile with the cursor at the end. The action following the 'if' statement then tries to proceed, but since the cursor is at the end, the script fails when moving in the opposite direction. Potential solution is to find a .seek(0) function for the tarfile module.  
+```StreamError: seeking backwards is not allowed```  
+
+```python
+with tarfile.open(fileobj=ftpstream, mode="r|gz") as tar:
+    hed_soho = [
+      tarinfo for tarinfo in tar.getmembers()
+      if tarinfo.name.startswith('export.src/HED') # the error occurs at this point
+  ]
+  tar.extractall(members=hed_soho)
+```
+
+### Outliers and changes for Solar Wind script
+- Values significantly over 1000 km/s and single points need to be removed from the dataset. Incorporate temperature and magnetic field components from both ACE and Wind. Aesthetic fixes to the current wget downloading scheme, and find a more efficient method of downloading variant versions of .cdf files. Look for different data sources for solar wind speed with a lower time interval. Deviations are not negligible between both ACE and Wind solar wind speed measurements, see the output [figure](Plots/solarwind_test.png).
+
+
+### Outliers for Radio Burst script
+- Values ~300 sfu that seem to be outliers. Values will be removed, but each spike includes more than 1 point, therefore a single max threshold will not suffice.
+
+
+### NaN values for Neutron Monitor script for lack of data
+- Some neutron monitors do not have data and will return NaN values. When the script runs and the NaN values are added, the title columns will be shifted since there is no data in those columns. Essentially, 3 labels will be made for 2 columns, and the headers might not match the correlated data.
+
+
 
 
 
