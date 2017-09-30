@@ -9,6 +9,6 @@ f = h5py.File('mag_data_16sec_2496.hdf', 'r')
 print(keys(f))
 f.close()
 '''
-with pd.HDFStore('mag_data_16sec_2496.hdf',  mode='r') as newstore:
+with pd.HDFStore('mag_data_4min_2439.hdf',  mode='r') as newstore:
     df_restored = newstore.select('df')
 
