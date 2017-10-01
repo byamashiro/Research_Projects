@@ -23,6 +23,8 @@ save_plot_option = 'yes' # saves the plots
 data_collection_option = 'no'
 event_option = 'no' # use event list to plot
 
+t3_freq = 300
+
 # long_plot_option = 'yes'
 
 # ========== Event list (Still being implemented, do not uncomment)
@@ -50,7 +52,7 @@ def daterange( start_date, end_date ):
 
 #==============Choosing Dataset
 
-print(f'{"="*40}\n{"=" + "DATASETS".center(38," ") + "="}\n{"="*40}\n1 - GOES-13/15 Proton Flux\n2 - Wind Type III Radio Bursts\n3 - Neutron Monitor Counts (Requires Internet Connection)\n4 - ACE/Wind Solar Wind Speed\n5 - GOES-13/15 Xray Flux\n6 - STEREO-A Proton Flux\n7 - STEREO-B Proton Flux\n{"="*40}')
+print(f'{"="*40}\n{"=" + "Type III Radio Burst Event Detector".center(38," ") + "="}\n{"="*40}')
 
 '''
 1 - GOES Proton Flux
@@ -69,7 +71,8 @@ while True: # energy_bin != 'done':
 		break
 
 	if event_option != 'yes':
-		option_bin = input('Enter Dataset Option then "done" or "all": ').lower()
+		option_bin_set.add('2')
+		break
 
 		if option_bin != 'done':
 			if option_bin == 'all':
@@ -260,97 +263,6 @@ if '1' in option_bin_set:
 	proton_df.drop(proton_df[proton_df['P6W_UNCOR_FLUX'] <= 0.0].index, inplace=True)
 	proton_df.drop(proton_df[proton_df['P7W_UNCOR_FLUX'] <= 0.0].index, inplace=True)
 
-	'''
-	proton_df.loc[proton_df['P2W_UNCOR_FLUX'] <= 0.0] = np.nan #6.5 MeV
-	proton_df.loc[proton_df['P3W_UNCOR_FLUX'] <= 0.0] = np.nan #11.6 MeV
-	proton_df.loc[proton_df['P4W_UNCOR_FLUX'] <= 0.0] = np.nan #30.6 MeV
-	proton_df.loc[proton_df['P5W_UNCOR_FLUX'] <= 0.0] = np.nan #63.1 MeV
-	proton_df.loc[proton_df['P6W_UNCOR_FLUX'] <= 0.0] = np.nan #165 MeV
-	proton_df.loc[proton_df['P7W_UNCOR_FLUX'] <= 0.0] = np.nan #433 MeV
-	'''
-
-
-
-#proton flux 2003
-'''
-	if int(start_year) == 2003:
-		print(f'\n{"="*40}\n{"=" + "GOES-10 Time Averaged Proton Flux".center(38," ") + "="}\n{"="*40}')
-		print(f'{"Energy Channels".center(7, " ")}\n{"-"*20}\n1: 0.6 - 4.0 MeV\n2: 4.0 - 9.0 MeV\n3: 9.0 - 15.0 MeV\n4: 15.0 - 44.0 MeV\n5: 40.0 - 80.0 MeV\n6: 80.0 - 165.0 MeV\n7: 165.0 - 500.0 MeV')
-		energy_bin_set = set()
-		while True: # energy_bin != 'done':
-			energy_bin = input('Enter Energy Channel(s) or "full": ')
-			if energy_bin != 'done':
-				if energy_bin == 'full':
-					energy_bin_set.add('1')
-					energy_bin_set.add('2')
-					energy_bin_set.add('3')
-					energy_bin_set.add('4')
-					energy_bin_set.add('5')
-					energy_bin_set.add('6')
-					energy_bin_set.add('7')
-					break
-				if int(energy_bin) < 8:
-					energy_bin_set.add(energy_bin)
-					#print(len(energy_bin_set))
-					if len(energy_bin_set) >= 7:
-						#print('len very long')
-						break
-			elif energy_bin == 'done':
-				break
-		energy_bin_list = []
-		for i in energy_bin_set:
-			if '1' in i:
-				energy_bin_list.append(['p1_flux','0.6 - 4.0 MeV', 'red'])
-			elif '2' in i:
-				energy_bin_list.append(['p2_flux','4.0 - 9.0 MeV','orange'])
-			elif '3' in i:
-				energy_bin_list.append(['p3_flux','9.0 - 15.0 MeV','green'])
-			elif '4' in i:
-				energy_bin_list.append(['p4_flux','15.0 - 44.0 MeV','blue'])
-			elif '5' in i:
-				energy_bin_list.append(['p5_flux','40.0 - 80.0 MeV','purple'])
-			elif '6' in i:
-				energy_bin_list.append(['p6_flux','80.0 - 165.0 MeV','violet'])
-			elif '7' in i:
-				energy_bin_list.append(['p7_flux','165.0 - 500.0 MeV','limegreen'])
-		proton_df = pd.DataFrame([])
-		for date in daterange( start, end ):
-			try:
-				event_date = str(date).replace('-','')
-				#print(event_date[0:6])
-				proton_name = f'g10_eps_1m_20031001_20031031.csv' # need to change the final date {event_date}
-				#g10_eps_1m_{event_date}_20031031.csv
-				proton_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_avg/{event_date[:4]}/{event_date[4:6]}/goes10/csv/{proton_name}'
-
-				#https://satdat.ngdc.noaa.gov/sem/goes/data/new_avg/{event_date[:4]}/{event_date[4:6]}/goes10/csv/
-				proton_in = wget.download(proton_url)
-				#name_list = ['datetime'] + [ str(i) for i in sorted_nm_list]
-				dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
-				proton_df_ind = pd.read_csv(f'{proton_in}', skiprows=214, date_parser=dateparse,index_col='time_tag', header=0)
-				proton_df = proton_df.append(proton_df_ind)
-				os.remove(proton_name)
-			except:
-				print(f'\nMissing data for {date}')
-				continue
-		proton_df.loc[proton_df['p1_flux'] < 0.0] = np.nan #6.5 MeV
-		proton_df.loc[proton_df['p2_flux'] < 0.0] = np.nan #11.6 MeV
-		proton_df.loc[proton_df['p3_flux'] < 0.0] = np.nan #30.6 MeV
-		proton_df.loc[proton_df['p4_flux'] < 0.0] = np.nan #63.1 MeV
-		proton_df.loc[proton_df['p5_flux'] < 0.0] = np.nan #165 MeV
-		proton_df.loc[proton_df['p6_flux'] < 0.0] = np.nan #433 MeV
-		proton_df.loc[proton_df['p7_flux'] < 0.0] = np.nan #433 MeV
-'''
-'''
-GOES-8 1995-01 to 2003-06
-GOES-9 1996-04 to 1998-07
-GOES-10 1998-07 to 2009-12
-GOES-11 2000-07 to 2011-02
-GOES-12 2003-01 to 2010-08
-GOES-13 2010-04 to present, (2006-07 to present for EUVS data)
-GOES-14 2009-12 to present, (2009-07 to 2012-11 for EUVS data)
-GOES-15 2010-09 to present, (2010-04 to present for EUVS data)
-'''
-
 
 #=========== 2: Wind Type III Radio Burst
 if '2' in option_bin_set:
@@ -377,10 +289,6 @@ if '2' in option_bin_set:
 				elif save_option == 'no':
 					os.remove(radio_name)
 
-			# radio_in = wget.download(url)
-			
-			# os.remove(radio_name)
-			# print(f'\nParsing Type III Data for {date}')
 			time_rb = []
 			for i in cdf['Epoch']:
 				time_rb.append(i)
@@ -403,193 +311,23 @@ if '2' in option_bin_set:
 
 			rb_concat = pd.concat([data_time, data_rad1], axis=1)
 			rb_concat.set_index(['date_time'], inplace=True)
+			rb_concat = rb_concat[[t3_freq]]
 			rb_data = rb_data.append(rb_concat)
 
 
-
-
-			'''
-			radio_name = f'wi_h1_wav_{event_date}_v01.cdf'
-			url = f'https://cdaweb.gsfc.nasa.gov/pub/data/wind/waves/wav_h1/{event_date[:4]}/{radio_name}'
-			radio_in = wget.download(url)
-			
-			cdf = pycdf.CDF(radio_in) # cdf = pycdf.CDF('wi_h1_wav_20120307_v01.cdf')
-			os.remove(radio_name)
-		
-			# print(f'\nParsing Type III Data for {date}')
-			
-			time_rb = []
-			for i in cdf['Epoch']:
-				time_rb.append(i)
-			
-			freq_rb = []
-			for i in cdf['Frequency_RAD1']:
-				freq_rb.append(i)
-			
-			rad1_rb = []
-			for i in cdf['E_VOLTAGE_RAD1']:
-				rad1_rb.append(i)
-			
-			
-			data_time = pd.DataFrame(time_rb)
-			data_time.columns = ['date_time']
-			
-			data_freq = pd.DataFrame(freq_rb)
-			data_freq.columns = ['freq']
-			
-			data_rad1 = pd.DataFrame(rad1_rb)
-			data_rad1.columns = data_freq['freq']
-			
-			rb_concat = pd.concat([data_time, data_rad1], axis=1)
-			rb_concat.set_index(['date_time'], inplace=True)
-		
-			rb_data = rb_data.append(rb_concat)
-			'''
 		except:
 			print(f'\nMISSING DATA FOR: {date}\n')
 			continue
 	
 	 # 256 columns (frequencies) + 1 column (average)
-	rb_data['avg'] = rb_data.mean(axis=1, numeric_only=True)
-	'''
-	for radio_line in rb_data.values:
-		# print("rad line", radio_line)
-		print(radio_line.index)
-		radio_null = 0
-		for radio_freq in radio_line:
-			if radio_freq == 0.0:
-				radio_null += 1
-		print("radionull", radio_null)
-
-		if radio_null > 200:
-			rb_data.drop(radio_line, inplace=True)
-	'''
-	# rb_data[rb_data.values == 0.0].index.values
-
+	#  rb_data['avg'] = rb_data.mean(axis=1, numeric_only=True)
 	rb_data.drop(rb_data[rb_data.values == 0.0].index, inplace=True)
 
 
-	# if radio_null > 200:
-	#	rb_data = rb_data[rb_data['avg'] != 0.0]
-
-
-	# ============ EXPERIMENTAL FITTING (DO NOT USE)
-	'''
-	fit_choice = input('\nType "1 - 3" if you would like to fit: (currently in work)')
-
-
-	if fit_choice == '1': # curve fitting
-		rb_data['d_int'] = mdates.date2num(rb_data.index.to_pydatetime())
-
-		z4 = np.polyfit(rb_data['d_int'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], rb_data['avg'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], 3)
-		p4 = np.poly1d(z4)
-
-		xx = np.linspace(rb_data['d_int'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].min(), rb_data['d_int'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].max(), 20)
-		dd = mdates.num2date(xx)
-
-		plt.plot(dd, p4(xx), 'o')
-		plt.show()
 
 
 
-	if fit_choice == '2': # gaussian fitting
-		from astropy.modeling import models, fitting
-
-		rb_data['d_int'] = mdates.date2num(rb_data.index.to_pydatetime())
-		rs_time = rb_data['d_int'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}']
-
-
-		n_obs = len(rb_data.loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].index)
-		data = rb_data['avg'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}']
-		# X = np.arange(n_obs)
-		X = rs_time
-
-
-		x = np.sum(X * data)/np.sum(data)
-		width = np.sqrt(np.abs(np.sum((X-x)**2*data)/np.sum(data)))
-
-		max_data = data.max()
-
-		gauss_fit = lambda t : max_data*np.exp(-(t-x)**2/(2*width**2))
-
-		plt.plot(gauss_fit(X), '-', color='blue')
-		plt.plot(rs_time, data, 'o', color='red')
-		
-
-
-		plt.show()
-
-	if fit_choice == '3': # skewed gaussian fitting
-		from lmfit.models import SkewedGaussianModel
-	
-		from astropy.modeling import models, fitting
-	
-		rb_data['d_int'] = mdates.date2num(rb_data.index.to_pydatetime())
-		rs_time = rb_data['d_int'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}']
-		n_obs = len(rb_data.loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].index)
-		data = rb_data['avg'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}']
-
-		data_max_index = mdates.date2num(rb_data['avg'].idxmax().to_pydatetime())
-		# X = np.arange(n_obs)
-		X = rs_time
-		x = np.sum(X * data)/np.sum(data)
-
-		width = np.sqrt(np.abs(np.sum((X-x)**2*data)/np.sum(data)))
-		max_data = data.max()
-		gauss_fit = lambda t : max_data*np.exp(-(t-x)**2/(2*width**2))
-	
-		skg_model = SkewedGaussianModel()
-		skg_params = skg_model.make_params(amplitude = 147, center = 734569.0245138889, sigma = 1, gamma = 0) # sigma, gamma = 1, 0
-		# skg_params = skg_model.make_params(amplitude = data.max(), center = data_max_index, sigma = 1, gamma = 0) # sigma, gamma = 1, 0
-		
-
-		skg_result = skg_model.fit(data, skg_params, x=rs_time)
-		print(skg_result.fit_report())
-
-		plt.axvline(734569.0245138889)
-		plt.plot(gauss_fit(X), '-', color='blue')
-		plt.plot(rs_time, data, 'o', color='red')
-		plt.plot(rs_time, skg_result.best_fit)
-		
-		plt.show()
-
-	if fit_choice == '4': # inverse gaussian fit
-		from scipy.stats import invgauss
-
-		rb_data['d_int'] = mdates.date2num(rb_data.index.to_pydatetime())
-		rs_time = rb_data['d_int'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}']
-		n_obs = len(rb_data.loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].index)
-		data = rb_data['avg'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}']
-		data_max_index = mdates.date2num(rb_data['avg'].idxmax().to_pydatetime())
-		# X = np.arange(n_obs)
-		X = rs_time
-		x = np.sum(X * data)/np.sum(data)
-		width = np.sqrt(np.abs(np.sum((X-x)**2*data)/np.sum(data)))
-		max_data = data.max()
-		gauss_fit = lambda t : max_data*np.exp(-(t-x)**2/(2*width**2))
-		skg_model = SkewedGaussianModel()
-		skg_params = skg_model.make_params(amplitude = 147, center = 734569.0245138889, sigma = 1, gamma = 0) # sigma, gamma = 1, 0
-		# skg_params = skg_model.make_params(amplitude = data.max(), center = data_max_index, sigma = 1, gamma = 0) # sigma, gamma = 1, 0
-		skg_result = skg_model.fit(data, skg_params, x=rs_time)
-		print(skg_result.fit_report())
-
-		plt.axvline(734569.0245138889)
-
-		inv_gauss = invgauss.fit(data)
-
-		plt.plot(gauss_fit(X), '-', color='blue')
-		plt.plot(rs_time, data, 'o', color='red')
-		plt.plot(rs_time, skg_result.best_fit)
-		plt.plot(rs_time, inv_gauss, color = 'green')
-
-		plt.show()
-
-
-''' # end experimental fitting
-
-
-
-
+sys.exit(0)
 
 #=========== 3: Neutron Monitors
 if '3' in option_bin_set:
