@@ -24,6 +24,7 @@ data_collection_option = 'no'
 event_option = 'no' # use event list to plot
 
 t3_freq = 300
+t3_threshold = 100
 
 # long_plot_option = 'yes'
 
@@ -323,6 +324,8 @@ if '2' in option_bin_set:
 	#  rb_data['avg'] = rb_data.mean(axis=1, numeric_only=True)
 	rb_data.drop(rb_data[rb_data.values == 0.0].index, inplace=True)
 
+	for i in rb_data[rb_data.values > 300].index:
+		print(rb_data.loc[i])
 
 
 
