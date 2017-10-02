@@ -324,9 +324,14 @@ if '2' in option_bin_set:
 	#  rb_data['avg'] = rb_data.mean(axis=1, numeric_only=True)
 	rb_data.drop(rb_data[rb_data.values == 0.0].index, inplace=True)
 
+
+
+	rb_event_df = pd.DataFrame([])
+	rb_counter = 0
 	for i in rb_data[rb_data.values > 300].index:
-		print(rb_data.loc[i])
-		counter = 
+		if rb_counter == 0:
+			print(rb_data.loc[i])
+		
 		# counter here
 
 		# if statement one day after another
