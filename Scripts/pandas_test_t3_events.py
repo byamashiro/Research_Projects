@@ -326,6 +326,10 @@ if '2' in option_bin_set:
 
 	for i in rb_data[rb_data.values > 300].index:
 		print(rb_data.loc[i])
+		counter = 
+		# counter here
+
+		# if statement one day after another
 
 
 
