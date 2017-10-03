@@ -327,14 +327,36 @@ if '2' in option_bin_set:
 
 
 	rb_event_df = pd.DataFrame([])
+	rb_list_temp = []
 	rb_counter = 0
-	for i in rb_data[rb_data.values > 300].index:
+	for i in rb_data[rb_data.values > 300].index: # for i in rb_data[rb_data.values > 300].index: # one level is 1 minute
+		if len(rb_list_temp) == 0:
+			rb_list_temp.append(i)
+
+		elif len(rb_list_temp) >= 1:
+
+			if i - rb_list_temp[-1] < 
+			rb_list.append(i)
+
+
+			if rb_counter > 10:
+
+
+			if 
+
+
+
+
 		if rb_counter == 0:
+			if 
 			print(rb_data.loc[i])
+
+
 		
 		# counter here
 
 		# if statement one day after another
+
 
 
 
@@ -854,9 +876,6 @@ def next_global():
 
 #high_bin_proton_str = sorted(energy_bin_list[-1])[0]
 #low_bin_proton_str = sorted(energy_bin_list[0])[0]
-
-
-
 
 
 def applyPlotStyle():

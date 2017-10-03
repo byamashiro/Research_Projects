@@ -120,6 +120,9 @@
     - [ ] Magnetic field intensity
     - [ ] Magnetic field density
 
+- [ ] Type III Radio Burst Event Finder
+  - [ ] Cycle through 2011-present to find events
+
 
 # Required Python Modules
 ## Current Python: Version 3.6.1

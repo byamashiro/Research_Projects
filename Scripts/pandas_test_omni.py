@@ -19,7 +19,7 @@ plt.close("all")
 
 data_directory = '/Users/bryanyamashiro/Documents/Research_Projects/Data'
 save_option = 'yes' # saves the data files
-save_plot_option = 'yes' # saves the plots
+save_plot_option = 'no' # saves the plots
 data_collection_option = 'no'
 event_option = 'no' # use event list to plot
 
