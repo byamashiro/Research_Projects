@@ -51,6 +51,10 @@ def daterange( start_date, end_date ):
         for n in range( ( start_date - end_date ).days + 1 ):
             yield start_date - datetime.timedelta( n )
 
+def days_hours_minutes(td):
+    # return td.days, td.seconds//3600, (td.seconds//60)%60
+    return (td.seconds//60)%60
+
 #==============Choosing Dataset
 
 print(f'{"="*40}\n{"=" + "Type III Radio Burst Event Detector".center(38," ") + "="}\n{"="*40}')
@@ -325,42 +329,86 @@ if '2' in option_bin_set:
 	rb_data.drop(rb_data[rb_data.values == 0.0].index, inplace=True)
 
 
-
 	rb_event_df = pd.DataFrame([])
 	rb_list_temp = []
+	rb_list_event = []
 	rb_counter = 0
-	for i in rb_data[rb_data.values > 300].index: # for i in rb_data[rb_data.values > 300].index: # one level is 1 minute
+
+	for i in rb_data[rb_data.values > t3_threshold].index: # for i in rb_data[rb_data.values > 300].index: # one level is 1 minute
 		if len(rb_list_temp) == 0:
 			rb_list_temp.append(i)
 
 		elif len(rb_list_temp) >= 1:
+			if (i - rb_list_temp[-1]) <= datetime.timedelta(minutes=5):
+				rb_list_temp.append(i)
 
-			if i - rb_list_temp[-1] < 
-			rb_list.append(i)
+			elif (i - rb_list_temp[-1]) > datetime.timedelta(minutes=5):
+				if (rb_list_temp[-1] - rb_list_temp[0]) >= datetime.timedelta(minutes=10):
+					rb_list_event.append(rb_list_temp)
+					rb_list_temp = []
+					rb_list_temp.append(i)
+
+				elif (rb_list_temp[-1] - rb_list_temp[0]) < datetime.timedelta(minutes=10):
+					rb_list_temp = []
+					rb_list_temp.append(i)
 
 
-			if rb_counter > 10:
+
+		'''
+		if (i - rb_list_temp[-1]) < datetime.timedelta(minutes=10):
+			rb_list_event.append(rb_list_temp)
+			rb_list_temp = []
+			rb_list_temp.append(i)
+		'''
 
 
-			if 
 
+	if len(rb_list_temp) > 0:
+		if (rb_list_temp[-1] - rb_list_temp[0]) >= datetime.timedelta(minutes=10):
+			rb_list_event.append(rb_list_temp)
+			rb_list_temp = []
+			rb_list_temp.append(i)
+		elif (rb_list_temp[-1] - rb_list_temp[0]) < datetime.timedelta(minutes=10):
+			rb_list_temp = []
+			rb_list_temp.append(i)		
+		rb_list_temp = []
 
+	print("\n")
 
+	for i in range(len(rb_list_event)):
+		rb_event_df = pd.DataFrame([rb_list_event[i][0], rb_list_event[i][-1], days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0])], columns=['st_time', 'ed_time', 'dur'])
+		if len(rb_event_df) > 0:
+			rb_event_df.append([rb_list_event[i][0], rb_list_event[i][-1], days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0])])
+		print(f"{rb_list_event[i][0]} -- {rb_list_event[i][-1]}", " Total Time: ", days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0]), " minutes")
 
-		if rb_counter == 0:
-			if 
-			print(rb_data.loc[i])
+	print(f"Number of Radio Events ({start} - {end}): ", len(rb_list_event))
+	print(rb_list_event)
 
 
 		
 		# counter here
-
+	'''
+		if rb_counter == 0:
+			print(rb_data.loc[i])
+	'''
 		# if statement one day after another
 
 
+	''' # this works but is a little inefficient
+	for i in rb_data[rb_data.values > t3_threshold].index: # for i in rb_data[rb_data.values > 300].index: # one level is 1 minute
+		if len(rb_list_temp) == 0:
+			rb_list_temp.append(i)
+
+		elif len(rb_list_temp) >= 1:
+			if i - rb_list_temp[-1] < datetime.timedelta(minutes=5):
+				rb_list_temp.append(i)
 
 
-
+		for i in rb_list_temp:
+			if (rb_list_temp[-1] - rb_list_temp[0]) > datetime.timedelta(minutes = 8):
+				rb_list_event.append(rb_list_temp)
+				rb_list_temp = []
+	'''
 sys.exit(0)
 
 #=========== 3: Neutron Monitors
