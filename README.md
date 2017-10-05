@@ -86,6 +86,9 @@
     - [ ] Run same algorithm as year_full on the unique events to get a count for all total events including lists (i.e [1,2,3])
   - [x] Add a purge option to remove data files that have incomplete data due to real time retrieval (09/25/2017)
   - [ ] Create an algorithm that will differentiate between two events that are merged in one (i.e 20140106)
+  - [ ] Add the lower energy channels <100 MeV
+    - [ ] Set a new threshold value for proton events
+    - [ ] Add statement to toggle between energy channels
 
 - [ ] Type III Radio Burst Fitting Program
   - [ ] Fit multiple models to 20120307 event
@@ -122,6 +125,12 @@
 
 - [ ] Type III Radio Burst Event Finder
   - [ ] Cycle through 2011-present to find events
+  - [ ] Add 'if' statements to assign different inputs
+    - [ ] Red: >100MeV GOES detected events
+    - [ ] Orange: <100MeV GOES detected events
+    - [ ] Blue: Xray flare events
+    - [ ] Green: All other events
+    - [ ] Markers 'o' and 'x': For different events worth differentiating
 
 
 # Required Python Modules
