@@ -23,7 +23,7 @@ save_plot_option = 'yes' # saves the plots
 data_collection_option = 'no'
 event_option = 'no' # use event list to plot
 
-t3_freq = 300
+t3_freq = 200
 t3_threshold = 25
 
 # long_plot_option = 'yes'
