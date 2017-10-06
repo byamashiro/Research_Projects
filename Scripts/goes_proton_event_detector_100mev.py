@@ -235,6 +235,11 @@ if len(year_list) > 1:
 
 	if len(full_event) != 0:
 		full_year.append(full_event)
+		full_year_df = pd.DataFrame(full_year)
+		# full_year_df.replace('None', 'vcv', inplace=True)
+
+		full_year_df.to_csv(f'detected_events/event_dates/0d25pfu_100mev_{year_list[0]}_{year_list[-1]}.txt', sep='\t', index=False)
+
 
 
 if plot_option == 'yes':
@@ -287,7 +292,7 @@ if plot_option == 'yes':
 			elif ''.join(event_day[0]) in list(year_set_15.difference(year_set_13)):
 				plt.title(f'Proton Event Detector [GOES-15 UNIQUE]\n[{event_day[0]} -- {event_day[-1]}] (Threshold : {detection_threshold} pfu)', fontname="Arial", fontsize = 14) #, y=1.04,
 			elif ''.join(event_day[0]) in list_of_intersection:
-				plt.title(f'Proton Event Detector [GOES-13/15 CONFIRMED]\n[{event_day[0]} -- {event_day[-1]}] (Threshold : {detection_threshold} pfu)', fontname="Arial", fontsize = 14) #, y=1.04,
+				plt.title(f'Proton Event Detector [GOES-13/15 CONFIRMED]\n[{event_day[0]} -- {event_day[-1]}] (Threshold : {detection_threshold} -- 100 MeV)', fontname="Arial", fontsize = 14) #, y=1.04,
 	
 	
 			plt.ylabel('Proton Flux [pfu]', fontname="Arial", fontsize = 12)
@@ -295,87 +300,8 @@ if plot_option == 'yes':
 		
 			# plt.show()
 			# sys.exit(0)
-	
-			plt.savefig(f'detected_events/detected_event_{event_day[0]}.png', format='png', dpi=900)
+			
+
+			plt.savefig(f'detected_events/th_0d25pfu_100mev/0d25pfu_100mev_{event_day[0]}.png', format='png', dpi=900)
 			#sys.exit(0)
 
-
-
-'''
-date in daterange( start, end ):
-	try:
-		event_date = str(date).replace('-','')
-		f_l_day = calendar.monthrange(int(detection_year), int(i))
-
-		event_f_day = str(f'{date.year}{str(date.month).zfill(2)}01') # {str(f_l_day[0]).zfill(2)}
-		event_l_day = str(f'{date.year}{str(date.month).zfill(2)}{str(f_l_day[1]).zfill(2)}')
-
-
-		#print(event_date[0:6])
-		# proton_name = f'g{satellite_no}_epead_p27w_32s_{event_date}_{event_date}.csv'
-		proton_name = f'g{satellite_no}_epead_cpflux_5m_{event_f_day}_{event_l_day}.csv' #g13_epead_cpflux_5m_20110101_20110131.csv
-		proton_check = os.path.isfile(f'{data_directory}/GOES/GOES_{satellite_no}/Pflux/{proton_name}')
-
-		if proton_check == True:
-			dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
-			proton_df_ind = pd.read_csv(f'{data_directory}/GOES/GOES_{satellite_no}/Pflux/{proton_name}', skiprows=282, date_parser=dateparse,index_col='time_tag', header=0)
-			proton_df = proton_df.append(proton_df_ind)
-
-		elif proton_check == False:
-			# proton_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_full/{event_date[:4]}/{event_date[4:6]}/goes{satellite_no}/csv/{proton_name}'
-			# proton_in = wget.download(proton_url)
-
-			
-			# [i for i in range(len(proton_df.columns)) if i]
-
-			for i in proton_df.columns:
-				if i != 'ZPGT100W':
-					proton_df.drop(f'{i}', inplace=True, axis=1)
-
-			proton_df.loc[proton_df['ZPGT100W'] < 0.0] = np.nan
-
-			print(proton_df.loc[proton_df['ZPGT100W'] > 1.0] )
-
-			for i in proton_df[proton_df['ZPGT100W'] > 1.0].index:
-				# print(str(i)[:10].replace('-',''))
-				event_set.add(str(i)[:10].replace('-',''))
-					
-
-			# print(proton_df.loc[proton_df['ZPGT100W'] > 1.0]) #check if value is over 1
-
-			
-			# for i in proton_df.values:
-			#	if i >= 1.0:
-			#		print()
-			
-
-
-
-			
-			# for i in range(len(proton_df)):
-			#	if proton_df['ZPGT100W'][i] < 0.0:
-			#		print(proton_df.iloc[i])
-			
-			# proton = proton_df['ZPGT100W']
-			# proton_df = pd.DataFrame([])
-			# del proton_df
-
-			# proton_df_ind = pd.read_csv(f'{proton_in}', skiprows=282, date_parser=dateparse,index_col='time_tag', header=0)
-			# proton_df = proton_df.append(proton_df_ind) # appends for all dates, keep if want a year long memory file
-			if save_option == 'yes':
-				shutil.move(f'{proton_name}', f'{data_directory}/GOES/GOES_{satellite_no}/Pflux/')
-			elif save_option == 'no':
-				os.remove(proton_name)
-	
-		# os.remove(proton_name)
-	except:
-		print(f'\nMissing data for {date}')
-		continue
-	
-	# proton_df.loc[proton_df['P2W_UNCOR_FLUX'] < 0.0] = np.nan #6.5 MeV
-# proton_df.loc[proton_df['P3W_UNCOR_FLUX'] < 0.0] = np.nan #11.6 MeV
-# proton_df.loc[proton_df['P4W_UNCOR_FLUX'] < 0.0] = np.nan #30.6 MeV
-# proton_df.loc[proton_df['P5W_UNCOR_FLUX'] < 0.0] = np.nan #63.1 MeV
-# proton_df.loc[proton_df['P6W_UNCOR_FLUX'] < 0.0] = np.nan #165 MeV
-# proton_df.loc[proton_df['P7W_UNCOR_FLUX'] < 0.0] = np.nan #433 MeV
-'''
