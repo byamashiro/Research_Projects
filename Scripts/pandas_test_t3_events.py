@@ -23,7 +23,7 @@ save_plot_option = 'yes' # saves the plots
 data_collection_option = 'no'
 event_option = 'no' # use event list to plot
 
-t3_freq = 200
+t3_freq = int(input("Enter TIII Frequency (20-1040 kHz): "))
 t3_threshold = 25
 
 # long_plot_option = 'yes'
@@ -57,7 +57,7 @@ def days_hours_minutes(td):
 
 #==============Choosing Dataset
 
-print(f'{"="*40}\n{"=" + "Type III Radio Burst Event Detector".center(38," ") + "="}\n{"="*40}')
+print(f'{"="*50}\n{"=" + f"Type III Radio Burst Event Detector".center(48," ") + "="}\n{"=" + f"Frequency: {t3_freq} kHz, Threshold: {t3_threshold} sfu)".center(48," ") + "="}\n{"="*50}')
 
 '''
 1 - GOES Proton Flux
@@ -72,7 +72,6 @@ option_bin_set = set()
 while True: # energy_bin != 'done':
 	if event_option == 'yes':
 		option_bin_set = {'1', '2', '4', '5', '6', '7'}
-
 		break
 
 	if event_option != 'yes':
@@ -106,6 +105,9 @@ detection_year = input("Enter year to parse (yyyy) or 'all': ").lower()
 if detection_year == 'all':
 	year_list = []
 	year_list = ['2011', '2012', '2013', '2014', '2015', '2016'] # , '2017'] # currently all function does not parse 2017
+elif detection_year != 'all':
+	year_list = []
+	year_list.append(detection_year)
 
 '''
 elif 'purge' in detection_year: # detection_year == 'purge'
@@ -164,10 +166,11 @@ if int(start_year) < 2010: # testing old 2003 data, uncomment laterß
 	print('\nDATE ERROR: Date must start after September 1, 2010')
 	sys.exit(0)
 '''
+'''
 if len(start_date) != 8 or len(end_date) != 8:
 	print('\nDATE ERROR: Dates must have 8 digits.')
 	sys.exit(0)
-
+'''
 
 if event_option == 'yes':
 	start_hour = str(event_list['event_st_hr'][0])
@@ -402,13 +405,17 @@ if '2' in option_bin_set:
 	print("\n")
 	rb_event_df = pd.DataFrame(columns=('start_time', 'end_time', 't3_duration', 't3_max_int', 'default_color'))
 
+	# add the lists here
+	# p_10mev_list = pd.read_csv(f'{data_directory}/detected_events/event_dates/1d50pfu_10mev_2011_2017.txt', delim_whitespace=True, header=1)
+
+
 	for i in range(len(rb_list_event)):
 		rb_event_df.loc[i] = [rb_list_event[i][0], rb_list_event[i][-1], days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0]), float(rb_data.loc[rb_list_event[i][0]:rb_list_event[i][-1]].max().values), 'green']
 		# print(f"{rb_list_event[i][0]} -- {rb_list_event[i][-1]}", " Total Time: ", days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0]), " minutes")
 
 	print(f"Number of Radio Events ({start} - {end}): ", len(rb_list_event))
 	print(rb_event_df)
-	rb_event_df.to_csv(f'{data_directory}/T3_Detection/rbevents_{t3_freq}khz_{t3_threshold}_{start_date}_{end_date}.txt', sep='\t')
+	rb_event_df.to_csv(f'{data_directory}/T3_Detection/rbevents_{t3_freq}khz_{t3_threshold}_{start_date}_{end_date}.txt', sep=',', index=False)
 
 
 		

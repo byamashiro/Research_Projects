@@ -254,7 +254,7 @@ if len(year_list) > 1:
 			
 			if datetime.datetime.strptime(f'{i}', '%Y%m%d') == datetime.datetime.strptime(f'{full_event[-1]}', '%Y%m%d') + datetime.timedelta(days=1): # if int(i) == int(full_event[-1]) + 1:
 				full_event.append(i)
-				
+
 			elif datetime.datetime.strptime(f'{i}', '%Y%m%d') != datetime.datetime.strptime(f'{full_event[-1]}', '%Y%m%d') + datetime.timedelta(days=1): # int(i) != int(full_event[-1]) + 1:
 				# print(i , " ", int(full_event[-1]), " ", int(full_event[-1]) + 1)
 				full_year.append(full_event)
@@ -264,9 +264,9 @@ if len(year_list) > 1:
 	if len(full_event) != 0:
 		full_year.append(full_event)
 		full_year_df = pd.DataFrame(full_year)
-		# full_year_df.replace('None', 'vcv', inplace=True)
+		full_year_df.fillna(value='none', inplace=True)
 
-		full_year_df.to_csv(f'detected_events/event_dates/{detection_threshold_str}pfu_{energy_channel}mev_{year_list[0]}_{year_list[-1]}.txt', sep='\t', index=False)
+		full_year_df.to_csv(f'{data_directory}/detected_events/event_dates/{detection_threshold_str}pfu_{energy_channel}mev_{year_list[0]}_{year_list[-1]}.txt', sep=',', index=False)
 
 
 
@@ -274,7 +274,7 @@ if plot_option == 'yes':
 	print(f'{"="*40}\n{"=" + f"Plotting Events".center(38," ") + "="}\n{"="*40}')
 	# if os.path.isfile(f'{data_directory}/GOES_Detection/GOES_{sat}/{detection_year}/{proton_name}')
 	for event_day in (full_year):
-		plot_check = os.path.isfile(f'detected_events/{energy_channel}mev/{detection_threshold_str}pfu_{energy_channel}mev_{event_day[0]}.png')
+		plot_check = os.path.isfile(f'{data_directory}/detected_events/{energy_channel}mev/{detection_threshold_str}pfu_{energy_channel}mev_{event_day[0]}.png')
 
 		if plot_check == True:
 			print(f"Plot exists for {event_day}")
@@ -339,6 +339,6 @@ if plot_option == 'yes':
 			# sys.exit(0)
 			
 
-			plt.savefig(f'detected_events/{energy_channel}mev/{detection_threshold_str}pfu_{energy_channel}mev_{event_day[0]}.png', format='png', dpi=900)
+			plt.savefig(f'{data_directory}/detected_events/{energy_channel}mev/{detection_threshold_str}pfu_{energy_channel}mev_{event_day[0]}.png', format='png', dpi=900)
 			#sys.exit(0)
 
