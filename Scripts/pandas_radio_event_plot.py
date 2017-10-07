@@ -17,8 +17,26 @@ import shutil
 
 plt.close("all")
 
+
+# ======== Definitions
+j = -1
+def next_global():
+	global j
+	if (j < len(event_list)+2):
+		j += 1
+
+
+def applyPlotStyle():
+	axes[length_data_list[j]].grid(True)
+	axes[length_data_list[j]].minorticks_on()
+	axes[length_data_list[j]].legend(loc='lower right', ncol=1,fontsize=8)# borderaxespad=0)# bbox_to_anchor=(1, 0.5)) # bbox_to_anchor=(1.02,1.0)
+	axes[length_data_list[j]].tick_params(axis='y', which='both', direction='in')
+
+
+
 #=========== Plotting Data
 data_directory = '/Users/bryanyamashiro/Documents/Research_Projects/Data'
+option_bin_set = {'2'}
 
 
 event_list = []
@@ -26,12 +44,51 @@ for fname in glob.glob(f'{data_directory}/T3_Detection/*.txt'):
 	event_list.append(fname)
 
 
+length_data_list = []
+for i in range(len(event_list)):
+	length_data_list.append(i)
+
+f, axes = plt.subplots(nrows=len(event_list), ncols=1, sharex=True, sharey=True, figsize=(10, 12))
+
+
 if len(event_list) == 1:
 	data = pd.read_csv(f'{event_list[0]}', sep=',', header=0)
 
-elif len(event_list) > 1:
+'''
+if length_data > 1:
+	if len(event_list) <= 4:
+		f, axes = plt.subplots(nrows=length_data, ncols=1, sharex=True, figsize=(10, 6))
+	elif len(event_list) > 4:
+		f, axes = plt.subplots(nrows=length_data, ncols=1, sharex=True, figsize=(10, 12))
+
+if length_data == 1:
+	length_data_list[0] = 0,0
+	f, axes = plt.subplots(nrows=length_data, ncols=1, sharex=False, figsize=(10, 6), squeeze=False)
+'''
+
+
+
+if len(event_list) > 1:
 	for i in event_list:
 		data = pd.read_csv(f'{i}', sep=',', header=0)
+
+		next_global()
+
+		# freq_list = [100, 300, 500, 700, 900]
+	
+		axes[length_data_list[j]].plot(data['t3_duration'], data['t3_max_int'],marker='o', color='blue', label= ' kHz',linewidth=0, zorder=5)
+		# axes[length_data_list[j]].set_ylim(0, 500)
+		# axes[length_data_list[j]].set_ylabel('Wind Type III\nRadio Burst [sfu]', fontname="Arial", fontsize = 12)
+		applyPlotStyle()
+
+
+axes[length_data_list[j]].set_xlabel('Duration [min.]', fontname="Arial", fontsize = 12)
+
+plt.savefig(f'test.png', format='png', dpi=900) #full_omni_plots/omni_full_test_{event_date}.png
+# plt.show()
+
+sys.exit(0)
+
 
 
 
@@ -40,8 +97,6 @@ length_data = int(len(event_list))
 length_data_list = []
 for i in range(length_data):
 	length_data_list.append(i)
-
-
 
 
 
@@ -69,9 +124,9 @@ def applyPlotStyle():
 	'''
 
 if length_data > 1:
-	if len(option_bin_set) <= 4:
+	if len(event_list) <= 4:
 		f, axes = plt.subplots(nrows=length_data, ncols=1, sharex=True, figsize=(10, 6))
-	elif len(option_bin_set) > 4:
+	elif len(event_list) > 4:
 		f, axes = plt.subplots(nrows=length_data, ncols=1, sharex=True, figsize=(10, 12))
 
 if length_data == 1:
@@ -94,41 +149,17 @@ if '1' in option_bin_set:
 	applyPlotStyle()
 
 
-
 if '2' in option_bin_set:
 	next_global()
 
-	freq_list = [100, 300, 500, 700, 900]
+	# freq_list = [100, 300, 500, 700, 900]
 	
-	for frequency in freq_list:
+	for events in event_list:
 		color_choice = next(color_cm)
 	
-		axes[length_data_list[j]].plot(rb_data[frequency].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color=color_choice, label= f'{frequency} kHz', zorder=5)
-	axes[length_data_list[j]].set_ylim(0, 500)
-	axes[length_data_list[j]].set_ylabel('Wind Type III\nRadio Burst [sfu]', fontname="Arial", fontsize = 12)
-	# axes[length_data_list[j]].set_ylabel('Type III Radio\nBurst Int. [sfu]', fontname="Arial", fontsize = 12)
-	
-
-	#================= Working code (uncommented) ---- end ----
-	# axes[length_data_list[j]].plot(rb_data[int('1020')].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='red', label= '1020')
-	# wind_range = range(20,1041, 2)
-	# axes[length_data_list[j]].plot(rb_data.loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}']) # [wind_range] , color='red', label= '1020')
-
-	# rb_data.loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].plot(cmap='viridis') # using viridis
-
-	''' This is the next step of the program, uncomment when using
-	axes[length_data_list[j]].plot(rb_data[20].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='red', label= '20 kHz')
-	axes[length_data_list[j]].plot(rb_data[1040].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='green', label= '1040 kHz')
-	'''
-
-	'''
-	for i in rb_data.columns:
-		if i != 'avg':
-			axes[length_data_list[j]].plot(rb_data[i].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], label= f'i')
-	'''
-
-
-
+	axes[length_data_list[j]].plot(x=data['{t3_duration}'], y=data['{t3_max_int}'], color='blue', label= ' kHz', zorder=5)
+	# axes[length_data_list[j]].set_ylim(0, 500)
+	# axes[length_data_list[j]].set_ylabel('Wind Type III\nRadio Burst [sfu]', fontname="Arial", fontsize = 12)
 	applyPlotStyle()
 
 
