@@ -89,6 +89,7 @@
   - [ ] Add the lower energy channels <100 MeV
     - [ ] Set a new threshold value for proton events
     - [ ] Add statement to toggle between energy channels
+  - [ ] If a certain threshold is hit by the respective energy range, highlight in yellow
 
 - [ ] Type III Radio Burst Fitting Program
   - [ ] Fit multiple models to 20120307 event
@@ -131,6 +132,10 @@
     - [ ] Blue: Xray flare events
     - [ ] Green: All other events
     - [ ] Markers 'o' and 'x': For different events worth differentiating
+
+- [ ] Type III Radio Burst Event Plot Program
+  - [ ] Add legend for different detection energy ranges
+
 
 
 # Required Python Modules

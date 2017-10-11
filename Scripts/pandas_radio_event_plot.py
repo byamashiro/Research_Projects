@@ -48,12 +48,17 @@ length_data_list = []
 for i in range(len(event_list)):
 	length_data_list.append(i)
 
-f, axes = plt.subplots(nrows=len(event_list), ncols=1, sharex=True, sharey=True, figsize=(10, 12))
 
 
 if len(event_list) == 1:
 	data = pd.read_csv(f'{event_list[0]}', sep=',', header=0)
+	length_data_list[0] = 0,0
+	f, axes = plt.subplots(nrows=len(event_list), ncols=1, sharex=False, sharey=False, figsize=(10, 6), squeeze=False)
+	next_global()
 
+	for element in range(len(data)):
+		axes[length_data_list[j]].plot(data['t3_duration'][element], data['t3_max_int'][element],marker='o', color=data['default_color'][element],linewidth=0, zorder=5)
+	applyPlotStyle()
 '''
 if length_data > 1:
 	if len(event_list) <= 4:
@@ -69,6 +74,8 @@ if length_data == 1:
 
 
 if len(event_list) > 1:
+	f, axes = plt.subplots(nrows=len(event_list), ncols=1, sharex=True, sharey=True, figsize=(10, 12))
+
 	for i in event_list:
 		data = pd.read_csv(f'{i}', sep=',', header=0)
 
@@ -81,11 +88,12 @@ if len(event_list) > 1:
 		# axes[length_data_list[j]].set_ylabel('Wind Type III\nRadio Burst [sfu]', fontname="Arial", fontsize = 12)
 		applyPlotStyle()
 
-
 axes[length_data_list[j]].set_xlabel('Duration [min.]', fontname="Arial", fontsize = 12)
 
-plt.savefig(f'test.png', format='png', dpi=900) #full_omni_plots/omni_full_test_{event_date}.png
-# plt.show()
+
+
+# plt.savefig(f'test.png', format='png', dpi=900) #full_omni_plots/omni_full_test_{event_date}.png
+plt.show()
 
 sys.exit(0)
 

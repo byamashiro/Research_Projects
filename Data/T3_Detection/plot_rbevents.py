@@ -17,6 +17,85 @@ import calendar
 import shutil
 
 
+plot_option = 'yes'
+filename = 'rbevents_100khz_25_20110101_20161231.txt'
+
+if plot_option == 'yes':
+	print(f'{"="*40}\n{"=" + f"Plotting Events".center(38," ") + "="}\n{"="*40}')
+	# if os.path.isfile(f'{data_directory}/GOES_Detection/GOES_{sat}/{detection_year}/{proton_name}')
+	'''
+	for event_day in (full_year):
+		plot_check = os.path.isfile(f'{data_directory}/detected_events/{energy_channel}mev/{detection_threshold_str}pfu_{energy_channel}mev_{event_day[0]}.png')
+
+		if plot_check == True:
+			print(f"Plot exists for {event_day}")
+
+		elif plot_check == False:
+			print(f'\rGenerating plot for {event_day}')
+			plt.close("all")
+			plt.figure(figsize=(10,6))
+		
+			for sat in ['13','15']:
+		
+				f_l_day = calendar.monthrange(int(f'{event_day[0][:4]}'), int(f'{event_day[0][4:6]}'))
+		
+				event_f_day = str(f'{event_day[0][:4]}{str(event_day[0][4:6]).zfill(2)}01') # {str(f_l_day[0]).zfill(2)}
+				event_l_day = str(f'{event_day[0][:4]}{str(event_day[0][4:6]).zfill(2)}{str(f_l_day[1]).zfill(2)}')
+		
+				proton_name = f'g{sat}_epead_cpflux_5m_{event_f_day}_{event_l_day}.csv' #g13_epead_cpflux_5m_20110101_20110131.csv
+				# proton_check = os.path.isfile(f'{data_directory}/GOES_Detection/GOES_{sat}/{detection_year}/{proton_name}')
+		
+				proton_df = pd.read_csv(f'{data_directory}/GOES_Detection/GOES_{sat}/{event_day[0][:4]}/{proton_name}', skiprows=718, date_parser=dateparse, names=cpflux_names,index_col='time_tag', header=0)
+				proton_df.loc[proton_df[f'{energy_header}'] <= 0.0] = np.nan
+				if sat == '13':
+					marker_sat = 'x'
+				elif sat == '15':
+					marker_sat = 'o'
+			'''
+	data = pd.read_csv(f'{filename}', sep='')
+				plt.plot(proton_df['ZPGT10W'].loc[f'{event_day[0]}':f'{event_day[-1]}'], label = f'GOES-{sat} >10 MeV', marker=marker_sat, color='red')
+				plt.plot(proton_df['ZPGT50W'].loc[f'{event_day[0]}':f'{event_day[-1]}'], label = f'GOES-{sat} >50 MeV', marker=marker_sat, color='blue')
+				plt.plot(proton_df['ZPGT100W'].loc[f'{event_day[0]}':f'{event_day[-1]}'], label = f'GOES-{sat} >100 MeV', marker=marker_sat, color='lime')
+
+			myFmt = mdates.DateFormatter('%m/%d\n%H:%M')
+			ax = plt.gca()
+			ax.xaxis.set_major_formatter(myFmt)
+			ax.set_ylim([10**-2,10**4])
+		
+
+
+			plt.axhline(detection_threshold, color='yellow', linestyle='-',linewidth=4 , zorder = 1)
+			plt.axhline(0.25, color='green', linestyle='--', label='100 MeV', zorder = 1)
+			plt.axhline(0.60, color='navy', linestyle='--', label='50 MeV', zorder = 1)
+			plt.axhline(1.5, color='crimson', linestyle='--', label='10 MeV', zorder = 1)
+
+			plt.yscale('log')
+			plt.setp(ax.xaxis.get_majorticklabels(), rotation=0, horizontalalignment='center')
+			plt.minorticks_on()
+			plt.grid(True)
+			plt.legend(loc='upper right', ncol=2,fontsize=8)
+			
+			if ''.join(event_day[0]) in list(year_set_13.difference(year_set_15)):
+				plt.title(f'Proton Event Detector [GOES-13 UNIQUE]\n[{event_day[0]} -- {event_day[-1]}] (Threshold : {detection_threshold} pfu -- {energy_channel} MeV)', fontname="Arial", fontsize = 14) #, y=1.04,
+			elif ''.join(event_day[0]) in list(year_set_15.difference(year_set_13)):
+				plt.title(f'Proton Event Detector [GOES-15 UNIQUE]\n[{event_day[0]} -- {event_day[-1]}] (Threshold : {detection_threshold} pfu -- {energy_channel} MeV)', fontname="Arial", fontsize = 14) #, y=1.04,
+			elif ''.join(event_day[0]) in list_of_intersection:
+				plt.title(f'Proton Event Detector [GOES-13/15 CONFIRMED]\n[{event_day[0]} -- {event_day[-1]}] (Threshold : {detection_threshold} pfu -- {energy_channel} MeV)', fontname="Arial", fontsize = 14) #, y=1.04,
+	
+	
+			plt.ylabel('Proton Flux [pfu]', fontname="Arial", fontsize = 12)
+			plt.xlabel('Time [UT]', fontname="Arial", fontsize = 12)
+		
+			# plt.show()
+			# sys.exit(0)
+			
+
+			plt.savefig(f'{data_directory}/detected_events/{energy_channel}mev/{detection_threshold_str}pfu_{energy_channel}mev_{event_day[0]}.png', format='png', dpi=900)
+			#sys.exit(0)
+
+sys.exit(0)
+
+
 # ======= Parameters to set
 data_directory = '/Users/bryanyamashiro/Documents/Research_Projects/Data'
 save_option = 'yes' # either 'yes' or 'no'
