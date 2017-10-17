@@ -344,7 +344,7 @@ Data       | Instrument | Detector | Source | URL
 
 ### OMNI Space Weather ([omni_script_v3](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/pandas_test_omni.py))
 
-<details><summary>OMNI Shell Example</summary>
+<details><summary>OMNI Command Line Example</summary>
 <p>
 
 ```shell
@@ -417,12 +417,20 @@ Specify which GOES Satellite for Xray Flux (13 or 15): 15
 
 
 
-### Remastered WIND Type III Radio Burst ([radio_script_v3](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/radio_event_remastered.py))
+### Remastered Wind Type III Radio Burst ([radio_script_v3](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/radio_event_remastered.py))
 
+<details><summary>Remastered Wind Type III Radio Burst Command Line Example</summary>
+<p>
+
+```shell
 In [51]: run radio_event_remastered.py  
   
 Plotting Type III Data: [20120307 00:00:00 -- 20120307 02:00:00]  
 Plot generated for 20120307  
+```
+
+</p>  
+</details>
 
 <img src="Plots/remastered_radio_test_v3.png" width="900">
 
@@ -431,7 +439,11 @@ Plot generated for 20120307
 
 ### Radio Burst Fit Program ([radio_fit_v1](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/pandas_test_radio_fit.py))
 
-In [49]: **run pandas_test_radio_fit.py**  
+<details><summary>Radio Burst Fit Program Command Line Example</summary>
+<p>
+
+```shell
+In [49]: run pandas_test_radio_fit.py  
 \========================================  
 \=       Radio Burst Fit Program        =  
 \========================================  
@@ -439,12 +451,20 @@ Enter a start date (yyyymmdd): 20120307
 Enter a end date (yyyymmdd): 20120307   
 Enter a start hour or "full": 00  
 Enter a end hour: 01  
+```
+
+</p>
+</details>
 
 <img src="Plots/radio_fit_test.png" width="600">
 
 
 ### Bartels' Rotation Number ([bartels_v1](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/bartels.py))
 
+<details><summary>Bartels' Rotation Number Command Line Example</summary>
+<p>
+
+```shell
 In [148]: **run bartels.py**  
   
 \========================================  
@@ -454,12 +474,17 @@ Input Start Date (yyyymmdd): 20120303
 Input End Date (yyyymmdd): 20120313  
 Bartels Rotation (2012-03-03):  2436  
 Bartels Rotation (2012-03-13):  2437  
+```
 
-
+</p>
+</details>
 
 ### Legacy OMNI Space Weather (1995-2009) ([legacy_omni_script_v1](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/pandas_test_legacy.py))
 
-In [583]: **run pandas_test_legacy.py**  
+<details><summary>Legacy OMNI Space Weather (1995-2009) Command Line Example</summary>
+<p>
+
+In [583]: run pandas_test_legacy.py  
 \========================================  
 \=               DATASETS               =  
 \========================================  
@@ -523,6 +548,8 @@ Parsing Type III Data for 2003-10-28
 Enter GOES Satellite Option: 2  
 100% [..........................................................................] 2097840 / 2097840  
 
+</p>
+</details>
 
 
 <img src="Plots/omni_test_legacy.png" width="600">
