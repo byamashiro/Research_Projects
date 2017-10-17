@@ -143,24 +143,43 @@
 
 Module       | Submodule(s) | as | Uses
 ------------ | ------------- | ------------- | -------------
-**pandas**       | -                | pd          | DataFrames, indexing, plotting, downloading http url data, csv_reader()
-**numpy**        | -                | np          | NaN values
-**spacepy**      | pycdf            | -           | Reading Common Data Format
-**urllib**       | error            | -           | For HTTPError recognition
-**random**       | -                | -           | Randomizer for random colors
-**matplotlib**   | .pyplot, .mdates | plt, mdates | Plotting, subplots, date formatting
-**datetime**     | -                | -           | Datetime indexing, datetime strings, datetime conversion from strings
-**sys**          | -                | -           | Exiting script
-**wget**         | -                | -           | Downloading files online (.cdf, .csv, .ascii, .txt)
-**os**           | -                | -           | Remove files through script
+**pandas**       | -                | pd              | DataFrames, indexing, plotting, downloading http url data, csv_reader()
+**numpy**        | -                | np              | NaN values
+**spacepy**      | pycdf            | -               | Reading Common Data Format
+**urllib**       | error            | -               | For HTTPError recognition
+**random**       | -                | -               | Randomizer for random colors
+**matplotlib**   | .pyplot, .mdates | plt, mdates, cm | Plotting, subplots, date formatting, color map (viridis)
+**datetime**     | -                | -               | Datetime indexing, datetime strings, datetime conversion from strings
+**sys**          | -                | -               | Exiting script
+**wget**         | -                | -               | Downloading files online (.cdf, .csv, .ascii, .txt)
+**os**           | -                | -               | Remove files through script
+**calendar**     | -                | -               | Retrieves final date of the month specified
+**shutil**       | -                | -               | Moves files into specified directories
 
 ## Installing Dependencies
-<details><summary>pip</summary>
+<details><summary>pip install</summary>
 <p>
 
 - pandas
 - datetime
-- spacepy
+- <details><summary>spacepy</summary>
+  <p>
+
+  - numpy
+  - matplotlib
+  - ffnet
+    - gcc
+    - gfortran
+
+  </p>
+  </details>
+  
+  - scipy (soft)
+  - networkx
+
+- matplotlib
+- numpy
+
 
 </p>
 </details>
