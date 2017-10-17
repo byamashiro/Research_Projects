@@ -2,8 +2,7 @@
 
 **Table of Contents**
 
-- [Current Tasks](#current-tasks)
-- [Current Errors and Pressing Tasks](#current-errors-and-pressing-tasks)
+- [Current Tasks and Errors](#current-tasks-and-errors)
 - [Required Python Modules](#required-python-modules)
 - [Running Scripts](#running-scripts)
   - [OMNI Space Weather (omni_script_v3)](#omni-space-weather-omni_script_v3)
@@ -271,8 +270,10 @@ with tarfile.open(fileobj=ftpstream, mode="r|gz") as tar:
 </p>
 </details>
 
+
 # Required Python Modules
-## Current Python: Version 3.6.1
+<details><summary>Current Python: Version 3.6.1</summary>
+<p>
 
 Module       | Submodule(s) | as | Uses
 ------------ | ------------- | ------------- | -------------
@@ -288,6 +289,10 @@ Module       | Submodule(s) | as | Uses
 **os**           | -                | -               | Remove files through script
 **calendar**     | -                | -               | Retrieves final date of the month specified
 **shutil**       | -                | -               | Moves files into specified directories
+
+</p>
+</details>
+
 
 ## Installing Dependencies
 <details><summary>pip install</summary>
@@ -444,9 +449,9 @@ Plot generated for 20120307
 
 ```shell
 In [49]: run pandas_test_radio_fit.py  
-\========================================  
-\=       Radio Burst Fit Program        =  
-\========================================  
+========================================  
+=       Radio Burst Fit Program        =  
+========================================  
 Enter a start date (yyyymmdd): 20120307  
 Enter a end date (yyyymmdd): 20120307   
 Enter a start hour or "full": 00  
@@ -467,9 +472,9 @@ Enter a end hour: 01
 ```shell
 In [148]: **run bartels.py**  
   
-\========================================  
-\=       Bartels Rotation Number        =  
-\========================================  
+========================================  
+=       Bartels Rotation Number        =  
+========================================  
 Input Start Date (yyyymmdd): 20120303  
 Input End Date (yyyymmdd): 20120313  
 Bartels Rotation (2012-03-03):  2436  
@@ -485,15 +490,15 @@ Bartels Rotation (2012-03-13):  2437
 <p>
 
 In [583]: run pandas_test_legacy.py  
-\========================================  
-\=               DATASETS               =  
-\========================================  
+========================================  
+=               DATASETS               =  
+========================================  
 1 - GOES-8,10 Proton Flux (1995-Present)  
 2 - Wind Type III Radio Bursts (1994-Present)  
 3 - Neutron Monitor Counts  
 4 - ACE/Wind Solar Wind Speed (1998-Present)/(1994-Present)  
 5 - GOES-8,10 Xray Flux (1995-Present)  
-\========================================  
+========================================  
 Enter Dataset Option then "done" or "all": 1  
 Enter Dataset Option then "done" or "all": 2  
 Enter Dataset Option then "done" or "all": 4  
@@ -502,20 +507,20 @@ Enter Dataset Option then "done" or "all": done
 Enter a start date (yyyymmdd): 20031028  
 Enter a end date (yyyymmdd): 20031028  
 Enter a start hour or "full": full  
-\========================================  
-\=           GOES Satellites            =  
-\========================================  
+========================================  
+=           GOES Satellites            =  
+========================================  
 1 - GOES-8 (1995 - 1998)  
 2 - GOES-10 (1999 - 2009)  
 3 - GOES-13 (2010 - Present) DO NOT USE!  
-\========================================  
+========================================  
 Enter GOES Satellite Option: 2  
   
-\========================================  
-\=  GOES-10 Time Averaged Proton Flux   =  
-\========================================  
+========================================  
+=  GOES-10 Time Averaged Proton Flux   =  
+========================================  
 Energy Channels  
-\--------------------  
+--------------------  
 1: 0.6 - 4.0 MeV  
 2: 4.0 - 9.0 MeV  
 3: 9.0 - 15.0 MeV  
@@ -525,26 +530,26 @@ Energy Channels
 7: 165.0 - 500.0 MeV  
 Enter Energy Channel(s) or "full": full  
 100% [..........................................................................] 5637540 / 5637540  
-\========================================  
-\=      Wind Type III Radio Bursts      =  
-\========================================  
+========================================  
+=      Wind Type III Radio Bursts      =  
+========================================  
 100% [..........................................................................] 3539967 / 3539967  
 Parsing Type III Data for 2003-10-28  
   
-\========================================  
-\=      ACE/Wind Solar Wind Speed       =  
-\========================================  
+========================================  
+=      ACE/Wind Solar Wind Speed       =  
+========================================  
 100% [............................................................................] 165376 / 165376  
-\========================================  
-\=   GOES-10 Time Averaged Xray Flux    =  
-\========================================  
-\========================================  
-\=           GOES Satellites            =  
-\========================================  
+========================================  
+=   GOES-10 Time Averaged Xray Flux    =  
+========================================  
+========================================  
+=           GOES Satellites            =  
+========================================  
 1 - GOES-8 (1995 - 1998)  
 2 - GOES-10 (1999 - 2009)  
 3 - GOES-13 (2010 - Present) DO NOT USE!  
-\========================================  
+========================================  
 Enter GOES Satellite Option: 2  
 100% [..........................................................................] 2097840 / 2097840  
 
@@ -567,6 +572,8 @@ Filename       | Type | Run Command | Functionality
 
 # Data
 The data consists of mainly flux data from instruments on the ground, Earth orbit, and at the L1 Lagrange point. The data includes a sample from (2012 March), not normalized, and complete in intervals of about 30 seconds to a minute. Data values that were not accepted are denoted at extreme negative values around -9999. The specifics of each data set is commented in each header.
+
+
 
 ### Data Caveats
 Data labeled as -99999.0 and 0.0 are converted to 'np.nan' values for all current working scripts.
@@ -633,6 +640,9 @@ Solar Wind Speed | N | < 0.0
 
 # Completed Tasks
 
+<details><summary>Completed Task List</summary>
+<p>
+
 - [x] Bartels' Rotation Converter (09/27/2017)
   - [x] Function to convert date to Bartels' rotation number (09/27/2017)
 
@@ -693,9 +703,13 @@ Solar Wind Speed | N | < 0.0
 - [x] Neutron Monitor (7/3/2017)
 - [x] Type III Radio Bursts (7/3/2017)
 
+</p>
+</details>
 
 # Resolved Errors
 
+<details><summary>Resolved Errors and Tasks</summary>
+<p>
 
 ### Change long plot option (09/20/2017)
 * **Resolution**: Made an 'if' statement to change figure sizes according to the amount of datasets chosen. If there are more than 4 options, change the figure size.
@@ -788,3 +802,5 @@ myFmt = mdates.DateFormatter('%m/%d\n%H:%M')
 ax.xaxis.set_major_formatter(myFmt) #this is line that breaks code (ValueError: year 60740 is out of range)
 ```
 
+</p>
+</details>
