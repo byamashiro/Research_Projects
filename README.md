@@ -136,7 +136,7 @@
 - [ ] Type III Radio Burst Event Plot Program
   - [ ] Add legend for different detection energy ranges
 
-
+- [ ] Change all proton flux to new_avg data
 
 # Required Python Modules
 ## Current Python: Version 3.6.1
@@ -145,7 +145,7 @@ Module       | Submodule(s) | as | Uses
 ------------ | ------------- | ------------- | -------------
 **pandas**       | -                | pd          | DataFrames, indexing, plotting, downloading http url data, csv_reader()
 **numpy**        | -                | np          | NaN values
-**spacepy**      | pycdf            | -           |  Reading Common Data Format
+**spacepy**      | pycdf            | -           | Reading Common Data Format
 **urllib**       | error            | -           | For HTTPError recognition
 **random**       | -                | -           | Randomizer for random colors
 **matplotlib**   | .pyplot, .mdates | plt, mdates | Plotting, subplots, date formatting
@@ -154,6 +154,15 @@ Module       | Submodule(s) | as | Uses
 **wget**         | -                | -           | Downloading files online (.cdf, .csv, .ascii, .txt)
 **os**           | -                | -           | Remove files through script
 
+## collapsible markdown?
+<details><summary>CLICK ME</summary>
+<p>
+#### yes, even hidden code blocks!
+```python
+print("hello world!")
+```
+</p>
+</details>
 
 # Data Sources
 ## Currently Implemented
