@@ -160,9 +160,11 @@ Module       | Submodule(s) | as | Uses
 <details><summary>pip install</summary>
 <p>
 
+- matplotlib
+- numpy
 - pandas
 - datetime
-- <details><summary>spacepy</summary>
+- <details><summary>spacepy (dependencies collapsed)</summary>
   <p>
 
   - numpy
@@ -170,16 +172,11 @@ Module       | Submodule(s) | as | Uses
   - ffnet
     - gcc
     - gfortran
+  - scipy
+  - networkx
 
   </p>
   </details>
-  
-  - scipy (soft)
-  - networkx
-
-- matplotlib
-- numpy
-
 
 </p>
 </details>
