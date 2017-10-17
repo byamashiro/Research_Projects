@@ -21,8 +21,8 @@
 
 
 
-
-<details><summary># Current Tasks</summary>
+# Current Tasks
+<details><summary>Task List</summary>
 <p>
 
 - [ ] Set a variable up in the preface of the code to specify options
@@ -346,6 +346,10 @@ Data       | Instrument | Detector | Source | URL
 
 ### OMNI Space Weather ([omni_script_v3](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/pandas_test_omni.py))
 
+<details><summary>OMNI Shell Example</summary>
+<p>
+
+```shell
 In [8]: **run pandas_test_omni.py**  
 \========================================  
 \=               DATASETS               =  
@@ -406,7 +410,10 @@ Specify which GOES Satellite for Xray Flux (13 or 15): 15
 \========================================  
 \=         STEREO-B Proton Flux         =  
 \========================================  
+```
 
+</p>
+</details>
 
 
 <img src="Plots/omni_full_test_v3.png" width="700">
