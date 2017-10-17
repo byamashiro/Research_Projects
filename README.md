@@ -154,13 +154,13 @@ Module       | Submodule(s) | as | Uses
 **wget**         | -                | -           | Downloading files online (.cdf, .csv, .ascii, .txt)
 **os**           | -                | -           | Remove files through script
 
-## collapsible markdown?
-<details><summary>CLICK ME</summary>
+## Installing Dependencies
+<details><summary>pip</summary>
 <p>
-#### yes, even hidden code blocks!
-```python
-print("hello world!")
-```
+#### pip install
+- pandas
+- datetime
+- spacepy
 </p>
 </details>
 
