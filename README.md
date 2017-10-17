@@ -21,7 +21,7 @@
 
 
 
-# Current Tasks
+# Current Tasks and Errors
 <details><summary>Task List</summary>
 <p>
 
@@ -143,8 +143,6 @@
 </p>
 </details>
 
-
-# Current Tasks and Errors
 <details><summary>Current Tasks and Errors</summary>
 <p>
 
@@ -350,10 +348,10 @@ Data       | Instrument | Detector | Source | URL
 <p>
 
 ```shell
-In [8]: **run pandas_test_omni.py**  
-\========================================  
-\=               DATASETS               =  
-\========================================  
+In [8]: run pandas_test_omni.py  
+========================================  
+=               DATASETS               =  
+========================================  
 1 - GOES-13/15 Proton Flux  
 2 - Wind Type III Radio Bursts  
 3 - Neutron Monitor Counts (Requires Internet Connection)  
@@ -361,18 +359,18 @@ In [8]: **run pandas_test_omni.py**
 5 - GOES-13/15 Xray Flux  
 6 - STEREO-A Proton Flux  
 7 - STEREO-B Proton Flux  
-\========================================  
+========================================  
 Enter Dataset Option then "done" or "all": all  
 Enter a start date (yyyymmdd): 20120307  
 Enter a end date (yyyymmdd): 20120307  
 Enter a start hour or "full": full  
 Specify which GOES Satellite for Proton Flux (13 or 15): 13  
   
-\========================================  
-\=         GOES-13 Proton Flux          =  
-\========================================  
+========================================  
+=         GOES-13 Proton Flux          =  
+========================================  
 Energy Channels  
-\--------------------  
+--------------------  
 1: 6.5 MeV  
 2: 11.6 MeV  
 3: 30.6 MeV  
@@ -381,40 +379,39 @@ Energy Channels
 6: 433 MeV  
 Enter Energy Channel(s) or "full": full  
   
-\========================================  
-\=      Wind Type III Radio Bursts      =  
-\========================================  
+========================================  
+=      Wind Type III Radio Bursts      =  
+========================================  
   
-\========================================  
-\=           Neutron Monitors           =  
-\========================================  
+========================================  
+=           Neutron Monitors           =  
+========================================  
 How many stations to parse: 1  
 You are parsing 1 station(s)  
 Enter station names: OULU  
 Parsing the ['OULU'] stations  
   
-\========================================  
-\=      ACE/Wind Solar Wind Speed       =  
-\========================================  
+========================================  
+=      ACE/Wind Solar Wind Speed       =  
+========================================  
   
 Specify which GOES Satellite for Xray Flux (13 or 15): 15  
   
-\========================================  
-\=          GOES-15 Xray Flux           =  
-\========================================  
+========================================  
+=          GOES-15 Xray Flux           =  
+========================================  
   
-\========================================  
-\=         STEREO-A Proton Flux         =  
-\========================================  
+========================================  
+=         STEREO-A Proton Flux         =  
+========================================  
   
-\========================================  
-\=         STEREO-B Proton Flux         =  
-\========================================  
+========================================  
+=         STEREO-B Proton Flux         =  
+========================================  
 ```
 
 </p>
 </details>
-
 
 <img src="Plots/omni_full_test_v3.png" width="700">
 
