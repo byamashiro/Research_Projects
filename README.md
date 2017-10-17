@@ -12,9 +12,6 @@
   - [Legacy OMNI Space Weather (1995-2009) (legacy_omni_script_v1)](#legacy-omni-space-weather-1995-2009-legacy_omni_script_v1)
 - [Deprecated Scripts](#deprecated-scripts)
 - [Data](#data)
-  - [Data Caveats](#data-caveats)
-  - [Data Originals](#data-originals)
-  - [Sample Data](#sample-data)
 - [Completed Tasks](#completed-tasks)
 - [Resolved Errors](#resolved-errors)
 
@@ -321,7 +318,10 @@ Module       | Submodule(s) | as | Uses
 
 
 # Data Sources
-## Currently Implemented
+
+<details><summary>Currently Implemented</summary>
+<p>
+
 Data       | Instrument | Detector | Source | URL
 ------------ | ------------- | ------------- | -------------| -------------
 **GOES Proton Flux**            | GOES-13,15        | EPEAD               | NOAA   | https://satdat.ngdc.noaa.gov/sem/goes/data/new_full/
@@ -333,9 +333,12 @@ Data       | Instrument | Detector | Source | URL
 **Wind Solar Wind Parameters**  | Wind              | SWE                 | CDAW   | https://cdaweb.gsfc.nasa.gov/pub/data/wind/swe/swe_k0/
 **STEREO-A/B Proton Flux**      | STEREO            | HET                 | IMPACT | http://stereo.ssl.berkeley.edu/
 
+</p>
+</details>
 
+<details><summary>Prospective Data Sets</summary>
+<p>
 
-## Prospective Datasets
 **Kp Index**     | Ground Based Magnetometers                | Planetary           | NOAA | ftp://ftp.swpc.noaa.gov/pub/indices/old_indices/
 **Dst Index**          | Ground Based Magnetometers                | Kyoto           | WDC | http://wdc.kugi.kyoto-u.ac.jp/
 **AE Index**         | -                | -           | - | -
@@ -344,6 +347,8 @@ Data       | Instrument | Detector | Source | URL
 ****           | -                | -           | - | -
 ****           | -                | -           | - | -
 
+</p>
+</details>
 
 # Running Scripts
 
@@ -564,28 +569,52 @@ Enter GOES Satellite Option: 2
 # Deprecated Scripts
 Deprecated [scripts](https://github.com/byamashiro/Research_Projects/tree/master/Scripts/deprecated_scripts) are kept for reference. All scripts are working, but most do not incorporate online data fetching. The first [event script](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/deprecated_scripts/deprecated_event.py) that used local files is included in the folder. The event script is highly inefficient as it reads data from year-long data files. This is not the desired method when pulling data from half a day, which in turn will read the entire year data. Old [bash scripts](https://github.com/byamashiro/Research_Projects/tree/master/Scripts/deprecated_scripts/bash_scripts) are also added to archive old/inefficient methods of collecting data and reducing. Most script descriptions were added to the deprecated folder. The omni script has the functionality of all of the deprecated scripts, and will be updated.
 
-### Old Scripts
+
+<details><summary>Data Caveats</summary>
+<p>
+
 Filename       | Type | Run Command | Functionality
 ------------ | ------------- | ------------- | -------------
 [getgoes.sh](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/deprecated_scripts/bash_scripts/getgoes.sh)  | bash                | ./get_goes.sh yyyymm yyyy mm  | Download datafile from GOES-13/15 (first EPEAD then HEPAD), make directory for intermediate files and final converted files, delete all header rows, collect only specified columns, delimit from ',' to ' ', move cleaned data to directory, delete intermediate files.
- 
+
+</p>
+</details>
 
 # Data
 The data consists of mainly flux data from instruments on the ground, Earth orbit, and at the L1 Lagrange point. The data includes a sample from (2012 March), not normalized, and complete in intervals of about 30 seconds to a minute. Data values that were not accepted are denoted at extreme negative values around -9999. The specifics of each data set is commented in each header.
 
 
 
-### Data Caveats
+<details><summary>Data Caveats</summary>
+<p>
+
 Data labeled as -99999.0 and 0.0 are converted to 'np.nan' values for all current working scripts.
 
-### Data Originals
+Data Set | Normalized (Y/N) | Bad Data Specifiers
+------------ | ------------- | -------------
+Proton Flux | N | -99999.0, 0.0
+Xray Flux | N | -99999.0, 0.0
+Neutron Monitor Rate | N | n/a 
+Radio Burst | N | n/a
+Solar Wind Speed | N | < 0.0
+
+</p>
+</details>
+
+<details><summary>Data Originals</summary>
+<p>
+
 GOES-13 Proton Flux  
 GOES-15 Xray Flux  
 ACE Magnetic Field Components  
 ACE Solar Wind Parameters  
 OULU Neutron Monitor Data  
 
-### Sample Data
+</p>
+</details>
+
+<details><summary>Sample Data Format</summary>
+<p>
 
 #### Sample Type III Radio Burst Data
 ```
@@ -620,22 +649,8 @@ datetime
 ...
 ```
 
-
-
-Data Set | Normalized (Y/N) | Bad Data Specifiers
------------- | ------------- | -------------
-Proton Flux | N | -99999.0, 0.0
-Xray Flux | N | -99999.0, 0.0
-Neutron Monitor Rate | N | n/a 
-Radio Burst | N | n/a
-Solar Wind Speed | N | < 0.0
-
-
-
-
-
-
-
+</p>
+</details>
 
 
 # Completed Tasks
