@@ -157,10 +157,11 @@ Module       | Submodule(s) | as | Uses
 ## Installing Dependencies
 <details><summary>pip</summary>
 <p>
-#### pip install
+
 - pandas
 - datetime
 - spacepy
+
 </p>
 </details>
 
