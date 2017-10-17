@@ -21,8 +21,8 @@
 
 
 
-# Current Tasks
-<details><summary>Task List</summary>
+
+<details><summary># Current Tasks</summary>
 <p>
 
 - [ ] Set a variable up in the preface of the code to specify options
