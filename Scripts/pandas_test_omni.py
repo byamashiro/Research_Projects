@@ -38,6 +38,10 @@ if event_option == 'yes':
 	event_list = pd.read_csv(f'{event_list_directory}/{event_list_name}', sep = '\t', names=event_columns, comment='#')
 
 '''
+# ========== GOES Proton flux Corrected
+goes_corrected_option = 'no'
+
+
 # ========== Definitions
 
 def daterange( start_date, end_date ):
@@ -176,89 +180,129 @@ if '1' in option_bin_set:
 				print('SATELLITE ERROR: Must specify either 13 or 15.')
 				sys.exit(0)
 
-	print(f'\n{"="*40}\n{"=" + f"GOES-{satellite_no} Proton Flux".center(38," ") + "="}\n{"="*40}')
-	print(f'{"Energy Channels".center(7, " ")}\n{"-"*20}\n1: 6.5 MeV\n2: 11.6 MeV\n3: 30.6 MeV\n4: 63.1 MeV\n5: 165 MeV\n6: 433 MeV')
-	energy_bin_set = set()
-	
-	while True: # energy_bin != 'done':
 
-		if event_option == 'yes':
-			energy_bin = 'full'
 
-		elif event_option != 'yes':
-			energy_bin = input('Enter Energy Channel(s) or "full": ')
+	if goes_corrected_option == 'yes':
+		print(f'\n{"="*40}\n{"=" + f"GOES-{satellite_no} Proton Flux".center(38," ") + "="}\n{"="*40}')
 
-		if energy_bin != 'done':
-			if energy_bin == 'full':
-				energy_bin_set.add('1')
-				energy_bin_set.add('2')
-				energy_bin_set.add('3')
-				energy_bin_set.add('4')
-				energy_bin_set.add('5')
-				energy_bin_set.add('6')
-				break
-			if int(energy_bin) < 7:
-				energy_bin_set.add(energy_bin)
-				#print(len(energy_bin_set))
-	
-				if len(energy_bin_set) >= 6:
-					#print('len very long')
-					break
-		elif energy_bin == 'done':
-			break
-	
-	energy_bin_list = []
-	for i in energy_bin_set:
-		if '1' in i:
-			energy_bin_list.append(['P2W_UNCOR_FLUX','6.5 MeV', 'red'])
-		elif '2' in i:
-			energy_bin_list.append(['P3W_UNCOR_FLUX','11.6 MeV','orange'])
-		elif '3' in i:
-			energy_bin_list.append(['P4W_UNCOR_FLUX','30.6 MeV','green'])
-		elif '4' in i:
-			energy_bin_list.append(['P5W_UNCOR_FLUX','63.1 MeV','blue'])
-		elif '5' in i:
-			energy_bin_list.append(['P6W_UNCOR_FLUX','165 MeV','purple'])
-		elif '6' in i:
-			energy_bin_list.append(['P7W_UNCOR_FLUX','433 MeV','violet'])
-	
-	
-	proton_df = pd.DataFrame([])
-	
-	for date in daterange( start, end ):
-		try:
-			event_date = str(date).replace('-','')
+			f_l_day = calendar.monthrange(int(f'{start_year}'), int(f'{start_month}'))
+			event_f_day = str(f'{start_year}{str(start_month).zfill(2)}01') # {str(f_l_day[0]).zfill(2)}
+			event_l_day = str(f'{start_year}{str(start_month).zfill(2)}{str(f_l_day[1]).zfill(2)}')
+			dir_check = os.path.isdir(f'{data_directory}/GOES_Detection/GOES_{satellite_no}/{start_year}')
+			if dir_check == False:
+				try:
+				    os.makedirs(f'{data_directory}/GOES_Detection/GOES_{satellite_no}/{start_year}')
+				except OSError as e:
+				    if e.errno != errno.EEXIST:
+				        raise
+			
+			proton_name = f'g{satellite_no}_epead_cpflux_5m_{event_f_day}_{event_l_day}.csv' #g13_epead_cpflux_5m_20110101_20110131.csv
+			proton_check = os.path.isfile(f'{data_directory}/GOES_Detection/GOES_{satellite_no}/{start_year}/{proton_name}')
 
-			#print(event_date[0:6])
-			proton_name = f'g{satellite_no}_epead_p27w_32s_{event_date}_{event_date}.csv'
-			proton_check = os.path.isfile(f'{data_directory}/GOES/GOES_{satellite_no}/Pflux/{proton_name}')
 			if proton_check == True:
 				dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
-				proton_df_ind = pd.read_csv(f'{data_directory}/GOES/GOES_{satellite_no}/Pflux/{proton_name}', skiprows=282, date_parser=dateparse,index_col='time_tag', header=0)
-				proton_df = proton_df.append(proton_df_ind)
+				proton_df = pd.read_csv(f'{data_directory}/GOES_Detection/GOES_{satellite_no}/{start_year}/{proton_name}', skiprows=718, date_parser=dateparse, names=cpflux_names,index_col='time_tag', header=0)
+
 
 			elif proton_check == False:
-				proton_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_full/{event_date[:4]}/{event_date[4:6]}/goes{satellite_no}/csv/{proton_name}'
-				proton_in = wget.download(proton_url)	
+				proton_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_avg/{start_year}/{str({start_month}).zfill(2)}/goes{satellite_no}/csv/{proton_name}'
+				# proton_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_avg/{event_date[:4]}/{event_date[4:6]}/goes{satellite_no}/csv/{proton_name}'
+				proton_in = wget.download(proton_url)
 				dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
-				proton_df_ind = pd.read_csv(f'{proton_in}', skiprows=282, date_parser=dateparse,index_col='time_tag', header=0)
-				proton_df = proton_df.append(proton_df_ind)
+				proton_df = pd.read_csv(f'{proton_in}', skiprows=718, date_parser=dateparse, names=cpflux_names,index_col='time_tag', header=0) # ZPGT100W
+
 				if save_option == 'yes':
-					shutil.move(f'{proton_name}', f'{data_directory}/GOES/GOES_{satellite_no}/Pflux/')
+					shutil.move(f'{proton_name}', f'{data_directory}/GOES_Detection/GOES_{satellite_no}/{start_year}')
 				elif save_option == 'no':
 					os.remove(proton_name)
+			
+
+
+
+	if goes_corrected_option == 'no':
+		print(f'\n{"="*40}\n{"=" + f"GOES-{satellite_no} Proton Flux".center(38," ") + "="}\n{"="*40}')
+		print(f'{"Energy Channels".center(7, " ")}\n{"-"*20}\n1: 6.5 MeV\n2: 11.6 MeV\n3: 30.6 MeV\n4: 63.1 MeV\n5: 165 MeV\n6: 433 MeV')
+		energy_bin_set = set()
+		
+		while True: # energy_bin != 'done':
 	
-			# os.remove(proton_name)
-		except:
-			print(f'\nMissing data for {date}')
-			continue
+			if event_option == 'yes':
+				energy_bin = 'full'
 	
-	proton_df.drop(proton_df[proton_df['P2W_UNCOR_FLUX'] <= 0.0].index, inplace=True)
-	proton_df.drop(proton_df[proton_df['P3W_UNCOR_FLUX'] <= 0.0].index, inplace=True)
-	proton_df.drop(proton_df[proton_df['P4W_UNCOR_FLUX'] <= 0.0].index, inplace=True)
-	proton_df.drop(proton_df[proton_df['P5W_UNCOR_FLUX'] <= 0.0].index, inplace=True)
-	proton_df.drop(proton_df[proton_df['P6W_UNCOR_FLUX'] <= 0.0].index, inplace=True)
-	proton_df.drop(proton_df[proton_df['P7W_UNCOR_FLUX'] <= 0.0].index, inplace=True)
+			elif event_option != 'yes':
+				energy_bin = input('Enter Energy Channel(s) or "full": ')
+	
+			if energy_bin != 'done':
+				if energy_bin == 'full':
+					energy_bin_set.add('1')
+					energy_bin_set.add('2')
+					energy_bin_set.add('3')
+					energy_bin_set.add('4')
+					energy_bin_set.add('5')
+					energy_bin_set.add('6')
+					break
+				if int(energy_bin) < 7:
+					energy_bin_set.add(energy_bin)
+					#print(len(energy_bin_set))
+		
+					if len(energy_bin_set) >= 6:
+						#print('len very long')
+						break
+			elif energy_bin == 'done':
+				break
+		
+		energy_bin_list = []
+		for i in energy_bin_set:
+			if '1' in i:
+				energy_bin_list.append(['P2W_UNCOR_FLUX','6.5 MeV', 'red'])
+			elif '2' in i:
+				energy_bin_list.append(['P3W_UNCOR_FLUX','11.6 MeV','orange'])
+			elif '3' in i:
+				energy_bin_list.append(['P4W_UNCOR_FLUX','30.6 MeV','green'])
+			elif '4' in i:
+				energy_bin_list.append(['P5W_UNCOR_FLUX','63.1 MeV','blue'])
+			elif '5' in i:
+				energy_bin_list.append(['P6W_UNCOR_FLUX','165 MeV','purple'])
+			elif '6' in i:
+				energy_bin_list.append(['P7W_UNCOR_FLUX','433 MeV','violet'])
+		
+		
+		proton_df = pd.DataFrame([])
+		
+		for date in daterange( start, end ):
+			try:
+				event_date = str(date).replace('-','')
+	
+				#print(event_date[0:6])
+				proton_name = f'g{satellite_no}_epead_p27w_32s_{event_date}_{event_date}.csv'
+				proton_check = os.path.isfile(f'{data_directory}/GOES/GOES_{satellite_no}/Pflux/{proton_name}')
+				if proton_check == True:
+					dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
+					proton_df_ind = pd.read_csv(f'{data_directory}/GOES/GOES_{satellite_no}/Pflux/{proton_name}', skiprows=282, date_parser=dateparse,index_col='time_tag', header=0)
+					proton_df = proton_df.append(proton_df_ind)
+	
+				elif proton_check == False:
+					proton_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_full/{event_date[:4]}/{event_date[4:6]}/goes{satellite_no}/csv/{proton_name}'
+					proton_in = wget.download(proton_url)	
+					dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
+					proton_df_ind = pd.read_csv(f'{proton_in}', skiprows=282, date_parser=dateparse,index_col='time_tag', header=0)
+					proton_df = proton_df.append(proton_df_ind)
+					if save_option == 'yes':
+						shutil.move(f'{proton_name}', f'{data_directory}/GOES/GOES_{satellite_no}/Pflux/')
+					elif save_option == 'no':
+						os.remove(proton_name)
+		
+				# os.remove(proton_name)
+			except:
+				print(f'\nMissing data for {date}')
+				continue
+		
+		proton_df.drop(proton_df[proton_df['P2W_UNCOR_FLUX'] <= 0.0].index, inplace=True)
+		proton_df.drop(proton_df[proton_df['P3W_UNCOR_FLUX'] <= 0.0].index, inplace=True)
+		proton_df.drop(proton_df[proton_df['P4W_UNCOR_FLUX'] <= 0.0].index, inplace=True)
+		proton_df.drop(proton_df[proton_df['P5W_UNCOR_FLUX'] <= 0.0].index, inplace=True)
+		proton_df.drop(proton_df[proton_df['P6W_UNCOR_FLUX'] <= 0.0].index, inplace=True)
+		proton_df.drop(proton_df[proton_df['P7W_UNCOR_FLUX'] <= 0.0].index, inplace=True)
 
 	'''
 	proton_df.loc[proton_df['P2W_UNCOR_FLUX'] <= 0.0] = np.nan #6.5 MeV
@@ -1140,13 +1184,26 @@ if length_data == 1:
 
 if '1' in option_bin_set:
 	next_global()
-	for i in sorted(energy_bin_list):
-		axes[length_data_list[j]].plot(proton_df[f'{i[0]}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color=f'{i[2]}', label= f'{i[1]}', zorder=5)#, logy=True)
-	axes[length_data_list[j]].set_yscale('log')
-	# axes[length_data_list[j]].set_ylim((10**(-3)), (10**3))
+	if goes_corrected_option == 'yes':
+		# for i in sorted(energy_bin_list):
+		#	axes[length_data_list[j]].plot(proton_df[f'{i[0]}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color=f'{i[2]}', label= f'{i[1]}', zorder=5)#, logy=True)
+		axes[length_data_list[j]].plot(proton_df['ZPGT10W'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='red', label= f'GOES-{sat} >10 MeV', zorder=5)#, logy=True)
+		axes[length_data_list[j]].plot(proton_df['ZPGT50W'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='blue', label= f'GOES-{sat} >50 MeV', zorder=5)#, logy=True)
+		axes[length_data_list[j]].plot(proton_df['ZPGT100W'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='lime', label= f'GOES-{sat} >100 MeV', zorder=5)#, logy=True)
 
-	axes[length_data_list[j]].set_yticks([10**-3, 10**-2, 10**-1, 10**0, 10**1, 10**2, 10**3])
-	axes[length_data_list[j]].set_ylabel(f'GOES-{satellite_no} Proton\nFlux [pfu]', fontname="Arial", fontsize = 12)
+		axes[length_data_list[j]].set_yscale('log')
+		# axes[length_data_list[j]].set_ylim((10**(-3)), (10**3))
+	
+		axes[length_data_list[j]].set_yticks([10**-3, 10**-2, 10**-1, 10**0, 10**1, 10**2, 10**3])
+		axes[length_data_list[j]].set_ylabel(f'GOES-{satellite_no} Proton\nFlux [pfu]', fontname="Arial", fontsize = 12)
+	elif goes_corrected_option == 'no':
+		for i in sorted(energy_bin_list):
+			axes[length_data_list[j]].plot(proton_df[f'{i[0]}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color=f'{i[2]}', label= f'{i[1]}', zorder=5)#, logy=True)
+		axes[length_data_list[j]].set_yscale('log')
+		# axes[length_data_list[j]].set_ylim((10**(-3)), (10**3))
+	
+		axes[length_data_list[j]].set_yticks([10**-3, 10**-2, 10**-1, 10**0, 10**1, 10**2, 10**3])
+		axes[length_data_list[j]].set_ylabel(f'GOES-{satellite_no} Proton\nFlux [pfu]', fontname="Arial", fontsize = 12)
 	applyPlotStyle()
 
 
