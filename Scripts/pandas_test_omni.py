@@ -192,40 +192,136 @@ if '1' in option_bin_set:
 		energy_bin_list.append(['ZPGT50W','>50 MeV', 'blue'])
 		energy_bin_list.append(['ZPGT100W','>100 MeV', 'lime'])
 
-		f_l_day = calendar.monthrange(int(f'{start_year}'), int(f'{start_month}'))
-		event_f_day = str(f'{start_year}{str(start_month).zfill(2)}01') # {str(f_l_day[0]).zfill(2)}
-		event_l_day = str(f'{start_year}{str(start_month).zfill(2)}{str(f_l_day[1]).zfill(2)}')
-		dir_check = os.path.isdir(f'{data_directory}/GOES_Detection/GOES_{satellite_no}/{start_year}')
-		if dir_check == False:
+
+
+
+
+		if start_date != end_date:
+
+			for month_event in months_in_year:
 			try:
-			    os.makedirs(f'{data_directory}/GOES_Detection/GOES_{satellite_no}/{start_year}')
-			except OSError as e:
-			    if e.errno != errno.EEXIST:
-			        raise
-		
-		proton_name = f'g{satellite_no}_epead_cpflux_5m_{event_f_day}_{event_l_day}.csv' #g13_epead_cpflux_5m_20110101_20110131.csv
-		proton_check = os.path.isfile(f'{data_directory}/GOES_Detection/GOES_{satellite_no}/{start_year}/{proton_name}')
+				# print(f'\r                                                                                                    ', end="\r")
+				
+				
+				print(f'Parsing month - {month_event}', end="\r")
 
-		if proton_check == True:
-			dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
-			proton_df = pd.read_csv(f'{data_directory}/GOES_Detection/GOES_{satellite_no}/{start_year}/{proton_name}', skiprows=718, date_parser=dateparse, names=cpflux_names,index_col='time_tag', header=0)
+				f_l_day = calendar.monthrange(int(detection_year), int(month_event))
+				event_f_day = str(f'{detection_year}{str(month_event).zfill(2)}01') # {str(f_l_day[0]).zfill(2)}
+				event_l_day = str(f'{detection_year}{str(month_event).zfill(2)}{str(f_l_day[1]).zfill(2)}')
 
 
-		elif proton_check == False:
-			proton_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_avg/{start_year}/{str({start_month}).zfill(2)}/goes{satellite_no}/csv/{proton_name}'
-			# proton_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_avg/{event_date[:4]}/{event_date[4:6]}/goes{satellite_no}/csv/{proton_name}'
-			proton_in = wget.download(proton_url)
-			dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
-			proton_df = pd.read_csv(f'{proton_in}', skiprows=718, date_parser=dateparse, names=cpflux_names,index_col='time_tag', header=0) # ZPGT100W
+				dir_check = os.path.isdir(f'{data_directory}/GOES_Detection/GOES_{satellite_no}/{detection_year}')
+				if dir_check == False:
+					try:
+					    os.makedirs(f'{data_directory}/GOES_Detection/GOES_{satellite_no}/{detection_year}')
+					except OSError as e:
+					    if e.errno != errno.EEXIST:
+					        raise
+				
+				proton_name = f'g{satellite_no}_epead_cpflux_5m_{event_f_day}_{event_l_day}.csv' #g13_epead_cpflux_5m_20110101_20110131.csv
+				proton_check = os.path.isfile(f'{data_directory}/GOES_Detection/GOES_{satellite_no}/{detection_year}/{proton_name}')
+	
+				if proton_check == True:
+					dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
+					proton_df = pd.read_csv(f'{data_directory}/GOES_Detection/GOES_{satellite_no}/{detection_year}/{proton_name}', skiprows=718, date_parser=dateparse, names=cpflux_names,index_col='time_tag', header=0)
+	
+	
+				elif proton_check == False:
+					proton_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_avg/{detection_year}/{str(month_event).zfill(2)}/goes{satellite_no}/csv/{proton_name}'
+					# proton_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_avg/{event_date[:4]}/{event_date[4:6]}/goes{satellite_no}/csv/{proton_name}'
+					proton_in = wget.download(proton_url)
+					dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
+					proton_df = pd.read_csv(f'{proton_in}', skiprows=718, date_parser=dateparse, names=cpflux_names,index_col='time_tag', header=0) # ZPGT100W
+	
+					if save_option == 'yes':
+						shutil.move(f'{proton_name}', f'{data_directory}/GOES_Detection/GOES_{satellite_no}/{detection_year}')
+					elif save_option == 'no':
+						os.remove(proton_name)
+	
+				continue
+	
+			except Exception as e:
+				print(e)
+				print(f'{month_event} does not have data.')
 
-			if save_option == 'yes':
-				shutil.move(f'{proton_name}', f'{data_directory}/GOES_Detection/GOES_{satellite_no}/{start_year}')
-			elif save_option == 'no':
-				os.remove(proton_name)
 
-		proton_df.drop(proton_df[proton_df['ZPGT10W'] <= 0.0].index, inplace=True)
-		proton_df.drop(proton_df[proton_df['ZPGT50W'] <= 0.0].index, inplace=True)
-		proton_df.drop(proton_df[proton_df['ZPGT100W'] <= 0.0].index, inplace=True)
+
+
+
+			f_l_day = calendar.monthrange(int(f'{start_year}'), int(f'{start_month}'))
+			event_f_day = str(f'{start_year}{str(start_month).zfill(2)}01') # {str(f_l_day[0]).zfill(2)}
+			event_l_day = str(f'{start_year}{str(start_month).zfill(2)}{str(f_l_day[1]).zfill(2)}')
+			dir_check = os.path.isdir(f'{data_directory}/GOES_Detection/GOES_{satellite_no}/{start_year}')
+			if dir_check == False:
+				try:
+				    os.makedirs(f'{data_directory}/GOES_Detection/GOES_{satellite_no}/{start_year}')
+				except OSError as e:
+				    if e.errno != errno.EEXIST:
+				        raise
+			
+	
+			proton_name = f'g{satellite_no}_epead_cpflux_5m_{event_f_day}_{event_l_day}.csv' #g13_epead_cpflux_5m_20110101_20110131.csv
+			proton_check = os.path.isfile(f'{data_directory}/GOES_Detection/GOES_{satellite_no}/{start_year}/{proton_name}')
+	
+			if proton_check == True:
+				dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
+				proton_df = pd.read_csv(f'{data_directory}/GOES_Detection/GOES_{satellite_no}/{start_year}/{proton_name}', skiprows=718, date_parser=dateparse, names=cpflux_names,index_col='time_tag', header=0)
+	
+	
+			elif proton_check == False:
+				proton_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_avg/{start_year}/{str({start_month}).zfill(2)}/goes{satellite_no}/csv/{proton_name}'
+				# proton_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_avg/{event_date[:4]}/{event_date[4:6]}/goes{satellite_no}/csv/{proton_name}'
+				proton_in = wget.download(proton_url)
+				dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
+				proton_df = pd.read_csv(f'{proton_in}', skiprows=718, date_parser=dateparse, names=cpflux_names,index_col='time_tag', header=0) # ZPGT100W
+	
+				if save_option == 'yes':
+					shutil.move(f'{proton_name}', f'{data_directory}/GOES_Detection/GOES_{satellite_no}/{start_year}')
+				elif save_option == 'no':
+					os.remove(proton_name)
+	
+			proton_df.drop(proton_df[proton_df['ZPGT10W'] <= 0.0].index, inplace=True)
+			proton_df.drop(proton_df[proton_df['ZPGT50W'] <= 0.0].index, inplace=True)
+			proton_df.drop(proton_df[proton_df['ZPGT100W'] <= 0.0].index, inplace=True)
+
+
+
+		elif start_date == end_date:
+			f_l_day = calendar.monthrange(int(f'{start_year}'), int(f'{start_month}'))
+			event_f_day = str(f'{start_year}{str(start_month).zfill(2)}01') # {str(f_l_day[0]).zfill(2)}
+			event_l_day = str(f'{start_year}{str(start_month).zfill(2)}{str(f_l_day[1]).zfill(2)}')
+			dir_check = os.path.isdir(f'{data_directory}/GOES_Detection/GOES_{satellite_no}/{start_year}')
+			if dir_check == False:
+				try:
+				    os.makedirs(f'{data_directory}/GOES_Detection/GOES_{satellite_no}/{start_year}')
+				except OSError as e:
+				    if e.errno != errno.EEXIST:
+				        raise
+			
+	
+			proton_name = f'g{satellite_no}_epead_cpflux_5m_{event_f_day}_{event_l_day}.csv' #g13_epead_cpflux_5m_20110101_20110131.csv
+			proton_check = os.path.isfile(f'{data_directory}/GOES_Detection/GOES_{satellite_no}/{start_year}/{proton_name}')
+	
+			if proton_check == True:
+				dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
+				proton_df = pd.read_csv(f'{data_directory}/GOES_Detection/GOES_{satellite_no}/{start_year}/{proton_name}', skiprows=718, date_parser=dateparse, names=cpflux_names,index_col='time_tag', header=0)
+	
+	
+			elif proton_check == False:
+				proton_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_avg/{start_year}/{str({start_month}).zfill(2)}/goes{satellite_no}/csv/{proton_name}'
+				# proton_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_avg/{event_date[:4]}/{event_date[4:6]}/goes{satellite_no}/csv/{proton_name}'
+				proton_in = wget.download(proton_url)
+				dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
+				proton_df = pd.read_csv(f'{proton_in}', skiprows=718, date_parser=dateparse, names=cpflux_names,index_col='time_tag', header=0) # ZPGT100W
+	
+				if save_option == 'yes':
+					shutil.move(f'{proton_name}', f'{data_directory}/GOES_Detection/GOES_{satellite_no}/{start_year}')
+				elif save_option == 'no':
+					os.remove(proton_name)
+	
+			proton_df.drop(proton_df[proton_df['ZPGT10W'] <= 0.0].index, inplace=True)
+			proton_df.drop(proton_df[proton_df['ZPGT50W'] <= 0.0].index, inplace=True)
+			proton_df.drop(proton_df[proton_df['ZPGT100W'] <= 0.0].index, inplace=True)
 		
 
 
