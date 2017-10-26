@@ -134,9 +134,7 @@
 - [ ] Type III Radio Burst Event Plot Program
   - [ ] Add legend for different detection energy ranges
 
-- [ ] Corrected GOES proton flux
-  - [x] Change all proton flux from new_full to new_avg data (10/18/2017)
-  - [ ] Add an 'if' statement to deal with an overlap of monthly data (i.e Jan. - Feb.)
+
 
 </p>
 </details>
@@ -659,6 +657,10 @@ datetime
 
 <details><summary>Completed Task List</summary>
 <p>
+
+- [x] Corrected GOES proton flux (10/23/2017)
+  - [x] Change all proton flux from new_full to new_avg data (10/18/2017)
+  - [x] Add an 'if' statement to deal with an overlap of monthly data (i.e Jan. - Feb.) (10/23/2017)
 
 - [x] Bartels' Rotation Converter (09/27/2017)
   - [x] Function to convert date to Bartels' rotation number (09/27/2017)
