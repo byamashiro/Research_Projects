@@ -1274,23 +1274,30 @@ def next_global():
 
 
 # ======== Proton flux parameters
-if '1' in option_bin_set:
-	high_bin_proton = sorted(energy_bin_list)[-1][0]
-	low_bin_proton = sorted(energy_bin_list)[0][0]
-	print(f"Max Proton Flux (>{low_bin_proton} MeV)", proton_df[f'{low_bin_proton}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax(), proton_df[f'{low_bin_proton}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax())
+if goes_corrected_option == 'yes':
+	if '1' in option_bin_set:
+		high_bin_proton = energy_bin_list[-1][0]
+		low_bin_proton = energy_bin_list[0][0]
+		print(f"Max Proton Flux (>{low_bin_proton} MeV)", proton_df[f'{low_bin_proton}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax(), proton_df[f'{low_bin_proton}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax())
 
+elif goes_corrected_option == 'no':
+	if '1' in option_bin_set:
+		high_bin_proton = sorted(energy_bin_list)[-1][0]
+		low_bin_proton = sorted(energy_bin_list)[0][0]
+		print(f"Max Proton Flux (>{low_bin_proton} MeV)", proton_df[f'{low_bin_proton}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax(), proton_df[f'{low_bin_proton}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax())
 
 
 def applyPlotStyle():
 	axes[length_data_list[j]].grid(True)
 	axes[length_data_list[j]].minorticks_on()
-	axes[length_data_list[j]].legend(loc='lower right', ncol=1,fontsize=8)# borderaxespad=0)# bbox_to_anchor=(1, 0.5)) # bbox_to_anchor=(1.02,1.0)
-	axes[length_data_list[j]].tick_params(axis='y', which='both', direction='in')
 	if '1' in option_bin_set:
 		# high_bin_proton_str = sorted(energy_bin_list)[-1][1]
 		# low_bin_proton_str = sorted(energy_bin_list)[0][1]
-		axes[length_data_list[j]].axvline(proton_df[f'{low_bin_proton}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax(), zorder=1, color='red') # (proton_df.P6W_UNCOR_FLUX.max()) # changed maximum flux to be within time interval specified
-		axes[length_data_list[j]].axvline(proton_df[f'{high_bin_proton}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax(), zorder=1, color='blue') # (proton_df.P6W_UNCOR_FLUX.max()) # changed maximum flux to be within time interval specified
+		axes[length_data_list[j]].axvline(proton_df[f'{low_bin_proton}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax(), zorder=1, color='purple', linestyle='--', label='Max >10MeV') # (proton_df.P6W_UNCOR_FLUX.max()) # changed maximum flux to be within time interval specified
+		axes[length_data_list[j]].axvline(proton_df[f'{high_bin_proton}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax(), zorder=1, color='green', linestyle='--', label='Max >100MeV') # (proton_df.P6W_UNCOR_FLUX.max()) # changed maximum flux to be within time interval specified
+
+	axes[length_data_list[j]].legend(loc='lower right', ncol=1,fontsize=8)# borderaxespad=0)# bbox_to_anchor=(1, 0.5)) # bbox_to_anchor=(1.02,1.0)
+	axes[length_data_list[j]].tick_params(axis='y', which='both', direction='in')
 
 	# axes[length_data_list[j]].axvline(proton_df.idxmax().P6W_UNCOR_FLUX) # (proton_df.P6W_UNCOR_FLUX.max())
 
