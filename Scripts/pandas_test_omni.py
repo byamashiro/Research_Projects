@@ -1278,6 +1278,7 @@ if goes_corrected_option == 'yes':
 	if '1' in option_bin_set:
 		high_bin_proton = energy_bin_list[-1][0]
 		low_bin_proton = energy_bin_list[0][0]
+		print(f"\nMax Proton Flux (>{high_bin_proton} MeV)", proton_df[f'{high_bin_proton}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax(), proton_df[f'{high_bin_proton}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax())
 		print(f"Max Proton Flux (>{low_bin_proton} MeV)", proton_df[f'{low_bin_proton}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax(), proton_df[f'{low_bin_proton}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax())
 
 elif goes_corrected_option == 'no':
@@ -1287,6 +1288,7 @@ elif goes_corrected_option == 'no':
 		print(f"Max Proton Flux (>{low_bin_proton} MeV)", proton_df[f'{low_bin_proton}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax(), proton_df[f'{low_bin_proton}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax())
 
 
+# ======== Definition of proton flux parameters
 def applyPlotStyle():
 	axes[length_data_list[j]].grid(True)
 	axes[length_data_list[j]].minorticks_on()
