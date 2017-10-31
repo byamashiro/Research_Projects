@@ -1278,8 +1278,9 @@ if goes_corrected_option == 'yes':
 	if '1' in option_bin_set:
 		high_bin_proton = energy_bin_list[-1][0]
 		low_bin_proton = energy_bin_list[0][0]
-		print(f"\nMax Proton Flux (>{high_bin_proton} MeV)", proton_df[f'{high_bin_proton}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax(), proton_df[f'{high_bin_proton}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax())
-		print(f"Max Proton Flux (>{low_bin_proton} MeV)", proton_df[f'{low_bin_proton}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax(), proton_df[f'{low_bin_proton}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax())
+		print(f"\nMax Proton Flux (>100 MeV)", proton_df[f'{high_bin_proton}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax()) #, proton_df[f'{high_bin_proton}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax())
+		print(f"Max Proton Flux (>10 MeV)", proton_df[f'{low_bin_proton}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax()) #, proton_df[f'{low_bin_proton}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax())
+
 
 elif goes_corrected_option == 'no':
 	if '1' in option_bin_set:
