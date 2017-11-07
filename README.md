@@ -6,6 +6,7 @@
 - [Required Python Modules](#required-python-modules)
 - [Running Scripts](#running-scripts)
   - [OMNI Space Weather (omni_script_v3)](#omni-space-weather-omni_script_v3)
+  - [GOES Proton Event Detector (goes_detector_script_v1)](#goes-proton-event-detector-goes_detector_script_v1)
   - [Remastered WIND Type III Radio Burst (radio_script_v3)](#remastered-wind-type-iii-radio-burst-radio_script_v3)
   - [Radio Burst Fit Program (radio_fit_v1)](#radio-burst-fit-program-radio_fit_v1)
   - [Bartels' Rotation Number (bartels_v1)](#bartels-rotation-number-bartels_v1)
@@ -464,7 +465,7 @@ Shared Events (2011): ['20110607', '20110608', '20110804', '20110809', '20110907
 </p>
 </details>
 
-<img src="0d25pfu_100mev_20120307.png" width="600">
+<img src="Plots/0d25pfu_100mev_20120307.png" width="600">
 
 
 
