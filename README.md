@@ -517,7 +517,7 @@ Enter a end hour: 01
 <p>
 
 ```shell
-In [148]: **run bartels.py**  
+In [148]: run bartels.py  
   
 ========================================  
 =       Bartels Rotation Number        =  
