@@ -427,6 +427,47 @@ Specify which GOES Satellite for Xray Flux (13 or 15): 15
 
 
 
+
+### GOES Proton Event Detector ([goes_detector_script_v1](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/goes_proton_event_detector.py))
+
+<details><summary>GOES Proton Event Detector Command Line Example</summary>
+<p>
+
+```shell
+In [17]: run goes_proton_event_detector.py
+Enter the energy channel (10/50/100): 100
+Enter year to parse (yyyy) or 'all': all
+
+========================================
+=   GOES-13/15 Proton Event Detector   =
+========================================
+========================================
+=                 2011                 =
+========================================
+GOES-13 Proton Events
+-------------------------
+GOES-15 Proton Events
+-------------------------
+Parsing month - 12
+============================================================
+GOES-13 Events (2011): ['20110321', '20110607', '20110608', '20110804', '20110809', '20110907']
+--GOES-13 Unique Events (2011): ['20110321']
+
+GOES-15 Events (2011): ['20110607', '20110608', '20110804', '20110809', '20110907']
+--GOES-15 Unique Events (2011): []
+============================================================
+
+Shared Events (2011): ['20110607', '20110608', '20110804', '20110809', '20110907']
+...
+```
+
+</p>
+</details>
+
+<img src="0d25pfu_100mev_20120307.png" width="600">
+
+
+
 ### Remastered Wind Type III Radio Burst ([radio_script_v3](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/radio_event_remastered.py))
 
 <details><summary>Remastered Wind Type III Radio Burst Command Line Example</summary>
