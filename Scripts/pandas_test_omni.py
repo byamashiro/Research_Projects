@@ -1246,7 +1246,7 @@ if data_collection_option == 'yes':
 		xray_df['A_FLUX'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax()
 
 
-	sys.exit(0)
+	# sys.exit(0)
 
 #=========== Plotting Data
 '''
@@ -1280,9 +1280,15 @@ if goes_corrected_option == 'yes':
 	if '1' in option_bin_set:
 		high_bin_proton = energy_bin_list[-1][0]
 		low_bin_proton = energy_bin_list[0][0]
-		print(f"\nMax Proton Flux (>100 MeV)", proton_df[f'{high_bin_proton}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax()) #, proton_df[f'{high_bin_proton}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax())
-		print(f"Max Proton Flux (>10 MeV)", proton_df[f'{low_bin_proton}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax()) #, proton_df[f'{low_bin_proton}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax())
+		# print(f"\nMax Proton Flux (>100 MeV)", proton_df[f'{high_bin_proton}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax()) #, proton_df[f'{high_bin_proton}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax())
+		# print(f"Max Proton Flux (>10 MeV)", proton_df[f'{low_bin_proton}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax()) #, proton_df[f'{low_bin_proton}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax())
+		
+		for i in energy_bin_list: # sorted(energy_bin_list): # sort listed 100W, 10W, 50W, therefore incorrectly
+			pmaxflux = proton_df[f'{i[0]}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].max()
+			pmaxflux_exp = "%0.3E" % pmaxflux
 
+			pmaxtime = proton_df[f'{i[0]}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax()
+			print(f"GOES-{satellite_no} Peak Proton Flux ({i[1]}): ({pmaxtime}) {pmaxflux_exp} [pfu]")
 
 elif goes_corrected_option == 'no':
 	if '1' in option_bin_set:
