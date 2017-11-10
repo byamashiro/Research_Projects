@@ -410,7 +410,7 @@ if '2' in option_bin_set:
 
 
 	for i in range(len(rb_list_event)):
-		rb_event_df.loc[i] = [rb_list_event[i][0], rb_list_event[i][-1], days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0]), float(rb_data.loc[rb_list_event[i][0]:rb_list_event[i][-1]].max().values), 'green']
+		rb_event_df.loc[i] = [rb_list_event[i][0], rb_list_event[i][-1], ((rb_list_event[i][-1] - rb_list_event[i][0]).seconds/60), float(rb_data.loc[rb_list_event[i][0]:rb_list_event[i][-1]].max().values), 'green'] # days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0])
 		# print(f"{rb_list_event[i][0]} -- {rb_list_event[i][-1]}", " Total Time: ", days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0]), " minutes")
 
 	print(f"Number of Radio Events ({start} - {end}): ", len(rb_list_event))

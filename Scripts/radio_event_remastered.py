@@ -17,7 +17,7 @@ data_directory = '/Users/bryanyamashiro/Documents/Research_Projects/Data'
 
 event_columns = ['event_date_st', 'event_date_ed', 'event_st', 'event_ed', 'plot_opt', 'full_list']
 event_input = pd.read_csv('event_lists/radio_list.txt', sep='\t', names=event_columns, comment='#')
-
+replace_nan = 'false' # false or true
 
 def daterange( start_date, end_date ):
     if start_date <= end_date: #
@@ -182,7 +182,9 @@ for ev_i in range(len(event_input)):
 			continue
 	
 	rb_data['avg'] = rb_data.mean(axis=1, numeric_only=True)
-	rb_data.drop(rb_data[rb_data.values == 0.0].index, inplace=True)
+
+	if replace_nan == 'true':
+		rb_data.drop(rb_data[rb_data.values == 0.0].index, inplace=True)
 
 	
 	#=========Plotting
@@ -263,7 +265,12 @@ for ev_i in range(len(event_input)):
 		#plt.locator_params(axis='x', nbins=5)
 		plt.setp(ax.xaxis.get_majorticklabels(), rotation=0, horizontalalignment='center')
 		fig.autofmt_xdate()
-		plt.savefig(f'radio_events/remastered_radio_full_{event_date}.png', format='png', dpi=900)
+
+		if replace_nan == 'true':
+			plt.savefig(f'radio_events/remastered_radio/nan_removed/remastered_radio_full_{event_date}.png', format='png', dpi=900)
+
+		if replace_nan != 'true':
+			plt.savefig(f'radio_events/remastered_radio/nan_kept/remastered_radio_full_{event_date}.png', format='png', dpi=900)
 
 		print(f'Plot generated for {event_date}')
 		

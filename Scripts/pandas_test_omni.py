@@ -1382,7 +1382,7 @@ if '2' in option_bin_set:
 	
 	#axes[length_data_list[j]].plot(rb_data['avg'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='navy', label= '20 kHz - 1040 kHz')
 	color_cm=iter(cm.viridis(np.linspace(0,1, 5 )))
-	freq_list = [100, 300, 500, 700, 900]
+	freq_list = [120] # [100, 300, 500, 700, 900]
 	
 	for frequency in freq_list:
 		color_choice = next(color_cm)
