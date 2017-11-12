@@ -135,6 +135,14 @@
 - [ ] Type III Radio Burst Event Plot Program
   - [ ] Add legend for different detection energy ranges
 
+- [ ] OMNI Type III Radio Bursts
+  - [ ] Implement the radio detection for a given frequency and duration limit
+    - [ ] Set an intensity threshold as a static parameter in the preamble
+      - [ ] Threshold must be low for backside events (i.e 20120723)
+    - [ ] Include every detected radio burst in the given range
+  - [ ] Plot lines/shaded area for corresponding radio burst
+    - [ ] Vertical lines at detection start and end of radio burst
+
 
 
 </p>
