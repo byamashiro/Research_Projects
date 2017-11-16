@@ -77,9 +77,13 @@ ax.set_extent((-180, 180, -90, 90)) # crs=ccrs.PlateCarree()
 ax.plot(west_limb_x, west_limb_y, transform=ccrs.PlateCarree(), color='black', lw=3)
 ax.plot(east_limb_x, east_limb_y, transform=ccrs.PlateCarree(), color='black', lw=3)
 
-for i in range(len(data)):
-	color_choice = next(color_cm)
-	ax.plot(data['flare_long'][i], data['flare_lat'][i], 'o', transform=ccrs.Geodetic(), color=color_choice, markersize=2, zorder=3) # longitude and latitude #ccrs.PlateCarree() color=color_choice
+
+
+scatter = ax.scatter(data['flare_long'], data['flare_lat'], c=data['connectivity'], cmap='viridis', transform=ccrs.Geodetic(), zorder=3)
+plt.colorbar(scatter)
+# for i in range(len(data)):
+	# color_choice = next(color_cm)
+	#ax.plot(data['flare_long'][i], data['flare_lat'][i], 'o', transform=ccrs.Geodetic(), color=color_choice, markersize=2, zorder=3) # longitude and latitude #ccrs.PlateCarree() color=color_choice
 
 
 # plt.colorbar()
