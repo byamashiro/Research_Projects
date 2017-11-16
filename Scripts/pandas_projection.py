@@ -16,11 +16,23 @@ import calendar
 
 import shutil
 
+
+import cartopy.crs as ccrs
+from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
+from matplotlib.pyplot import cm
+
+plt.close("all")
+
+
 data_directory = '/Users/bryanyamashiro/Documents/Research_Projects/Data'
 
 data = pd.read_csv(f'{data_directory}/Projection/location.csv', sep=',', comment='#')
 
 
+
+
+
+# ====== coordinates
 west_limb_x = [90, 90]
 west_limb_y = [-90, 90]
 
@@ -56,11 +68,69 @@ for i in data['flare_location']:
 data['flare_lat'] = flare_lat_list
 data['flare_long'] = flare_long_list
 
-import cartopy.crs as ccrs
-from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
-from matplotlib.pyplot import cm
 
 
+
+# ===== subplot methods
+plt.figure(figsize = (8, 6))
+
+proj_choice = ccrs.PlateCarree()
+
+
+# scatter
+ax1 = plt.subplot(2, 1, 1, projection=proj_choice)
+ax1.set_extent((-180, 180, -90, 90)) # crs=ccrs.PlateCarree()
+scatter1 = ax1.scatter(data['flare_long'], data['flare_lat'], c=data['goes_max_proton'], cmap='viridis', transform=ccrs.Geodetic(), zorder=3)
+# gridlines
+gl = ax1.gridlines(crs=proj_choice, draw_labels=True, zorder=2)
+gl.xlabels_top = False
+gl.xformatter = LONGITUDE_FORMATTER
+gl.yformatter = LATITUDE_FORMATTER
+plt.colorbar(scatter1)
+# Limb lines
+ax1.plot(west_limb_x, west_limb_y, transform=ccrs.PlateCarree(), color='black', lw=3)
+ax1.plot(east_limb_x, east_limb_y, transform=ccrs.PlateCarree(), color='black', lw=3)
+ax1.set_title('connectivity')
+
+# scatter
+ax2 = plt.subplot(2, 1, 2, projection=proj_choice)
+ax2.set_extent((-180, 180, -90, 90)) # crs=ccrs.PlateCarree()
+scatter2 = ax2.scatter(data['flare_long'], data['flare_lat'], c=data['fluence'], cmap='viridis', transform=ccrs.Geodetic(), zorder=3)
+# gridlines
+gl = ax2.gridlines(crs=proj_choice, draw_labels=True, zorder=2)
+gl.xlabels_top = False
+gl.xformatter = LONGITUDE_FORMATTER
+gl.yformatter = LATITUDE_FORMATTER
+plt.colorbar(scatter2)
+# Limb lines
+ax2.plot(west_limb_x, west_limb_y, transform=ccrs.PlateCarree(), color='black', lw=3)
+ax2.plot(east_limb_x, east_limb_y, transform=ccrs.PlateCarree(), color='black', lw=3)
+ax2.set_title('fluence')
+
+'''
+# scatter
+ax3 = plt.subplot(2, 1, 2, projection=proj_choice)
+ax3.set_extent((-180, 180, -90, 90)) # crs=ccrs.PlateCarree()
+scatter3 = ax3.scatter(data['flare_long'], data['flare_lat'], c=data['connectivity'], cmap='viridis', transform=ccrs.Geodetic(), zorder=3)
+# gridlines
+gl = ax3.gridlines(crs=proj_choice, draw_labels=True, zorder=2)
+gl.xlabels_top = False
+gl.xformatter = LONGITUDE_FORMATTER
+gl.yformatter = LATITUDE_FORMATTER
+plt.colorbar(scatter3)
+# Limb lines
+ax3.plot(west_limb_x, west_limb_y, transform=ccrs.PlateCarree(), color='black', lw=3)
+ax3.plot(east_limb_x, east_limb_y, transform=ccrs.PlateCarree(), color='black', lw=3)
+ax3.set_title('protons')
+'''
+
+
+plt.show()
+
+sys.exit(0)
+
+
+# ======== single plot, working
 proj_choice = ccrs.PlateCarree() # Mollweide is the closest to aitoff
 plt.figure(figsize=(12,6))
 ax = plt.axes(projection=proj_choice) # PlateCarree and Mercator have functioning gridlines
@@ -78,13 +148,11 @@ ax.plot(west_limb_x, west_limb_y, transform=ccrs.PlateCarree(), color='black', l
 ax.plot(east_limb_x, east_limb_y, transform=ccrs.PlateCarree(), color='black', lw=3)
 
 
-
 scatter = ax.scatter(data['flare_long'], data['flare_lat'], c=data['connectivity'], cmap='viridis', transform=ccrs.Geodetic(), zorder=3)
 plt.colorbar(scatter)
 # for i in range(len(data)):
 	# color_choice = next(color_cm)
 	#ax.plot(data['flare_long'][i], data['flare_lat'][i], 'o', transform=ccrs.Geodetic(), color=color_choice, markersize=2, zorder=3) # longitude and latitude #ccrs.PlateCarree() color=color_choice
-
 
 # plt.colorbar()
 plt.show()
