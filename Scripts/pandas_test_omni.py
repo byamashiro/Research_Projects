@@ -1387,7 +1387,7 @@ if '2' in option_bin_set:
 	for frequency in freq_list:
 		color_choice = next(color_cm)
 	
-		axes[length_data_list[j]].plot(rb_data[frequency].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color=color_choice, label= f'{frequency} kHz', zorder=5)
+		axes[length_data_list[j]].plot(rb_data[frequency].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'],'.', color=color_choice, label= f'{frequency} kHz', zorder=5)
 	axes[length_data_list[j]].set_ylim(0, 500)
 	axes[length_data_list[j]].set_ylabel('Wind Type III\nRadio Burst [sfu]', fontname="Arial", fontsize = 12)
 	# axes[length_data_list[j]].set_ylabel('Type III Radio\nBurst Int. [sfu]', fontname="Arial", fontsize = 12)
@@ -1533,6 +1533,7 @@ if event_option == 'yes':
 	plt.savefig(f'xflare_events/omni_test_{event_date}.png', format='png', dpi=900)
 
 if save_plot_option == 'yes' and len(option_bin_set) <= 4:
+	# plt.savefig(f'xflare_events/bplot.png', format='png', dpi=900)
 	plt.savefig(f'xflare_events/omni_test_{event_date}.png', format='png', dpi=900)
 
 elif save_plot_option == 'yes' and len(option_bin_set) > 4:
