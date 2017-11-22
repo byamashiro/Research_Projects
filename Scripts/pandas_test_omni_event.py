@@ -462,6 +462,11 @@ for event_no in range(len(event_list_file)):
 					continue
 			
 			rb_data['avg'] = rb_data.mean(axis=1, numeric_only=True)
+
+
+
+
+			
 		
 		
 			# ============ EXPERIMENTAL FITTING (DO NOT USE)

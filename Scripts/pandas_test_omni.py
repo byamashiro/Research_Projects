@@ -636,6 +636,60 @@ if '2' in option_bin_set:
 	rb_data.drop(rb_data[rb_data.values == 0.0].index, inplace=True)
 
 
+	# ======= event detection
+	rb_event_df = pd.DataFrame([])
+	rb_list_temp = []
+	rb_list_event = []
+	rb_counter = 0
+
+	for i in rb_data[rb_data.values > t3_threshold].index: # for i in rb_data[rb_data.values > 300].index: # one level is 1 minute
+		if len(rb_list_temp) == 0:
+			rb_list_temp.append(i)
+
+		elif len(rb_list_temp) >= 1:
+			if (i - rb_list_temp[-1]) <= datetime.timedelta(minutes=5):
+				rb_list_temp.append(i)
+
+			elif (i - rb_list_temp[-1]) > datetime.timedelta(minutes=5):
+				if (rb_list_temp[-1] - rb_list_temp[0]) >= datetime.timedelta(minutes=10):
+					rb_list_event.append(rb_list_temp)
+					rb_list_temp = []
+					rb_list_temp.append(i)
+
+				elif (rb_list_temp[-1] - rb_list_temp[0]) < datetime.timedelta(minutes=10):
+					rb_list_temp = []
+					rb_list_temp.append(i)
+
+	if len(rb_list_temp) > 0:
+		if (rb_list_temp[-1] - rb_list_temp[0]) >= datetime.timedelta(minutes=10):
+			rb_list_event.append(rb_list_temp)
+			rb_list_temp = []
+			rb_list_temp.append(i)
+		elif (rb_list_temp[-1] - rb_list_temp[0]) < datetime.timedelta(minutes=10):
+			rb_list_temp = []
+			rb_list_temp.append(i)
+		rb_list_temp = []
+
+	print("\n")
+	rb_event_df = pd.DataFrame(columns=('start_time', 'end_time', 't3_duration', 't3_max_int', 'default_color'))
+
+	# add the lists here
+	# p_10mev_list = pd.read_csv(f'{data_directory}/detected_events/event_dates/1d50pfu_10mev_2011_2017.txt', delim_whitespace=True, header=1)
+
+
+	for i in range(len(rb_list_event)):
+		rb_event_df.loc[i] = [rb_list_event[i][0], rb_list_event[i][-1], ((rb_list_event[i][-1] - rb_list_event[i][0]).seconds/60), float(rb_data.loc[rb_list_event[i][0]:rb_list_event[i][-1]].max().values), 'green'] # days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0])
+		# print(f"{rb_list_event[i][0]} -- {rb_list_event[i][-1]}", " Total Time: ", days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0]), " minutes")
+
+	print(f"Number of Radio Events ({start} - {end}): ", len(rb_list_event))
+	print(rb_event_df)
+	rb_event_df.to_csv(f'{data_directory}/T3_Detection/rbevents_{t3_freq}khz_{t3_threshold}_{start_date}_{end_date}.txt', sep=',', index=False)
+
+
+
+
+
+
 	# if radio_null > 200:
 	#	rb_data = rb_data[rb_data['avg'] != 0.0]
 
