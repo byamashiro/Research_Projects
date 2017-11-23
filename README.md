@@ -137,11 +137,13 @@
 
 - [ ] OMNI Type III Radio Bursts
   - [ ] Implement the radio detection for a given frequency and duration limit
-    - [ ] Set an intensity threshold as a static parameter in the preamble
-      - [ ] Threshold must be low for backside events (i.e 20120723)
-    - [ ] Include every detected radio burst in the given range
-  - [ ] Plot lines/shaded area for corresponding radio burst
-    - [ ] Vertical lines at detection start and end of radio burst
+   - [x] Integrate radio burst detection algorithm into OMNI script (11/22/2017)
+    - [x] Horizontal line for t3 threshold and vertical lines for start and end time of event (11/22/2017)
+    - [ ] Plot lines/shaded area for corresponding radio burst
+    - [x] Set an intensity threshold as a static parameter in the preamble (11/22/2017)
+    - [ ] Threshold must be low for backside events (i.e 20120723)
+    - [ ] Include every detected radio burst in the given range 
+  
 
 
 
