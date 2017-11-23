@@ -575,6 +575,9 @@ if '2' in option_bin_set:
 
 
 
+
+
+
 			'''
 			radio_name = f'wi_h1_wav_{event_date}_v01.cdf'
 			url = f'https://cdaweb.gsfc.nasa.gov/pub/data/wind/waves/wav_h1/{event_date[:4]}/{radio_name}'
@@ -636,13 +639,21 @@ if '2' in option_bin_set:
 	rb_data.drop(rb_data[rb_data.values == 0.0].index, inplace=True)
 
 
-	# ======= event detection
+	# ======= TIII radio burst event detection
+	# ======= added for event options
+	t3_threshold = 25
+	t3_freq = 120
+
+	rb_data_event = pd.DataFrame([])
+	rb_concat_event = rb_concat[[t3_freq]]
+	rb_data_event = rb_data_event.append(rb_concat_event)
+
 	rb_event_df = pd.DataFrame([])
 	rb_list_temp = []
 	rb_list_event = []
 	rb_counter = 0
 
-	for i in rb_data[rb_data.values > t3_threshold].index: # for i in rb_data[rb_data.values > 300].index: # one level is 1 minute
+	for i in rb_data_event[rb_data_event.values > t3_threshold].index: # for i in rb_data[rb_data.values > 300].index: # one level is 1 minute
 		if len(rb_list_temp) == 0:
 			rb_list_temp.append(i)
 
@@ -676,14 +687,17 @@ if '2' in option_bin_set:
 	# add the lists here
 	# p_10mev_list = pd.read_csv(f'{data_directory}/detected_events/event_dates/1d50pfu_10mev_2011_2017.txt', delim_whitespace=True, header=1)
 
+	if len( rb_list_event ) == 1:
+		rb_event_df.loc[0] = [rb_list_event[0][0], rb_list_event[0][-1], ((rb_list_event[0][-1] - rb_list_event[0][0]).seconds/60), float(rb_data_event.loc[rb_list_event[0][0]:rb_list_event[0][-1]].max().values), 'green'] # days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0])
 
-	for i in range(len(rb_list_event)):
-		rb_event_df.loc[i] = [rb_list_event[i][0], rb_list_event[i][-1], ((rb_list_event[i][-1] - rb_list_event[i][0]).seconds/60), float(rb_data.loc[rb_list_event[i][0]:rb_list_event[i][-1]].max().values), 'green'] # days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0])
+	elif len( rb_list_event ) > 1:
+		for i in range(len(rb_list_event)):
+			rb_event_df.loc[i] = [rb_list_event[i][0], rb_list_event[i][-1], ((rb_list_event[i][-1] - rb_list_event[i][0]).seconds/60), float(rb_data_event.loc[rb_list_event[i][0]:rb_list_event[i][-1]].max().values), 'green'] # days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0])
 		# print(f"{rb_list_event[i][0]} -- {rb_list_event[i][-1]}", " Total Time: ", days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0]), " minutes")
 
 	print(f"Number of Radio Events ({start} - {end}): ", len(rb_list_event))
 	print(rb_event_df)
-	rb_event_df.to_csv(f'{data_directory}/T3_Detection/rbevents_{t3_freq}khz_{t3_threshold}_{start_date}_{end_date}.txt', sep=',', index=False)
+	# rb_event_df.to_csv(f'{data_directory}/T3_Detection/rbevents_{t3_freq}khz_{t3_threshold}_{start_date}_{end_date}.txt', sep=',', index=False)
 
 
 
@@ -1441,7 +1455,13 @@ if '2' in option_bin_set:
 	for frequency in freq_list:
 		color_choice = next(color_cm)
 	
-		axes[length_data_list[j]].plot(rb_data[frequency].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'],'.', color=color_choice, label= f'{frequency} kHz', zorder=5)
+		axes[length_data_list[j]].plot(rb_data[frequency].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'],'o',mfc='none', color=color_choice, label= f'{frequency} kHz', zorder=5)
+	
+	axes[length_data_list[j]].axvline(rb_event_df['start_time'].values, linewidth=1, zorder=1, color='blue', linestyle='--', label='Max >10MeV')
+	axes[length_data_list[j]].axvline(rb_event_df['end_time'].values, linewidth=1, zorder=1, color='blue', linestyle='--', label='Max >10MeV')
+	axes[length_data_list[j]].axhline(t3_threshold, linewidth=1, zorder=1, color='red', linestyle='-', label='Max >10MeV')
+
+
 	axes[length_data_list[j]].set_ylim(0, 500)
 	axes[length_data_list[j]].set_ylabel('Wind Type III\nRadio Burst [sfu]', fontname="Arial", fontsize = 12)
 	# axes[length_data_list[j]].set_ylabel('Type III Radio\nBurst Int. [sfu]', fontname="Arial", fontsize = 12)
