@@ -179,24 +179,16 @@ if '1' in option_bin_set:
 		satellite_no = input('Specify which GOES Satellite for Proton Flux (13 or 15): ')
 		if satellite_no != '13':
 			if satellite_no != '15':
-				print('SATELLITE ERROR: Must specify either 13 or 15.')
-				sys.exit(0)
+				if satellite_no != '10':
+					print('SATELLITE ERROR: Must specify either 13 or 15.')
+					sys.exit(0)
 
 
 
 	if goes_corrected_option == 'yes':
 		print(f'\n{"="*40}\n{"=" + f"GOES-{satellite_no} Proton Flux".center(38," ") + "="}\n{"="*40}')
 
-		cpflux_names = ['time_tag','ZPGT1E_QUAL_FLAG', 'ZPGT1E', 'ZPGT5E_QUAL_FLAG', 'ZPGT5E', 'ZPGT10E_QUAL_FLAG', 'ZPGT10E', 'ZPGT30E_QUAL_FLAG', 'ZPGT30E', 'ZPGT50E_QUAL_FLAG', 'ZPGT50E', 'ZPGT60E_QUAL_FLAG', 'ZPGT60E', 'ZPGT100E_QUAL_FLAG', 'ZPGT100E', 'ZPGT1W_QUAL_FLAG', 'ZPGT1W', 'ZPGT5W_QUAL_FLAG', 'ZPGT5W', 'ZPGT10W_QUAL_FLAG', 'ZPGT10W', 'ZPGT30W_QUAL_FLAG', 'ZPGT30W', 'ZPGT50W_QUAL_FLAG', 'ZPGT50W', 'ZPGT60W_QUAL_FLAG', 'ZPGT60W', 'ZPGT100W_QUAL_FLAG', 'ZPGT100W', 'ZPEQ5E_QUAL_FLAG', 'ZPEQ5E', 'ZPEQ15E_QUAL_FLAG', 'ZPEQ15E', 'ZPEQ30E_QUAL_FLAG', 'ZPEQ30E', 'ZPEQ50E_QUAL_FLAG', 'ZPEQ50E', 'ZPEQ60E_QUAL_FLAG', 'ZPEQ60E', 'ZPEQ100E_QUAL_FLAG', 'ZPEQ100E', 'ZPEQ5W_QUAL_FLAG', 'ZPEQ5W', 'ZPEQ15W_QUAL_FLAG', 'ZPEQ15W', 'ZPEQ30W_QUAL_FLAG', 'ZPEQ30W', 'ZPEQ50W_QUAL_FLAG', 'ZPEQ50W', 'ZPEQ60W_QUAL_FLAG', 'ZPEQ60W', 'ZPEQ100W_QUAL_FLAG', 'ZPEQ100W']
-
 		energy_bin_list = []
-		energy_bin_list.append(['ZPGT10W','>10 MeV', 'red'])
-		energy_bin_list.append(['ZPGT50W','>50 MeV', 'blue'])
-		energy_bin_list.append(['ZPGT100W','>100 MeV', 'lime'])
-
-
-
-
 
 		if start_date[4:6] != end_date[4:6]:
 			proton_df = pd.DataFrame([])
@@ -210,58 +202,126 @@ if '1' in option_bin_set:
 				date_in_year.append(cur_date)
 
 
-			for date_event in date_in_year:
-				try:
-					# print(f'\r                                                                                                    ', end="\r")
-					
-					
-					# print(f'Parsing month - {month_event}', end="\r")
+			if start.year >= 2011:
+				cpflux_names = ['time_tag','ZPGT1E_QUAL_FLAG', 'ZPGT1E', 'ZPGT5E_QUAL_FLAG', 'ZPGT5E', 'ZPGT10E_QUAL_FLAG', 'ZPGT10E', 'ZPGT30E_QUAL_FLAG', 'ZPGT30E', 'ZPGT50E_QUAL_FLAG', 'ZPGT50E', 'ZPGT60E_QUAL_FLAG', 'ZPGT60E', 'ZPGT100E_QUAL_FLAG', 'ZPGT100E', 'ZPGT1W_QUAL_FLAG', 'ZPGT1W', 'ZPGT5W_QUAL_FLAG', 'ZPGT5W', 'ZPGT10W_QUAL_FLAG', 'ZPGT10W', 'ZPGT30W_QUAL_FLAG', 'ZPGT30W', 'ZPGT50W_QUAL_FLAG', 'ZPGT50W', 'ZPGT60W_QUAL_FLAG', 'ZPGT60W', 'ZPGT100W_QUAL_FLAG', 'ZPGT100W', 'ZPEQ5E_QUAL_FLAG', 'ZPEQ5E', 'ZPEQ15E_QUAL_FLAG', 'ZPEQ15E', 'ZPEQ30E_QUAL_FLAG', 'ZPEQ30E', 'ZPEQ50E_QUAL_FLAG', 'ZPEQ50E', 'ZPEQ60E_QUAL_FLAG', 'ZPEQ60E', 'ZPEQ100E_QUAL_FLAG', 'ZPEQ100E', 'ZPEQ5W_QUAL_FLAG', 'ZPEQ5W', 'ZPEQ15W_QUAL_FLAG', 'ZPEQ15W', 'ZPEQ30W_QUAL_FLAG', 'ZPEQ30W', 'ZPEQ50W_QUAL_FLAG', 'ZPEQ50W', 'ZPEQ60W_QUAL_FLAG', 'ZPEQ60W', 'ZPEQ100W_QUAL_FLAG', 'ZPEQ100W']
+
+				energy_bin_list.append(['ZPGT10W','>10 MeV', 'red'])
+				energy_bin_list.append(['ZPGT50W','>50 MeV', 'blue'])
+				energy_bin_list.append(['ZPGT100W','>100 MeV', 'lime'])
+
+				for date_event in date_in_year:
+					try:
+						f_l_day = calendar.monthrange(int(date_event.year), int(date_event.month)) #	f_l_day = calendar.monthrange(int(detection_year), int(month_event))
+						event_f_day = str(f'{date_event.year}{str(date_event.month).zfill(2)}01') # {str(f_l_day[0]).zfill(2)}
+						event_l_day = str(f'{date_event.year}{str(date_event.month).zfill(2)}{str(f_l_day[1]).zfill(2)}')
+		
+		
+						dir_check = os.path.isdir(f'{data_directory}/GOES_Detection/GOES_{satellite_no}/{date_event.year}')
+						if dir_check == False:
+							try:
+							    os.makedirs(f'{data_directory}/GOES_Detection/GOES_{satellite_no}/{date_event.year}')
+							except OSError as e:
+							    if e.errno != errno.EEXIST:
+							        raise
+						
+						proton_name = f'g{satellite_no}_epead_cpflux_5m_{event_f_day}_{event_l_day}.csv' #g13_epead_cpflux_5m_20110101_20110131.csv
+						proton_check = os.path.isfile(f'{data_directory}/GOES_Detection/GOES_{satellite_no}/{date_event.year}/{proton_name}')
+			
+						if proton_check == True:
+							dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
+							proton_df_ind = pd.read_csv(f'{data_directory}/GOES_Detection/GOES_{satellite_no}/{date_event.year}/{proton_name}', skiprows=718, date_parser=dateparse, names=cpflux_names,index_col='time_tag', header=0)
+							proton_df = proton_df.append(proton_df_ind)
 	
-					f_l_day = calendar.monthrange(int(date_event.year), int(date_event.month)) #	f_l_day = calendar.monthrange(int(detection_year), int(month_event))
-					event_f_day = str(f'{date_event.year}{str(date_event.month).zfill(2)}01') # {str(f_l_day[0]).zfill(2)}
-					event_l_day = str(f'{date_event.year}{str(date_event.month).zfill(2)}{str(f_l_day[1]).zfill(2)}')
+			
+						elif proton_check == False:
+							proton_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_avg/{date_event.year}/{date_event.month}/goes{satellite_no}/csv/{proton_name}'
+							# proton_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_avg/{event_date[:4]}/{event_date[4:6]}/goes{satellite_no}/csv/{proton_name}'
+							proton_in = wget.download(proton_url)
+							dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
+							proton_df_ind = pd.read_csv(f'{proton_in}', skiprows=718, date_parser=dateparse, names=cpflux_names,index_col='time_tag', header=0) # ZPGT100W
+							proton_df = proton_df.append(proton_df_ind)
 	
+							if save_option == 'yes':
+								shutil.move(f'{proton_name}', f'{data_directory}/GOES_Detection/GOES_{satellite_no}/{date_event.year}')
+							elif save_option == 'no':
+								os.remove(proton_name)
+			
+						continue
+			
+					except Exception as e:
+						print(e)
+						print(f'{date_event.month} does not have data.')
 	
-					dir_check = os.path.isdir(f'{data_directory}/GOES_Detection/GOES_{satellite_no}/{date_event.year}')
-					if dir_check == False:
-						try:
-						    os.makedirs(f'{data_directory}/GOES_Detection/GOES_{satellite_no}/{date_event.year}')
-						except OSError as e:
-						    if e.errno != errno.EEXIST:
-						        raise
-					
-					proton_name = f'g{satellite_no}_epead_cpflux_5m_{event_f_day}_{event_l_day}.csv' #g13_epead_cpflux_5m_20110101_20110131.csv
-					proton_check = os.path.isfile(f'{data_directory}/GOES_Detection/GOES_{satellite_no}/{date_event.year}/{proton_name}')
-		
-					if proton_check == True:
-						dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
-						proton_df_ind = pd.read_csv(f'{data_directory}/GOES_Detection/GOES_{satellite_no}/{date_event.year}/{proton_name}', skiprows=718, date_parser=dateparse, names=cpflux_names,index_col='time_tag', header=0)
-						proton_df = proton_df.append(proton_df_ind)
+				proton_df.drop(proton_df[proton_df['ZPGT10W'] <= 0.0].index, inplace=True)
+				proton_df.drop(proton_df[proton_df['ZPGT50W'] <= 0.0].index, inplace=True)
+				proton_df.drop(proton_df[proton_df['ZPGT100W'] <= 0.0].index, inplace=True)
 
-		
-					elif proton_check == False:
-						proton_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_avg/{date_event.year}/{str(date_event.month).zfill(2)}/goes{satellite_no}/csv/{proton_name}'
-						# proton_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_avg/{event_date[:4]}/{event_date[4:6]}/goes{satellite_no}/csv/{proton_name}'
-						proton_in = wget.download(proton_url)
-						dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
-						proton_df_ind = pd.read_csv(f'{proton_in}', skiprows=718, date_parser=dateparse, names=cpflux_names,index_col='time_tag', header=0) # ZPGT100W
-						proton_df = proton_df.append(proton_df_ind)
+			# ====== Legacy GOES data protons (GOES-10)
 
-						if save_option == 'yes':
-							shutil.move(f'{proton_name}', f'{data_directory}/GOES_Detection/GOES_{satellite_no}/{date_event.year}')
-						elif save_option == 'no':
-							os.remove(proton_name)
-		
-					continue
-		
-				except Exception as e:
-					print(e)
-					print(f'{date_event.month} does not have data.')
+			elif start.year < 2011:
+				cpflux_names_legacy = ['time_tag','e1_flux_ic','e2_flux_ic','e3_flux_ic','p1_flux','p2_flux','p3_flux','p4_flux','p5_flux','p6_flux','p7_flux','a1_flux','a2_flux','a3_flux','a4_flux','a5_flux','a6_flux','p1_flux_c','p2_flux_c','p3_flux_c','p4_flux_c','p5_flux_c','p6_flux_c','p7_flux_c','p1_flux_ic','p2_flux_ic','p3_flux_ic','p4_flux_ic','p5_flux_ic','p6_flux_ic','p7_flux_ic']
 
-			proton_df.drop(proton_df[proton_df['ZPGT10W'] <= 0.0].index, inplace=True)
-			proton_df.drop(proton_df[proton_df['ZPGT50W'] <= 0.0].index, inplace=True)
-			proton_df.drop(proton_df[proton_df['ZPGT100W'] <= 0.0].index, inplace=True)
+				energy_bin_list.append(['p3_flux_ic','>10 MeV', 'red'])
+				energy_bin_list.append(['p5_flux_ic','>50 MeV', 'blue'])
+				energy_bin_list.append(['p7_flux_ic','>100 MeV', 'lime'])
 
+				for date_event in date_in_year:
+					try:
+						f_l_day = calendar.monthrange(int(date_event.year), int(date_event.month)) #	f_l_day = calendar.monthrange(int(detection_year), int(month_event))
+						event_f_day = str(f'{date_event.year}{str(date_event.month).zfill(2)}01') # {str(f_l_day[0]).zfill(2)}
+						event_l_day = str(f'{date_event.year}{str(date_event.month).zfill(2)}{str(f_l_day[1]).zfill(2)}')
+		
+		
+						dir_check = os.path.isdir(f'{data_directory}/GOES_Detection/GOES_{satellite_no}/{date_event.year}')
+						if dir_check == False:
+							try:
+							    os.makedirs(f'{data_directory}/GOES_Detection/GOES_{satellite_no}/{date_event.year}')
+							except OSError as e:
+							    if e.errno != errno.EEXIST:
+							        raise
+						
+						proton_name = f'g{satellite_no}_eps_5m_{event_f_day}_{event_l_day}.csv' #g13_epead_cpflux_5m_20110101_20110131.csv
+						proton_check = os.path.isfile(f'{data_directory}/GOES_Detection/GOES_{satellite_no}/{date_event.year}/{proton_name}')
+			
+						if proton_check == True:
+							dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
+							proton_df_ind = pd.read_csv(f'{data_directory}/GOES_Detection/GOES_{satellite_no}/{date_event.year}/{proton_name}', skiprows=452, date_parser=dateparse, names=cpflux_names_legacy,index_col='time_tag', header=0)
+							proton_df = proton_df.append(proton_df_ind)
+	
+			
+						elif proton_check == False:
+							proton_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_avg/{date_event.year}/{date_event.month}/goes{satellite_no}/csv/{proton_name}'
+							# proton_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_avg/{event_date[:4]}/{event_date[4:6]}/goes{satellite_no}/csv/{proton_name}'
+							proton_in = wget.download(proton_url)
+							dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
+							proton_df_ind = pd.read_csv(f'{proton_in}', skiprows=452, date_parser=dateparse, names=cpflux_names_legacy,index_col='time_tag', header=0) # ZPGT100W
+							proton_df = proton_df.append(proton_df_ind)
+	
+							if save_option == 'yes':
+								shutil.move(f'{proton_name}', f'{data_directory}/GOES_Detection/GOES_{satellite_no}/{date_event.year}')
+							elif save_option == 'no':
+								os.remove(proton_name)
+			
+						continue
+			
+					except Exception as e:
+						print(e)
+						print(f'{date_event.month} does not have data.')
+	
+				proton_df.drop(proton_df[proton_df['p3_flux_ic'] <= 0.0].index, inplace=True)
+				proton_df.drop(proton_df[proton_df['p5_flux_ic'] <= 0.0].index, inplace=True)
+				proton_df.drop(proton_df[proton_df['p7_flux_ic'] <= 0.0].index, inplace=True)
+
+			'''
+			GOES-8 1995-01 to 2003-06
+			GOES-9 1996-04 to 1998-07
+			GOES-10 1998-07 to 2009-12
+			GOES-11 2000-07 to 2011-02
+			GOES-12 2003-01 to 2010-08
+			GOES-13 2010-04 to present, (2006-07 to present for EUVS data)
+			GOES-14 2009-12 to present, (2009-07 to 2012-11 for EUVS data)
+			GOES-15 2010-09 to present, (2010-04 to present for EUVS data)
+			'''
 
 			'''
 			f_l_day = calendar.monthrange(int(f'{start_year}'), int(f'{start_month}'))
@@ -303,42 +363,92 @@ if '1' in option_bin_set:
 
 
 		elif start_date[4:6] == end_date[4:6]:
-			f_l_day = calendar.monthrange(int(f'{start_year}'), int(f'{start_month}'))
-			event_f_day = str(f'{start_year}{str(start_month).zfill(2)}01') # {str(f_l_day[0]).zfill(2)}
-			event_l_day = str(f'{start_year}{str(start_month).zfill(2)}{str(f_l_day[1]).zfill(2)}')
-			dir_check = os.path.isdir(f'{data_directory}/GOES_Detection/GOES_{satellite_no}/{start_year}')
-			if dir_check == False:
-				try:
-				    os.makedirs(f'{data_directory}/GOES_Detection/GOES_{satellite_no}/{start_year}')
-				except OSError as e:
-				    if e.errno != errno.EEXIST:
-				        raise
-			
-	
-			proton_name = f'g{satellite_no}_epead_cpflux_5m_{event_f_day}_{event_l_day}.csv' #g13_epead_cpflux_5m_20110101_20110131.csv
-			proton_check = os.path.isfile(f'{data_directory}/GOES_Detection/GOES_{satellite_no}/{start_year}/{proton_name}')
-	
-			if proton_check == True:
-				dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
-				proton_df = pd.read_csv(f'{data_directory}/GOES_Detection/GOES_{satellite_no}/{start_year}/{proton_name}', skiprows=718, date_parser=dateparse, names=cpflux_names,index_col='time_tag', header=0)
-	
-	
-			elif proton_check == False:
-				proton_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_avg/{start_year}/{str({start_month}).zfill(2)}/goes{satellite_no}/csv/{proton_name}'
-				# proton_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_avg/{event_date[:4]}/{event_date[4:6]}/goes{satellite_no}/csv/{proton_name}'
-				proton_in = wget.download(proton_url)
-				dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
-				proton_df = pd.read_csv(f'{proton_in}', skiprows=718, date_parser=dateparse, names=cpflux_names,index_col='time_tag', header=0) # ZPGT100W
-	
-				if save_option == 'yes':
-					shutil.move(f'{proton_name}', f'{data_directory}/GOES_Detection/GOES_{satellite_no}/{start_year}')
-				elif save_option == 'no':
-					os.remove(proton_name)
-	
-			proton_df.drop(proton_df[proton_df['ZPGT10W'] <= 0.0].index, inplace=True)
-			proton_df.drop(proton_df[proton_df['ZPGT50W'] <= 0.0].index, inplace=True)
-			proton_df.drop(proton_df[proton_df['ZPGT100W'] <= 0.0].index, inplace=True)
+			cpflux_names = ['time_tag','ZPGT1E_QUAL_FLAG', 'ZPGT1E', 'ZPGT5E_QUAL_FLAG', 'ZPGT5E', 'ZPGT10E_QUAL_FLAG', 'ZPGT10E', 'ZPGT30E_QUAL_FLAG', 'ZPGT30E', 'ZPGT50E_QUAL_FLAG', 'ZPGT50E', 'ZPGT60E_QUAL_FLAG', 'ZPGT60E', 'ZPGT100E_QUAL_FLAG', 'ZPGT100E', 'ZPGT1W_QUAL_FLAG', 'ZPGT1W', 'ZPGT5W_QUAL_FLAG', 'ZPGT5W', 'ZPGT10W_QUAL_FLAG', 'ZPGT10W', 'ZPGT30W_QUAL_FLAG', 'ZPGT30W', 'ZPGT50W_QUAL_FLAG', 'ZPGT50W', 'ZPGT60W_QUAL_FLAG', 'ZPGT60W', 'ZPGT100W_QUAL_FLAG', 'ZPGT100W', 'ZPEQ5E_QUAL_FLAG', 'ZPEQ5E', 'ZPEQ15E_QUAL_FLAG', 'ZPEQ15E', 'ZPEQ30E_QUAL_FLAG', 'ZPEQ30E', 'ZPEQ50E_QUAL_FLAG', 'ZPEQ50E', 'ZPEQ60E_QUAL_FLAG', 'ZPEQ60E', 'ZPEQ100E_QUAL_FLAG', 'ZPEQ100E', 'ZPEQ5W_QUAL_FLAG', 'ZPEQ5W', 'ZPEQ15W_QUAL_FLAG', 'ZPEQ15W', 'ZPEQ30W_QUAL_FLAG', 'ZPEQ30W', 'ZPEQ50W_QUAL_FLAG', 'ZPEQ50W', 'ZPEQ60W_QUAL_FLAG', 'ZPEQ60W', 'ZPEQ100W_QUAL_FLAG', 'ZPEQ100W']
+			energy_bin_list.append(['ZPGT10W','>10 MeV', 'red'])
+			energy_bin_list.append(['ZPGT50W','>50 MeV', 'blue'])
+			energy_bin_list.append(['ZPGT100W','>100 MeV', 'lime'])
+
+			if start.year >= 2011:
+				f_l_day = calendar.monthrange(int(f'{start_year}'), int(f'{start_month}'))
+				event_f_day = str(f'{start_year}{str(start_month).zfill(2)}01') # {str(f_l_day[0]).zfill(2)}
+				event_l_day = str(f'{start_year}{str(start_month).zfill(2)}{str(f_l_day[1]).zfill(2)}')
+				dir_check = os.path.isdir(f'{data_directory}/GOES_Detection/GOES_{satellite_no}/{start_year}')
+				if dir_check == False:
+					try:
+					    os.makedirs(f'{data_directory}/GOES_Detection/GOES_{satellite_no}/{start_year}')
+					except OSError as e:
+					    if e.errno != errno.EEXIST:
+					        raise
+				
 		
+				proton_name = f'g{satellite_no}_epead_cpflux_5m_{event_f_day}_{event_l_day}.csv' #g13_epead_cpflux_5m_20110101_20110131.csv
+				proton_check = os.path.isfile(f'{data_directory}/GOES_Detection/GOES_{satellite_no}/{start_year}/{proton_name}')
+		
+				if proton_check == True:
+					dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
+					proton_df = pd.read_csv(f'{data_directory}/GOES_Detection/GOES_{satellite_no}/{start_year}/{proton_name}', skiprows=718, date_parser=dateparse, names=cpflux_names,index_col='time_tag', header=0)
+		
+		
+				elif proton_check == False:
+					proton_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_avg/{start_year}/{str({start_month}).zfill(2)}/goes{satellite_no}/csv/{proton_name}'
+					# proton_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_avg/{event_date[:4]}/{event_date[4:6]}/goes{satellite_no}/csv/{proton_name}'
+					proton_in = wget.download(proton_url)
+					dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
+					proton_df = pd.read_csv(f'{proton_in}', skiprows=718, date_parser=dateparse, names=cpflux_names,index_col='time_tag', header=0) # ZPGT100W
+		
+					if save_option == 'yes':
+						shutil.move(f'{proton_name}', f'{data_directory}/GOES_Detection/GOES_{satellite_no}/{start_year}')
+					elif save_option == 'no':
+						os.remove(proton_name)
+		
+				proton_df.drop(proton_df[proton_df['ZPGT10W'] <= 0.0].index, inplace=True)
+				proton_df.drop(proton_df[proton_df['ZPGT50W'] <= 0.0].index, inplace=True)
+				proton_df.drop(proton_df[proton_df['ZPGT100W'] <= 0.0].index, inplace=True)
+		
+
+			elif start.year < 2011:
+				cpflux_names_legacy = ['time_tag','e1_flux_ic','e2_flux_ic','e3_flux_ic','p1_flux','p2_flux','p3_flux','p4_flux','p5_flux','p6_flux','p7_flux','a1_flux','a2_flux','a3_flux','a4_flux','a5_flux','a6_flux','p1_flux_c','p2_flux_c','p3_flux_c','p4_flux_c','p5_flux_c','p6_flux_c','p7_flux_c','p1_flux_ic','p2_flux_ic','p3_flux_ic','p4_flux_ic','p5_flux_ic','p6_flux_ic','p7_flux_ic']
+
+				energy_bin_list.append(['p3_flux_ic','>10 MeV', 'red'])
+				energy_bin_list.append(['p5_flux_ic','>50 MeV', 'blue'])
+				energy_bin_list.append(['p7_flux_ic','>100 MeV', 'lime'])
+
+
+				f_l_day = calendar.monthrange(int(f'{start_year}'), int(f'{start_month}'))
+				event_f_day = str(f'{start_year}{str(start_month).zfill(2)}01') # {str(f_l_day[0]).zfill(2)}
+				event_l_day = str(f'{start_year}{str(start_month).zfill(2)}{str(f_l_day[1]).zfill(2)}')
+				dir_check = os.path.isdir(f'{data_directory}/GOES_Detection/GOES_{satellite_no}/{start_year}')
+				if dir_check == False:
+					try:
+					    os.makedirs(f'{data_directory}/GOES_Detection/GOES_{satellite_no}/{start_year}')
+					except OSError as e:
+					    if e.errno != errno.EEXIST:
+					        raise
+				
+		
+				proton_name = f'g{satellite_no}_eps_5m_{event_f_day}_{event_l_day}.csv' #g13_epead_cpflux_5m_20110101_20110131.csv
+				proton_check = os.path.isfile(f'{data_directory}/GOES_Detection/GOES_{satellite_no}/{start_year}/{proton_name}')
+		
+				if proton_check == True:
+					dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
+					proton_df = pd.read_csv(f'{data_directory}/GOES_Detection/GOES_{satellite_no}/{start_year}/{proton_name}', skiprows=453, date_parser=dateparse, names=cpflux_names_legacy,index_col='time_tag', header=0)
+		
+		
+				elif proton_check == False:
+					proton_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_avg/{start_year}/{start_month}/goes{satellite_no}/csv/{proton_name}'
+					# proton_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_avg/{event_date[:4]}/{event_date[4:6]}/goes{satellite_no}/csv/{proton_name}'
+					proton_in = wget.download(proton_url)
+					dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
+					proton_df = pd.read_csv(f'{proton_in}', skiprows=453, date_parser=dateparse, names=cpflux_names_legacy,index_col='time_tag', header=0) # ZPGT100W
+		
+					if save_option == 'yes':
+						shutil.move(f'{proton_name}', f'{data_directory}/GOES_Detection/GOES_{satellite_no}/{start_year}')
+					elif save_option == 'no':
+						os.remove(proton_name)
+		
+				proton_df.drop(proton_df[proton_df['p3_flux_ic'] <= 0.0].index, inplace=True)
+				proton_df.drop(proton_df[proton_df['p5_flux_ic'] <= 0.0].index, inplace=True)
+				proton_df.drop(proton_df[proton_df['p7_flux_ic'] <= 0.0].index, inplace=True)		
 
 
 
