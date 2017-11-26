@@ -641,12 +641,13 @@ if '2' in option_bin_set:
 
 	# ======= TIII radio burst event detection
 	# ======= added for event options
-	t3_threshold = 25
+	t3_threshold = 3
 	t3_freq = 120
 
 	rb_data_event = pd.DataFrame([])
 	rb_concat_event = rb_concat[[t3_freq]]
 	rb_data_event = rb_data_event.append(rb_concat_event)
+	rb_data_event.drop(rb_data[rb_data.values == 0.0].index, inplace=True)
 
 	rb_event_df = pd.DataFrame([])
 	rb_list_temp = []
@@ -687,16 +688,60 @@ if '2' in option_bin_set:
 	# add the lists here
 	# p_10mev_list = pd.read_csv(f'{data_directory}/detected_events/event_dates/1d50pfu_10mev_2011_2017.txt', delim_whitespace=True, header=1)
 
+
+
+	# =========  Outlier list
 	if len( rb_list_event ) == 1:
+		rb_var_list = []
+		rb_outlier_list = []
+
+		rb_mean = rb_data[120].loc[rb_list_event[0][1]:rb_list_event[0][-1]].mean(axis=0)
+		rb_len = len(rb_list_event[0])
+
+		for i in rb_list_event[0]:
+			rb_var = np.sqrt(  pow((rb_data_event[120].loc[i]  -  rb_mean), 2) / (rb_len - 1)  )
+			if rb_var > 10.0:
+				rb_outlier_list.append(i)
+			rb_var_list.append(rb_var)
+
+		if len(rb_outlier_list) != 0:
+			for i in rb_outlier_list:
+				rb_data.drop(i, inplace=True)
+				rb_data_event.drop(i, inplace=True)
+			# rb_data.drop(rb_data[rb_data.values == 0.0].index, inplace=True)
+
 		rb_event_df.loc[0] = [rb_list_event[0][0], rb_list_event[0][-1], ((rb_list_event[0][-1] - rb_list_event[0][0]).seconds/60), float(rb_data_event.loc[rb_list_event[0][0]:rb_list_event[0][-1]].max().values), 'green'] # days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0])
 
 	elif len( rb_list_event ) > 1:
+
+		#====== may not work for multiple events
+		rb_var_list = []
+		rb_outlier_list = []
+
+		rb_mean = rb_data[120].loc[rb_list_event[0][1]:rb_list_event[0][-1]].mean(axis=0)
+		rb_len = len(rb_list_event[0])
+
+		for i in rb_list_event[0]:
+			rb_var = np.sqrt(  pow((rb_data_event[120].loc[i]  -  rb_mean), 2) / (rb_len - 1)  )
+			if rb_var > 10.0:
+				rb_outlier_list.append(i)
+			rb_var_list.append(rb_var)
+
+		if len(rb_outlier_list) != 0:
+			for i in rb_outlier_list:
+				rb_data.drop(i, inplace=True)
+				rb_data_event.drop(i, inplace=True)
+		# ======= end might not work
+
 		for i in range(len(rb_list_event)):
 			rb_event_df.loc[i] = [rb_list_event[i][0], rb_list_event[i][-1], ((rb_list_event[i][-1] - rb_list_event[i][0]).seconds/60), float(rb_data_event.loc[rb_list_event[i][0]:rb_list_event[i][-1]].max().values), 'green'] # days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0])
 		# print(f"{rb_list_event[i][0]} -- {rb_list_event[i][-1]}", " Total Time: ", days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0]), " minutes")
 
 	print(f"Number of Radio Events ({start} - {end}): ", len(rb_list_event))
 	print(rb_event_df)
+
+
+
 	# rb_event_df.to_csv(f'{data_directory}/T3_Detection/rbevents_{t3_freq}khz_{t3_threshold}_{start_date}_{end_date}.txt', sep=',', index=False)
 
 
@@ -1457,9 +1502,14 @@ if '2' in option_bin_set:
 	
 		axes[length_data_list[j]].plot(rb_data[frequency].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'],'o',mfc='none', color=color_choice, label= f'{frequency} kHz', zorder=5)
 	
-	axes[length_data_list[j]].axvline(rb_event_df['start_time'].values, linewidth=1, zorder=1, color='blue', linestyle='--', label='Max >10MeV')
-	axes[length_data_list[j]].axvline(rb_event_df['end_time'].values, linewidth=1, zorder=1, color='blue', linestyle='--', label='Max >10MeV')
-	axes[length_data_list[j]].axhline(t3_threshold, linewidth=1, zorder=1, color='red', linestyle='-', label='Max >10MeV')
+	# axes[length_data_list[j]].axvline(rb_event_df['start_time'].values, linewidth=1, zorder=1, color='blue', linestyle='--', label='Max >10MeV')
+	# axes[length_data_list[j]].axvline(rb_event_df['end_time'].values, linewidth=1, zorder=1, color='blue', linestyle='--', label='Max >10MeV')
+	for i in range(len(rb_event_df)):
+		axes[length_data_list[j]].axvspan(rb_event_df['start_time'][i], rb_event_df['end_time'][i], color='blue', alpha=0.5)
+		# axes[length_data_list[j]].axvspan(rb_event_df['start_time'].values, rb_event_df['end_time'].values, color='blue', alpha=0.5)
+
+
+	axes[length_data_list[j]].axhline(t3_threshold, linewidth=1, zorder=1, color='red', linestyle='-', label=f'{t3_threshold} sfu') #  xmin=0, xmax=1
 
 
 	axes[length_data_list[j]].set_ylim(0, 500)
