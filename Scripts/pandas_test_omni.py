@@ -363,12 +363,13 @@ if '1' in option_bin_set:
 
 
 		elif start_date[4:6] == end_date[4:6]:
-			cpflux_names = ['time_tag','ZPGT1E_QUAL_FLAG', 'ZPGT1E', 'ZPGT5E_QUAL_FLAG', 'ZPGT5E', 'ZPGT10E_QUAL_FLAG', 'ZPGT10E', 'ZPGT30E_QUAL_FLAG', 'ZPGT30E', 'ZPGT50E_QUAL_FLAG', 'ZPGT50E', 'ZPGT60E_QUAL_FLAG', 'ZPGT60E', 'ZPGT100E_QUAL_FLAG', 'ZPGT100E', 'ZPGT1W_QUAL_FLAG', 'ZPGT1W', 'ZPGT5W_QUAL_FLAG', 'ZPGT5W', 'ZPGT10W_QUAL_FLAG', 'ZPGT10W', 'ZPGT30W_QUAL_FLAG', 'ZPGT30W', 'ZPGT50W_QUAL_FLAG', 'ZPGT50W', 'ZPGT60W_QUAL_FLAG', 'ZPGT60W', 'ZPGT100W_QUAL_FLAG', 'ZPGT100W', 'ZPEQ5E_QUAL_FLAG', 'ZPEQ5E', 'ZPEQ15E_QUAL_FLAG', 'ZPEQ15E', 'ZPEQ30E_QUAL_FLAG', 'ZPEQ30E', 'ZPEQ50E_QUAL_FLAG', 'ZPEQ50E', 'ZPEQ60E_QUAL_FLAG', 'ZPEQ60E', 'ZPEQ100E_QUAL_FLAG', 'ZPEQ100E', 'ZPEQ5W_QUAL_FLAG', 'ZPEQ5W', 'ZPEQ15W_QUAL_FLAG', 'ZPEQ15W', 'ZPEQ30W_QUAL_FLAG', 'ZPEQ30W', 'ZPEQ50W_QUAL_FLAG', 'ZPEQ50W', 'ZPEQ60W_QUAL_FLAG', 'ZPEQ60W', 'ZPEQ100W_QUAL_FLAG', 'ZPEQ100W']
-			energy_bin_list.append(['ZPGT10W','>10 MeV', 'red'])
-			energy_bin_list.append(['ZPGT50W','>50 MeV', 'blue'])
-			energy_bin_list.append(['ZPGT100W','>100 MeV', 'lime'])
 
 			if start.year >= 2011:
+				cpflux_names = ['time_tag','ZPGT1E_QUAL_FLAG', 'ZPGT1E', 'ZPGT5E_QUAL_FLAG', 'ZPGT5E', 'ZPGT10E_QUAL_FLAG', 'ZPGT10E', 'ZPGT30E_QUAL_FLAG', 'ZPGT30E', 'ZPGT50E_QUAL_FLAG', 'ZPGT50E', 'ZPGT60E_QUAL_FLAG', 'ZPGT60E', 'ZPGT100E_QUAL_FLAG', 'ZPGT100E', 'ZPGT1W_QUAL_FLAG', 'ZPGT1W', 'ZPGT5W_QUAL_FLAG', 'ZPGT5W', 'ZPGT10W_QUAL_FLAG', 'ZPGT10W', 'ZPGT30W_QUAL_FLAG', 'ZPGT30W', 'ZPGT50W_QUAL_FLAG', 'ZPGT50W', 'ZPGT60W_QUAL_FLAG', 'ZPGT60W', 'ZPGT100W_QUAL_FLAG', 'ZPGT100W', 'ZPEQ5E_QUAL_FLAG', 'ZPEQ5E', 'ZPEQ15E_QUAL_FLAG', 'ZPEQ15E', 'ZPEQ30E_QUAL_FLAG', 'ZPEQ30E', 'ZPEQ50E_QUAL_FLAG', 'ZPEQ50E', 'ZPEQ60E_QUAL_FLAG', 'ZPEQ60E', 'ZPEQ100E_QUAL_FLAG', 'ZPEQ100E', 'ZPEQ5W_QUAL_FLAG', 'ZPEQ5W', 'ZPEQ15W_QUAL_FLAG', 'ZPEQ15W', 'ZPEQ30W_QUAL_FLAG', 'ZPEQ30W', 'ZPEQ50W_QUAL_FLAG', 'ZPEQ50W', 'ZPEQ60W_QUAL_FLAG', 'ZPEQ60W', 'ZPEQ100W_QUAL_FLAG', 'ZPEQ100W']
+				energy_bin_list.append(['ZPGT10W','>10 MeV', 'red'])
+				energy_bin_list.append(['ZPGT50W','>50 MeV', 'blue'])
+				energy_bin_list.append(['ZPGT100W','>100 MeV', 'lime'])
+
 				f_l_day = calendar.monthrange(int(f'{start_year}'), int(f'{start_month}'))
 				event_f_day = str(f'{start_year}{str(start_month).zfill(2)}01') # {str(f_l_day[0]).zfill(2)}
 				event_l_day = str(f'{start_year}{str(start_month).zfill(2)}{str(f_l_day[1]).zfill(2)}')
@@ -406,6 +407,7 @@ if '1' in option_bin_set:
 				proton_df.drop(proton_df[proton_df['ZPGT100W'] <= 0.0].index, inplace=True)
 		
 
+			# ====== legacy start
 			elif start.year < 2011:
 				cpflux_names_legacy = ['time_tag','e1_flux_ic','e2_flux_ic','e3_flux_ic','p1_flux','p2_flux','p3_flux','p4_flux','p5_flux','p6_flux','p7_flux','a1_flux','a2_flux','a3_flux','a4_flux','a5_flux','a6_flux','p1_flux_c','p2_flux_c','p3_flux_c','p4_flux_c','p5_flux_c','p6_flux_c','p7_flux_c','p1_flux_ic','p2_flux_ic','p3_flux_ic','p4_flux_ic','p5_flux_ic','p6_flux_ic','p7_flux_ic']
 
@@ -431,7 +433,7 @@ if '1' in option_bin_set:
 		
 				if proton_check == True:
 					dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
-					proton_df = pd.read_csv(f'{data_directory}/GOES_Detection/GOES_{satellite_no}/{start_year}/{proton_name}', skiprows=453, date_parser=dateparse, names=cpflux_names_legacy,index_col='time_tag', header=0)
+					proton_df = pd.read_csv(f'{data_directory}/GOES_Detection/GOES_{satellite_no}/{start_year}/{proton_name}', skiprows=455, date_parser=dateparse, names=cpflux_names_legacy,index_col='time_tag', header=0)
 		
 		
 				elif proton_check == False:
@@ -439,7 +441,7 @@ if '1' in option_bin_set:
 					# proton_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_avg/{event_date[:4]}/{event_date[4:6]}/goes{satellite_no}/csv/{proton_name}'
 					proton_in = wget.download(proton_url)
 					dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
-					proton_df = pd.read_csv(f'{proton_in}', skiprows=453, date_parser=dateparse, names=cpflux_names_legacy,index_col='time_tag', header=0) # ZPGT100W
+					proton_df = pd.read_csv(f'{proton_in}', skiprows=455, date_parser=dateparse, names=cpflux_names_legacy,index_col='time_tag', header=0) # ZPGT100W
 		
 					if save_option == 'yes':
 						shutil.move(f'{proton_name}', f'{data_directory}/GOES_Detection/GOES_{satellite_no}/{start_year}')
@@ -449,7 +451,7 @@ if '1' in option_bin_set:
 				proton_df.drop(proton_df[proton_df['p3_flux_ic'] <= 0.0].index, inplace=True)
 				proton_df.drop(proton_df[proton_df['p5_flux_ic'] <= 0.0].index, inplace=True)
 				proton_df.drop(proton_df[proton_df['p7_flux_ic'] <= 0.0].index, inplace=True)		
-
+	# ==== legacy end
 
 
 	elif goes_corrected_option == 'no':
@@ -755,7 +757,7 @@ if '2' in option_bin_set:
 	t3_freq = 120
 
 	rb_data_event = pd.DataFrame([])
-	rb_concat_event = rb_concat[[t3_freq]]
+	rb_concat_event = rb_data[[t3_freq]]
 	rb_data_event = rb_data_event.append(rb_concat_event)
 	rb_data_event.drop(rb_data[rb_data.values == 0.0].index, inplace=True)
 
@@ -1604,6 +1606,15 @@ if '2' in option_bin_set:
 	#================= Working code (uncommented) ---- begin ----
 	
 	#axes[length_data_list[j]].plot(rb_data['avg'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='navy', label= '20 kHz - 1040 kHz')
+	
+
+	s_time = datetime.datetime.strptime(start_hour, '%H').time()
+	e_time = datetime.datetime.strptime(end_hour, '%H').time()
+
+	s_dtime = datetime.datetime.combine(start, s_time)
+	e_dtime = datetime.datetime.combine(end, e_time)
+
+
 	color_cm=iter(cm.viridis(np.linspace(0,1, 5 )))
 	freq_list = [120] # [100, 300, 500, 700, 900]
 	
@@ -1615,7 +1626,10 @@ if '2' in option_bin_set:
 	# axes[length_data_list[j]].axvline(rb_event_df['start_time'].values, linewidth=1, zorder=1, color='blue', linestyle='--', label='Max >10MeV')
 	# axes[length_data_list[j]].axvline(rb_event_df['end_time'].values, linewidth=1, zorder=1, color='blue', linestyle='--', label='Max >10MeV')
 	for i in range(len(rb_event_df)):
-		axes[length_data_list[j]].axvspan(rb_event_df['start_time'][i], rb_event_df['end_time'][i], color='blue', alpha=0.5)
+
+		if s_dtime <= (rb_event_df['start_time'][i] and rb_event_df['end_time'][i]) <= e_dtime:
+
+			axes[length_data_list[j]].axvspan(rb_event_df['start_time'][i], rb_event_df['end_time'][i], color='blue', alpha=0.5)
 		# axes[length_data_list[j]].axvspan(rb_event_df['start_time'].values, rb_event_df['end_time'].values, color='blue', alpha=0.5)
 
 
