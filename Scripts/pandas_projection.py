@@ -28,6 +28,7 @@ data_directory = '/Users/bryanyamashiro/Documents/Research_Projects/Data'
 
 data = pd.read_csv(f'{data_directory}/Projection/location.csv', sep=',', comment='#')
 
+proj_choice = ccrs.PlateCarree()
 
 
 
@@ -69,8 +70,8 @@ data['flare_lat'] = flare_lat_list
 data['flare_long'] = flare_long_list
 
 
-
-
+'''
+# ==== start subplot
 # ===== subplot methods
 plt.figure(figsize = (8, 6))
 
@@ -128,7 +129,7 @@ ax3.set_title('protons')
 plt.show()
 
 sys.exit(0)
-
+'''
 
 # ======== single plot, working
 proj_choice = ccrs.PlateCarree() # Mollweide is the closest to aitoff
@@ -150,12 +151,15 @@ ax.plot(east_limb_x, east_limb_y, transform=ccrs.PlateCarree(), color='black', l
 
 scatter = ax.scatter(data['flare_long'], data['flare_lat'], c=data['connectivity'], cmap='viridis', transform=ccrs.Geodetic(), zorder=3)
 plt.colorbar(scatter)
+plt.xlabel("Longitude")
 # for i in range(len(data)):
 	# color_choice = next(color_cm)
 	#ax.plot(data['flare_long'][i], data['flare_lat'][i], 'o', transform=ccrs.Geodetic(), color=color_choice, markersize=2, zorder=3) # longitude and latitude #ccrs.PlateCarree() color=color_choice
 
 # plt.colorbar()
 plt.show()
+
+sys.exit(0)
 
 
 '''
@@ -165,7 +169,6 @@ for i in range(len(data_df)):
 	axes[length_data_list[j]].plot([list(data_df['city_long_in'])[i],list(data_df['city_long_out'])[i]] , [list(data_df['city_lat_in'])[i],list(data_df['city_lat_out'])[i]] , color=color_choice, linewidth=1,marker='o', markersize=1, transform=ccrs.Geodetic(), zorder=4) # , marker='.'
 '''
 
-sys.exit(0)
 
 
 fig = plt.figure("example", figsize=(10,5))

@@ -753,7 +753,7 @@ if '2' in option_bin_set:
 
 	# ======= TIII radio burst event detection
 	# ======= added for event options
-	t3_threshold = 3
+	t3_threshold = 5 # 5
 	t3_freq = 120
 
 	rb_data_event = pd.DataFrame([])
@@ -1636,7 +1636,7 @@ if '2' in option_bin_set:
 	axes[length_data_list[j]].axhline(t3_threshold, linewidth=1, zorder=1, color='red', linestyle='-', label=f'{t3_threshold} sfu') #  xmin=0, xmax=1
 
 
-	axes[length_data_list[j]].set_ylim(0, 500)
+	# axes[length_data_list[j]].set_ylim(0, 100) # commented to allow for auto y-scaling, remove for rigid axis
 	axes[length_data_list[j]].set_ylabel('Wind Type III\nRadio Burst [sfu]', fontname="Arial", fontsize = 12)
 	# axes[length_data_list[j]].set_ylabel('Type III Radio\nBurst Int. [sfu]', fontname="Arial", fontsize = 12)
 	
