@@ -26,7 +26,7 @@ plt.close("all")
 
 data_directory = '/Users/bryanyamashiro/Documents/Research_Projects/Data'
 
-data = pd.read_csv(f'{data_directory}/Projection/location.csv', sep=',', comment='#')
+data = pd.read_csv(f'{data_directory}/Projection/location_backside.csv', sep=',', comment='#')
 
 proj_choice = ccrs.PlateCarree()
 
@@ -43,6 +43,7 @@ east_limb_y = [-90, 90]
 flare_lat_list = []
 flare_long_list = []
 
+'''
 for i in data['flare_location']:
 	# print(i)
 	try:
@@ -50,13 +51,19 @@ for i in data['flare_location']:
 		flare_long_temp = 0
 
 		if i[0] == 'N':
-			flare_lat_temp = int(i[1:3])
+			# flare_lat_temp = int(i[1:3])
+			for j in i:
+				if isinstance(j, int):
+
+
+
 		elif i[0] == 'S':
 			flare_lat_temp = -int(i[1:3])
 		if i[3] == 'W':
 			flare_long_temp = int(i[4:6])
 		elif i[3] == 'E':
 			flare_long_temp = -int(i[4:6])
+		elif 
 
 		flare_lat_list.append(flare_lat_temp)
 		flare_long_list.append(flare_long_temp)
@@ -66,9 +73,10 @@ for i in data['flare_location']:
 		flare_long_list.append(np.nan)
 		# print("not working")
 
+
 data['flare_lat'] = flare_lat_list
 data['flare_long'] = flare_long_list
-
+'''
 
 '''
 # ==== start subplot
@@ -135,28 +143,58 @@ sys.exit(0)
 proj_choice = ccrs.PlateCarree() # Mollweide is the closest to aitoff
 plt.figure(figsize=(12,6))
 ax = plt.axes(projection=proj_choice) # PlateCarree and Mercator have functioning gridlines
+
+ax.text(-0.07, 0.55, 'Latitude', va='bottom', ha='center',
+		fontsize=16,
+        rotation='vertical', rotation_mode='anchor',
+        transform=ax.transAxes)
+ax.text(0.5, -0.1, 'Longitude', va='bottom', ha='center',
+		fontsize=16,
+        rotation='horizontal', rotation_mode='anchor',
+        transform=ax.transAxes)
+
 # ax.stock_img()
-plt.title('Plate Carree Projection')
+#plt.title('Plate Carree Projection')
+# plt.xlabel("Longitude")
+# plt.ylabel("Latitude")
 gl = ax.gridlines(crs=proj_choice, draw_labels=True, zorder=2)
 gl.xlabels_top = False
 gl.xformatter = LONGITUDE_FORMATTER
 gl.yformatter = LATITUDE_FORMATTER
 #plt.plot([ny_lon, delhi_lon], color='gray', transform=ccrs.PlateCarree())
-color_cm=iter(cm.viridis(np.linspace(0,int(data['fluence'].min()), int(data['fluence'].max())  ) ) )
+# color_cm=iter(cm.viridis(np.linspace(0,int(data['fluence'].min()), int(data['fluence'].max())  ) ) )
+
+
+
+for i in range(len(data)):
+	if "M" in data.iloc[i]['flare_class']:
+		plt.plot(data['flare_long'][i], data['flare_lat'][i], 'o', color='blue', mfc='none', markersize=10, zorder=4, label="M-Class" if i==0 else "")
+	elif "X" in data.iloc[i]['flare_class']:
+		plt.plot(data['flare_long'][i], data['flare_lat'][i], 'x', color='red', markersize=10, zorder=4, label="X-Class" if i==4 else "")
+	elif "B" in data.iloc[i]['flare_class']:
+		plt.plot(data['flare_long'][i], data['flare_lat'][i], '+', color='green', markersize=10, zorder=4, label="Backside" if i==15 else "")
 
 ax.set_extent((-180, 180, -90, 90)) # crs=ccrs.PlateCarree()
-ax.plot(west_limb_x, west_limb_y, transform=ccrs.PlateCarree(), color='black', lw=3)
-ax.plot(east_limb_x, east_limb_y, transform=ccrs.PlateCarree(), color='black', lw=3)
+ax.plot(west_limb_x, west_limb_y, transform=ccrs.PlateCarree(), color='black', lw=2, zorder=2)
+ax.plot(east_limb_x, east_limb_y, transform=ccrs.PlateCarree(), color='black', lw=2, zorder=2)
+
+plt.legend(loc='upper right', ncol=1,fontsize=14)
 
 
-scatter = ax.scatter(data['flare_long'], data['flare_lat'], c=data['connectivity'], cmap='viridis', transform=ccrs.Geodetic(), zorder=3)
-plt.colorbar(scatter)
-plt.xlabel("Longitude")
+# scatter = ax.scatter(data['flare_long'], data['flare_lat'], c=data['connectivity'], cmap='viridis', transform=ccrs.Geodetic(), zorder=3)
+#plt.colorbar(scatter)
+
+
+
+
+
 # for i in range(len(data)):
 	# color_choice = next(color_cm)
 	#ax.plot(data['flare_long'][i], data['flare_lat'][i], 'o', transform=ccrs.Geodetic(), color=color_choice, markersize=2, zorder=3) # longitude and latitude #ccrs.PlateCarree() color=color_choice
 
 # plt.colorbar()
+plt.savefig(f'{data_directory}/Projection/flare_location_test.png', format='png', dpi=100)
+
 plt.show()
 
 sys.exit(0)
