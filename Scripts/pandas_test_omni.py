@@ -771,10 +771,10 @@ if '2' in option_bin_set:
 			rb_list_temp.append(i)
 
 		elif len(rb_list_temp) >= 1:
-			if (i - rb_list_temp[-1]) <= datetime.timedelta(minutes=5):
+			if (i - rb_list_temp[-1]) <= datetime.timedelta(minutes=10): # originally 5 minutes
 				rb_list_temp.append(i)
 
-			elif (i - rb_list_temp[-1]) > datetime.timedelta(minutes=5):
+			elif (i - rb_list_temp[-1]) > datetime.timedelta(minutes=10): # originally 5 minutes
 				if (rb_list_temp[-1] - rb_list_temp[0]) >= datetime.timedelta(minutes=10):
 					rb_list_event.append(rb_list_temp)
 					rb_list_temp = []
