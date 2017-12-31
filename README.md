@@ -38,10 +38,6 @@
   - [ ] Temperature
   - [ ] Magnetic field components/absolute value
 
-- [ ] GOES-13 xray flux
-  - [ ] Add markers and tags to certain xray flux magnitudes
-  - [x] Add GOES-13 xray flux (9/6/2017)
-
 
 - [ ] Push headers to data without forcing pandas names with files that have different header line numbers
   - [ ] regex? solution to accept only header and data rows
@@ -59,10 +55,6 @@
   - [ ] AE index interchangeable with Dst index
   - [ ] Gather datasets and plot individually
   - [ ] Plot both datasets on one axis canvas
-
-- [ ] Create an projection of the Sun using cartopy/basemap/aitoff
-  - [ ] Sun projection from -180 to 180, including the back side
-  - [ ] Plot individual events on the Sun
 
 - [ ] Use itertools to sort and group
   - [ ] Use 'itertools.groupby' to group objects of flare class intensity
@@ -119,7 +111,7 @@
       - [ ] LET
 
 - [ ] ACE Magnetic field Data
-  - [ ] Create an alogorithm to decode .hdf files
+  - [ ] Create an algorithm to decode .hdf files
     - [ ] Magnetic field intensity
     - [ ] Magnetic field density
 
@@ -134,15 +126,6 @@
 
 - [ ] Type III Radio Burst Event Plot Program
   - [ ] Add legend for different detection energy ranges
-
-- [ ] OMNI Type III Radio Bursts
-  - [ ] Implement the radio detection for a given frequency and duration limit
-   - [x] Integrate radio burst detection algorithm into OMNI script (11/22/2017)
-    - [x] Horizontal line for t3 threshold and vertical lines for start and end time of event (11/22/2017)
-    - [ ] Plot lines/shaded area for corresponding radio burst
-    - [x] Set an intensity threshold as a static parameter in the preamble (11/22/2017)
-    - [ ] Threshold must be low for backside events (i.e 20120723)
-    - [ ] Include every detected radio burst in the given range 
   
 
 
@@ -222,7 +205,7 @@ ValueError: The input contains nan values
 
 ### Type III radio burst event list
 - Check events over 100 MeV threshold for GOES proton flux.
-  - Automate process and add an if statment for 1) if intensities are over ~100 sfu, and 2) specified durations of frequencies.
+  - Automate process and add an if statement for 1) if intensities are over ~100 sfu, and 2) specified durations of frequencies.
 - Match each Type III event with proton flux, xray flux, etc.
 
 ### Download local files
@@ -710,6 +693,23 @@ datetime
 <details><summary>Completed Task List</summary>
 <p>
 
+- [x] OMNI Type III Radio Bursts (12/30/2017)
+  - [x] Implement the radio detection for a given frequency and duration limit (12/30/2017)
+   - [x] Integrate radio burst detection algorithm into OMNI script (11/22/2017)
+    - [x] Horizontal line for t3 threshold and vertical lines for start and end time of event (11/22/2017)
+    - [x] Plot lines/shaded area for corresponding radio burst (12/30/2017)
+    - [x] Set an intensity threshold as a static parameter in the preamble (11/22/2017)
+    - [x] Threshold must be low for backside events (i.e 20120723) (12/30/2017)
+    - [x] Include every detected radio burst in the given range (12/30/2017)
+
+- [x] GOES-13 xray flux (12/30/2017)
+  - [x] Add markers and tags to certain xray flux magnitudes (12/30/2017)
+  - [x] Add GOES-13 xray flux (9/6/2017)
+
+- [x] Create an projection of the Sun using cartopy/basemap/aitoff (12/30/2017)
+  - [x] Sun projection from -180 to 180, including the back side (12/30/2017)
+  - [x] Plot individual events on the Sun (12/30/2017)
+
 - [x] Corrected GOES proton flux (10/23/2017)
   - [x] Change all proton flux from new_full to new_avg data (10/18/2017)
   - [x] Add an 'if' statement to deal with an overlap of monthly data (i.e Jan. - Feb.) (10/23/2017)
@@ -781,6 +781,43 @@ datetime
 
 <details><summary>Resolved Errors and Tasks</summary>
 <p>
+
+
+<details><summary>Key</summary>
+<p>
+
+### Error Name (Resolution Date)
+* **Resolution**: Resolution Description
+- Description of the error and preemptive ideas to solve the error
+
+</p>
+</details>
+
+
+### A single radio burst event was separated into two detections (12/30/2017)
+* **Resolution**: Increased the detection time from 5 minutes to 10 minutes. The entire radio burst is now detected as one event. 
+- The threshold length is most likely too short, which means that there is a data gap longer than the threshold.
+- Error can be recreated by running pandas_test_omni.py script for 20140901 or 20140910. The thresholds were set to "datetime.timedelta(minutes=5)". The specific lines of code are provided below.
+- Increasing the threshold from 5 minutes to 10 minutes will most likely resolve the problem.
+
+```python
+...
+    elif len(rb_list_temp) >= 1:
+      if (i - rb_list_temp[-1]) <= datetime.timedelta(minutes=10): # originally 5 minutes
+        rb_list_temp.append(i)
+
+      elif (i - rb_list_temp[-1]) > datetime.timedelta(minutes=10): # originally 5 minutes
+        if (rb_list_temp[-1] - rb_list_temp[0]) >= datetime.timedelta(minutes=10):
+          rb_list_event.append(rb_list_temp)
+          rb_list_temp = []
+          rb_list_temp.append(i)
+
+        elif (rb_list_temp[-1] - rb_list_temp[0]) < datetime.timedelta(minutes=10):
+          rb_list_temp = []
+          rb_list_temp.append(i)
+...
+```
+
 
 ### Change long plot option (09/20/2017)
 * **Resolution**: Made an 'if' statement to change figure sizes according to the amount of datasets chosen. If there are more than 4 options, change the figure size.
