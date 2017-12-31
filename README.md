@@ -352,72 +352,77 @@ Data       | Instrument | Detector | Source | URL
 <p>
 
 ```shell
-In [8]: run pandas_test_omni.py  
-========================================  
-=               DATASETS               =  
-========================================  
-1 - GOES-13/15 Proton Flux  
-2 - Wind Type III Radio Bursts  
-3 - Neutron Monitor Counts (Requires Internet Connection)  
-4 - ACE/Wind Solar Wind Speed  
-5 - GOES-13/15 Xray Flux  
-6 - STEREO-A Proton Flux  
-7 - STEREO-B Proton Flux  
-========================================  
-Enter Dataset Option then "done" or "all": all  
-Enter a start date (yyyymmdd): 20120307  
-Enter a end date (yyyymmdd): 20120307  
-Enter a start hour or "full": full  
-Specify which GOES Satellite for Proton Flux (13 or 15): 13  
+In [5]: run pandas_test_omni.py
+========================================
+=               DATASETS               =
+========================================
+1 - GOES-13/15 Proton Flux
+2 - Wind Type III Radio Bursts
+3 - Neutron Monitor Counts (Requires Internet Connection)
+4 - ACE/Wind Solar Wind Speed
+5 - GOES-13/15 Xray Flux
+6 - STEREO-A Proton Flux
+7 - STEREO-B Proton Flux
+========================================
+Enter Dataset Option then "done" or "all": all
+Enter a start date (yyyymmdd): 20120307
+Enter a end date (yyyymmdd): 20120307
+Enter a start hour or "full": full
+Specify which GOES Satellite for Proton Flux (13 or 15): 13
+
   
-========================================  
-=         GOES-13 Proton Flux          =  
-========================================  
-Energy Channels  
---------------------  
-1: 6.5 MeV  
-2: 11.6 MeV  
-3: 30.6 MeV  
-4: 63.1 MeV  
-5: 165 MeV  
-6: 433 MeV  
-Enter Energy Channel(s) or "full": full  
-  
-========================================  
-=      Wind Type III Radio Bursts      =  
-========================================  
-  
-========================================  
-=           Neutron Monitors           =  
-========================================  
-How many stations to parse: 1  
-You are parsing 1 station(s)  
-Enter station names: OULU  
-Parsing the ['OULU'] stations  
-  
-========================================  
-=      ACE/Wind Solar Wind Speed       =  
-========================================  
-  
-Specify which GOES Satellite for Xray Flux (13 or 15): 15  
-  
-========================================  
-=          GOES-15 Xray Flux           =  
-========================================  
-  
-========================================  
-=         STEREO-A Proton Flux         =  
-========================================  
-  
-========================================  
-=         STEREO-B Proton Flux         =  
-========================================  
+========================================
+=         GOES-13 Proton Flux          =
+========================================
+
+========================================
+=      Wind Type III Radio Bursts      =
+========================================
+
+
+Number of Radio Events (2012-03-07 - 2012-03-07):  2
+           start_time            end_time  t3_duration  t3_max_int  \
+0 2012-03-07 00:21:30 2012-03-07 02:18:30        117.0   52.680389   
+1 2012-03-07 07:35:30 2012-03-07 07:50:30         15.0    9.096712   
+
+  default_color  
+0         green  
+1         green  
+
+========================================
+=           Neutron Monitors           =
+========================================
+How many stations to parse: 1
+You are parsing 1 station(s)
+Enter station names: OULU
+Parsing the ['OULU'] stations
+
+========================================
+=      ACE/Wind Solar Wind Speed       =
+========================================
+
+Specify which GOES Satellite for Xray Flux (13 or 15): 15
+
+========================================
+=          GOES-15 Xray Flux           =
+========================================
+
+========================================
+=         STEREO-A Proton Flux         =
+========================================
+
+========================================
+=         STEREO-B Proton Flux         =
+========================================
+GOES-13 Peak Proton Flux (>10 MeV): (2012-03-07 16:20:00) 1.637E+03 [pfu]
+GOES-13 Peak Proton Flux (>50 MeV): (2012-03-07 15:35:00) 2.537E+02 [pfu]
+GOES-13 Peak Proton Flux (>100 MeV): (2012-03-07 15:20:00) 5.681E+01 [pfu]
 ```
 
 </p>
 </details>
 
-<img src="Plots/omni_full_test_v3.png" width="700">
+<img src="Plots/omni_full_test_v4.png" width="700">
 
 
 
