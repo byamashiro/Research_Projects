@@ -429,19 +429,20 @@ GOES-13 Peak Proton Flux (>100 MeV): (2012-03-07 15:20:00) 5.681E+01 [pfu]
 
 
 
-### Proton Event Flare Location Projection ([projection_script_v1](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/pandas_projection.py))
+
+### Proton Event Flare Location Projection ([projection_script_v1](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/pandas_location_flareclass.py))
 
 <details><summary>Proton Event Flare Location Projection Command Line Example</summary>
 <p>
 
 ```shell
-In [11]: run pandas_projection.py
+In [11]: run pandas_location_flareclass.py
 ```
 
 </p>
 </details>
 
-<img src="Plots/projection_test_v2.png" width="700">
+<img src="Plots/flare_location_test_v2.png" width="700">
 
 
 

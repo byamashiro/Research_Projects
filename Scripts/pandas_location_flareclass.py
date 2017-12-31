@@ -193,7 +193,7 @@ plt.legend(loc='upper right', ncol=1,fontsize=14)
 	#ax.plot(data['flare_long'][i], data['flare_lat'][i], 'o', transform=ccrs.Geodetic(), color=color_choice, markersize=2, zorder=3) # longitude and latitude #ccrs.PlateCarree() color=color_choice
 
 # plt.colorbar()
-plt.savefig(f'{data_directory}/Projection/flare_location_test.png', format='png', dpi=100)
+plt.savefig(f'{data_directory}/Projection/flare_location_test_v2.png', format='png', dpi=900)
 
 plt.show()
 
