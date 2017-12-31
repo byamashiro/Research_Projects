@@ -157,6 +157,8 @@ plt.xlabel("Longitude")
 	#ax.plot(data['flare_long'][i], data['flare_lat'][i], 'o', transform=ccrs.Geodetic(), color=color_choice, markersize=2, zorder=3) # longitude and latitude #ccrs.PlateCarree() color=color_choice
 
 # plt.colorbar()
+# plt.savefig('/Users/bryanyamashiro/Documents/Research_Projects/Scripts/map_test/projection_test.png', format='png', dpi=900)
+
 plt.show()
 
 sys.exit(0)

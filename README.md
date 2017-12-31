@@ -5,7 +5,8 @@
 - [Current Tasks and Errors](#current-tasks-and-errors)
 - [Required Python Modules](#required-python-modules)
 - [Running Scripts](#running-scripts)
-  - [OMNI Space Weather (omni_script_v3)](#omni-space-weather-omni_script_v3)
+  - [OMNI Space Weather Monitor (omni_script_v4)](#omni-space-weather-monitor-omni_script_v4)
+  - [Proton Event Flare Location Projection (projection_script_v1)](#proton-event-flare-location-projection-projection_script_v1)
   - [GOES Proton Event Detector (goes_detector_script_v1)](#goes-proton-event-detector-goes_detector_script_v1)
   - [Remastered WIND Type III Radio Burst (radio_script_v3)](#remastered-wind-type-iii-radio-burst-radio_script_v3)
   - [Radio Burst Fit Program (radio_fit_v1)](#radio-burst-fit-program-radio_fit_v1)
@@ -128,7 +129,8 @@
   - [ ] Add legend for different detection energy ranges
   
 
-
+- [ ] Remastered Wind Type III Radio Burst Update
+  - [ ] Add the sigma clipping algorithm from the omni script
 
 </p>
 </details>
@@ -346,7 +348,7 @@ Data       | Instrument | Detector | Source | URL
 
 # Running Scripts
 
-### OMNI Space Weather ([omni_script_v3](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/pandas_test_omni.py))
+### OMNI Space Weather Monitor ([omni_script_v4](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/pandas_test_omni.py))
 
 <details><summary>OMNI Command Line Example</summary>
 <p>
@@ -423,6 +425,23 @@ GOES-13 Peak Proton Flux (>100 MeV): (2012-03-07 15:20:00) 5.681E+01 [pfu]
 </details>
 
 <img src="Plots/omni_full_test_v4.png" width="700">
+
+
+
+
+### Proton Event Flare Location Projection ([projection_script_v1](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/pandas_projection.py))
+
+<details><summary>Proton Event Flare Location Projection Command Line Example</summary>
+<p>
+
+```shell
+In [11]: run pandas_projection.py
+```
+
+</p>
+</details>
+
+<img src="Plots/projection_test_v2.png" width="700">
 
 
 
