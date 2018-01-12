@@ -5,14 +5,6 @@
 - [Current Tasks and Errors](#current-tasks-and-errors)
 - [Required Python Modules](#required-python-modules)
 - [Running Scripts](#running-scripts)
-  - [OMNI Space Weather Monitor (omni_script_v4)](#omni-space-weather-monitor-omni_script_v4)
-  - [Proton Event Flare Location Projection (projection_script_v1)](#proton-event-flare-location-projection-projection_script_v1)
-  - [GOES Proton Event Detector (goes_detector_script_v1)](#goes-proton-event-detector-goes_detector_script_v1)
-  - [Remastered WIND Type III Radio Burst (radio_script_v3)](#remastered-wind-type-iii-radio-burst-radio_script_v3)
-  - [Radio Burst Fit Program (radio_fit_v1)](#radio-burst-fit-program-radio_fit_v1)
-  - [Bartels' Rotation Number (bartels_v1)](#bartels-rotation-number-bartels_v1)
-  - [Legacy OMNI Space Weather (1995-2009) (legacy_omni_script_v1)](#legacy-omni-space-weather-1995-2009-legacy_omni_script_v1)
-- [Deprecated Scripts](#deprecated-scripts)
 - [Data](#data)
 - [Completed Tasks](#completed-tasks)
 - [Resolved Errors](#resolved-errors)
@@ -21,7 +13,7 @@
 
 # Current Tasks and Errors
 
-- [ ] Finish solar parameter catalog (01/11/2018)
+- [ ] Finish solar parameter catalog
   - Flare (http://www.lmsal.com/solarsoft/latest_events_archive.html)
     - [ ] Flare start time, max time, end time
     - [ ] Flare location
@@ -37,144 +29,31 @@
       - [ ] Half width
   - Solar Energetic Particles
     - [ ] GOES
-      - [ ] Proton flux
+      - [ ] Proton "start time" (https://cdaw.gsfc.nasa.gov/CME_list/sepe/)
   - Geomagnetic Storm
-    - Disturbance Storm Time 
+    - Disturbance Storm Time (http://wdc.kugi.kyoto-u.ac.jp/dstdir/index.html)
       - [ ] Dst minimum date
       - [ ] Dst minimum equatorial value
-    - Kp (ftp://ftp.swpc.noaa.gov/pub/indices/old_indices/)
+    - Kp Index (ftp://ftp.swpc.noaa.gov/pub/indices/old_indices/)
       - [ ] Kp maximum date
       - [ ] Kp maximum index
 
 
-- [ ] Plot correlations (01/11/2018)
-  - [ ] Max proton flux 
+- [ ] Plot Practice
+  - [ ] Max proton flux vs. max Xray intensity
+  - [ ] Max proton flux vs. CME speed
 
 
 <details><summary>Current Tasks and Errors</summary>
 <p>
 
-### OMNI script crash with multiple dates and downloads
-- When retrieving data for plots, that do not exist locally, a key error is produced while plotting. This value error does not trigger when local files exist. 
-```python
-...
-========================================
-=         STEREO-B Proton Flux         =
-========================================
-100% [....................................................] 13073516 / 13073516---------------------------------------------------------------------------
-ValueError                                Traceback (most recent call last)
-/Users/bryanyamashiro/miniconda3/envs/classUHenv/lib/python3.6/site-packages/pandas/core/indexes/base.py in get_slice_bound(self, label, side, kind)
-   3434             try:
--> 3435                 return self._searchsorted_monotonic(label, side)
-   3436             except ValueError:
-
-/Users/bryanyamashiro/miniconda3/envs/classUHenv/lib/python3.6/site-packages/pandas/core/indexes/base.py in _searchsorted_monotonic(self, label, side)
-   3393 
--> 3394         raise ValueError('index must be monotonic increasing or decreasing')
-   3395 
-
-ValueError: index must be monotonic increasing or decreasing
-
-During handling of the above exception, another exception occurred:
-
-KeyError                                  Traceback (most recent call last)
-/Users/bryanyamashiro/Documents/Research_Projects/Scripts/pandas_test_omni.py in <module>()
-   1304 
-   1305         next_global()
--> 1306         axes[length_data_list[j]].plot(sta_df[27].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='darkred', label='35.5-40.5 MeV', zorder=5)
-   1307         axes[length_data_list[j]].plot(sta_df[29].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='red', label='40.0-60.0 MeV', zorder=5)
-   1308         axes[length_data_list[j]].plot(sta_df[31].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='orange', label='60.0-100.0 MeV', zorder=5)
-...
-
-KeyError: '20130929 00'
-```
-
-### Neutron monitor data retrieval failsafe for OMNI script
-- Current neutron monitor dataset relies on internet connection, therefore local files are not saved. This is because different slices of neutron monitor data, using the start and end hours, will result in data that is not uniform unless using the 'full' day. 1) Save neutron monitor data only when full day is obtained, but data outages will lead to script errors when taking slices of local files. 2) Create a check to determine if data can be downloaded (i.e connection == True, no HTTPError), if not, remove from 'option_bin_set' and let the figure loading reflect the change in 'option_bin_set' length.
-
-
-### Log-normal distribution fit for radio bursts
-- Even with the "missing='drop'" parameter, the fit still detects NaN values. Although nan elements exist, the other fits allowed for removal of nans with the 'missing' method. There is a possible discrepancy in the parameters, as the Log-normal distribution does not include the gamma factor, which is present in the other three fits that work.
-```python
-ValueError                                Traceback (most recent call last)
-/Users/bryanyamashiro/Documents/Research_Projects/Scripts/pandas_test_radio_fit.py in <module>()
-    354                 params_lognorm = model_lognorm.make_params(amplitude=ymax_val, center=ymax_center, sigma=1)
-    355 
---> 356                 log_normal = model_lognorm.fit(yvals, params_lognorm, x = xvals)
-    357                 print("Log Normal Model\n", log_normal.fit_report())
-    358 
-...
-ValueError: The input contains nan values
-```
-
-### Fitting techniques and dropped values
-- Values of 0.0 are dropped due to the absence of physical intuition for these phenomena. This in turn allows for a continuous line while plotting from the last known value to the value after the dropped 0.0 value. This causes a problem when creating fits because a evenly spaced sequence is used, namely 'np.arange'. When the final fits are plotted, the dropped index values cause the fit to be discontinuous, illustrated by jagged edges.
-
-### Comparison check with event lists
-- Compare the files from the event list against the xflare list. Check the intensities of radio bursts and xflares, and put an indicator for xflares that coincide with the radio bursts (i.e mark with 'red').
-
-### Version check and checking if the file exists
-- When checking if a file exists, there is a slight issue when running into the loops. Currently the code will search if the file exists first, and then assigns a boolean, then runs the loop to look for versions. The loops that cycle through various versions will create a False value every time. Possibly implement a scheme that'll search for the existing file after pulling the file from online.
-```radio_check = os.path.isfile(f'{data_directory}/WIND/RAD1/{radio_name}')```
-
-### Type III radio burst representation
-- Change the radio burst average into a spectrogram. Try the 'plt.pcolormesh(t, f, Sxx)' function into the radio burst subplot. The 't' for time, 'f' for frequency. 
-
-
-### Type III radio burst event list
-- Check events over 100 MeV threshold for GOES proton flux.
-  - Automate process and add an if statement for 1) if intensities are over ~100 sfu, and 2) specified durations of frequencies.
-- Match each Type III event with proton flux, xray flux, etc.
-
-### Download local files
-- Instead of downloading data every instance of the code (i.e OMNI), store a repository of data on the local drive.
-  - If the local file does not exist, download from the web. Vice versa, if the local file exists, parse the file rather than downloading. Create the path in the script header to allow for quick changes to the local download folder.
-
-### Create data template for specific events
-- Previous versions of the code parsed two days before the event and five following the event. Make an external file that can be read in with a few parameters.
-  - Event date, which data sets
-
-### Incorporate sunpy package
-- The sunpy package may contain data sources for level 2 data. This may be faster than downloading and importing data for each datetime instance for longer time intervals
-
-### Collect science
-- Maximum: Proton flux, xray flux, solar wind speed, radio burst intensity/duration.
-- Minimum: Neutron monitor counts, dst (not currently implemented).
-- Write datetime, index, max, and min to a datafile.
-
-
-### Download SOHO proton flux data and plot
-1) SOHO data title format is not uniform (i.e erne-yyyy.mm.dd-yyyy.mm.dd-{non-uniform-number}.tgz)
-2) SOHO data is in .tgz format, with the tar files including 20+ data files in them. Only files of HED#.SL2 are of use.
-- Current options
-  - **wget**: Download .tgz file, extract only HED*.SL2 and push data into memory, delete local files, plot (downloading to local)
-  - **urllib, tarfile**: Read .tgz into memory, extract only HED*.SL2 and push data into memory, plot (time intensive, no backwards seeking)
-3) Download only the HED without the wget function extracting the low energy files.
-
-### Seeking backwards with tarfile
-- The current method is inefficient as all the files in the tarfile must be first read into memory, then applying statements. The script currently is time intensive, possibly due to the tarfile existing online. A possibility for the time inflation could be that the script iterates through every element of the tarfile to load headers, then must repeat the process to press 'if' statements.
-- Using an 'if' statement with the tarfile.open() command results in an error. This error seems to be caused because the 'if' statement reads through the entire tarfile with the cursor at the end. The action following the 'if' statement then tries to proceed, but since the cursor is at the end, the script fails when moving in the opposite direction. Potential solution is to find a .seek(0) function for the tarfile module.  
-```StreamError: seeking backwards is not allowed```  
-
-```python
-with tarfile.open(fileobj=ftpstream, mode="r|gz") as tar:
-    hed_soho = [
-      tarinfo for tarinfo in tar.getmembers()
-      if tarinfo.name.startswith('export.src/HED') # the error occurs at this point
-  ]
-  tar.extractall(members=hed_soho)
-```
-
-### Outliers and changes for Solar Wind script
-- Values significantly over 1000 km/s and single points need to be removed from the dataset. Incorporate temperature and magnetic field components from both ACE and Wind. Aesthetic fixes to the current wget downloading scheme, and find a more efficient method of downloading variant versions of .cdf files. Look for different data sources for solar wind speed with a lower time interval. Deviations are not negligible between both ACE and Wind solar wind speed measurements, see the output [figure](Plots/solarwind_test.png).
-
-
-### Outliers for Radio Burst script
-- Values ~300 sfu that seem to be outliers. Values will be removed, but each spike includes more than 1 point, therefore a single max threshold will not suffice.
-
-
-### NaN values for Neutron Monitor script for lack of data
-- Some neutron monitors do not have data and will return NaN values. When the script runs and the NaN values are added, the title columns will be shifted since there is no data in those columns. Essentially, 3 labels will be made for 2 columns, and the headers might not match the correlated data.
+<details><summary>Key</summary>
+<p>
+### Error Name (Resolution Date)
+* **Resolution**: Resolution Description
+- Description of the error and preemptive ideas to solve the error
+</p>
+</details>
 
 </p>
 </details>
@@ -262,79 +141,17 @@ Data       | Instrument | Detector | Source | URL
 </p>
 </details>
 
+
+
 # Running Scripts
 
-### OMNI Space Weather Monitor ([omni_script_v4](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/pandas_test_omni.py))
+### Code Name ([omni_script_v4](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/pandas_test_omni.py))
 
-<details><summary>OMNI Command Line Example</summary>
+<details><summary>Command Line Example</summary>
 <p>
 
 ```shell
-In [5]: run pandas_test_omni.py
-========================================
-=               DATASETS               =
-========================================
-1 - GOES-13/15 Proton Flux
-2 - Wind Type III Radio Bursts
-3 - Neutron Monitor Counts (Requires Internet Connection)
-4 - ACE/Wind Solar Wind Speed
-5 - GOES-13/15 Xray Flux
-6 - STEREO-A Proton Flux
-7 - STEREO-B Proton Flux
-========================================
-Enter Dataset Option then "done" or "all": all
-Enter a start date (yyyymmdd): 20120307
-Enter a end date (yyyymmdd): 20120307
-Enter a start hour or "full": full
-Specify which GOES Satellite for Proton Flux (13 or 15): 13
-
-  
-========================================
-=         GOES-13 Proton Flux          =
-========================================
-
-========================================
-=      Wind Type III Radio Bursts      =
-========================================
-
-
-Number of Radio Events (2012-03-07 - 2012-03-07):  2
-           start_time            end_time  t3_duration  t3_max_int  \
-0 2012-03-07 00:21:30 2012-03-07 02:18:30        117.0   52.680389   
-1 2012-03-07 07:35:30 2012-03-07 07:50:30         15.0    9.096712   
-
-  default_color  
-0         green  
-1         green  
-
-========================================
-=           Neutron Monitors           =
-========================================
-How many stations to parse: 1
-You are parsing 1 station(s)
-Enter station names: OULU
-Parsing the ['OULU'] stations
-
-========================================
-=      ACE/Wind Solar Wind Speed       =
-========================================
-
-Specify which GOES Satellite for Xray Flux (13 or 15): 15
-
-========================================
-=          GOES-15 Xray Flux           =
-========================================
-
-========================================
-=         STEREO-A Proton Flux         =
-========================================
-
-========================================
-=         STEREO-B Proton Flux         =
-========================================
-GOES-13 Peak Proton Flux (>10 MeV): (2012-03-07 16:20:00) 1.637E+03 [pfu]
-GOES-13 Peak Proton Flux (>50 MeV): (2012-03-07 15:35:00) 2.537E+02 [pfu]
-GOES-13 Peak Proton Flux (>100 MeV): (2012-03-07 15:20:00) 5.681E+01 [pfu]
+Template for running the code
 ```
 
 </p>
@@ -346,215 +163,6 @@ GOES-13 Peak Proton Flux (>100 MeV): (2012-03-07 15:20:00) 5.681E+01 [pfu]
 
 
 
-### Proton Event Flare Location Projection ([projection_script_v1](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/pandas_location_flareclass.py))
-
-<details><summary>Proton Event Flare Location Projection Command Line Example</summary>
-<p>
-
-```shell
-In [11]: run pandas_location_flareclass.py
-```
-
-</p>
-</details>
-
-<img src="Plots/flare_location_test_v2.png" width="700">
-
-
-
-
-### GOES Proton Event Detector ([goes_detector_script_v1](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/goes_proton_event_detector.py))
-
-<details><summary>GOES Proton Event Detector Command Line Example</summary>
-<p>
-
-```shell
-In [17]: run goes_proton_event_detector.py
-Enter the energy channel (10/50/100): 100
-Enter year to parse (yyyy) or 'all': all
-
-========================================
-=   GOES-13/15 Proton Event Detector   =
-========================================
-========================================
-=                 2011                 =
-========================================
-GOES-13 Proton Events
--------------------------
-GOES-15 Proton Events
--------------------------
-Parsing month - 12
-============================================================
-GOES-13 Events (2011): ['20110321', '20110607', '20110608', '20110804', '20110809', '20110907']
---GOES-13 Unique Events (2011): ['20110321']
-
-GOES-15 Events (2011): ['20110607', '20110608', '20110804', '20110809', '20110907']
---GOES-15 Unique Events (2011): []
-============================================================
-
-Shared Events (2011): ['20110607', '20110608', '20110804', '20110809', '20110907']
-...
-```
-
-</p>
-</details>
-
-<img src="Plots/0d25pfu_100mev_20120307.png" width="600">
-
-
-
-### Remastered Wind Type III Radio Burst ([radio_script_v3](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/radio_event_remastered.py))
-
-<details><summary>Remastered Wind Type III Radio Burst Command Line Example</summary>
-<p>
-
-```shell
-In [51]: run radio_event_remastered.py  
-  
-Plotting Type III Data: [20120307 00:00:00 -- 20120307 02:00:00]  
-Plot generated for 20120307  
-```
-
-</p>  
-</details>
-
-<img src="Plots/remastered_radio_test_v3.png" width="900">
-
-
-
-
-### Radio Burst Fit Program ([radio_fit_v1](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/pandas_test_radio_fit.py))
-
-<details><summary>Radio Burst Fit Program Command Line Example</summary>
-<p>
-
-```shell
-In [49]: run pandas_test_radio_fit.py  
-========================================  
-=       Radio Burst Fit Program        =  
-========================================  
-Enter a start date (yyyymmdd): 20120307  
-Enter a end date (yyyymmdd): 20120307   
-Enter a start hour or "full": 00  
-Enter a end hour: 01  
-```
-
-</p>
-</details>
-
-<img src="Plots/radio_fit_test.png" width="600">
-
-
-### Bartels' Rotation Number ([bartels_v1](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/bartels.py))
-
-<details><summary>Bartels' Rotation Number Command Line Example</summary>
-<p>
-
-```shell
-In [148]: run bartels.py  
-  
-========================================  
-=       Bartels Rotation Number        =  
-========================================  
-Input Start Date (yyyymmdd): 20120303  
-Input End Date (yyyymmdd): 20120313  
-Bartels Rotation (2012-03-03):  2436  
-Bartels Rotation (2012-03-13):  2437  
-```
-
-</p>
-</details>
-
-### Legacy OMNI Space Weather (1995-2009) ([legacy_omni_script_v1](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/pandas_test_legacy.py))
-
-<details><summary>Legacy OMNI Space Weather (1995-2009) Command Line Example</summary>
-<p>
-
-In [583]: run pandas_test_legacy.py  
-========================================  
-=               DATASETS               =  
-========================================  
-1 - GOES-8,10 Proton Flux (1995-Present)  
-2 - Wind Type III Radio Bursts (1994-Present)  
-3 - Neutron Monitor Counts  
-4 - ACE/Wind Solar Wind Speed (1998-Present)/(1994-Present)  
-5 - GOES-8,10 Xray Flux (1995-Present)  
-========================================  
-Enter Dataset Option then "done" or "all": 1  
-Enter Dataset Option then "done" or "all": 2  
-Enter Dataset Option then "done" or "all": 4  
-Enter Dataset Option then "done" or "all": 5  
-Enter Dataset Option then "done" or "all": done  
-Enter a start date (yyyymmdd): 20031028  
-Enter a end date (yyyymmdd): 20031028  
-Enter a start hour or "full": full  
-========================================  
-=           GOES Satellites            =  
-========================================  
-1 - GOES-8 (1995 - 1998)  
-2 - GOES-10 (1999 - 2009)  
-3 - GOES-13 (2010 - Present) DO NOT USE!  
-========================================  
-Enter GOES Satellite Option: 2  
-  
-========================================  
-=  GOES-10 Time Averaged Proton Flux   =  
-========================================  
-Energy Channels  
---------------------  
-1: 0.6 - 4.0 MeV  
-2: 4.0 - 9.0 MeV  
-3: 9.0 - 15.0 MeV  
-4: 15.0 - 44.0 MeV  
-5: 40.0 - 80.0 MeV  
-6: 80.0 - 165.0 MeV  
-7: 165.0 - 500.0 MeV  
-Enter Energy Channel(s) or "full": full  
-100% [..........................................................................] 5637540 / 5637540  
-========================================  
-=      Wind Type III Radio Bursts      =  
-========================================  
-100% [..........................................................................] 3539967 / 3539967  
-Parsing Type III Data for 2003-10-28  
-  
-========================================  
-=      ACE/Wind Solar Wind Speed       =  
-========================================  
-100% [............................................................................] 165376 / 165376  
-========================================  
-=   GOES-10 Time Averaged Xray Flux    =  
-========================================  
-========================================  
-=           GOES Satellites            =  
-========================================  
-1 - GOES-8 (1995 - 1998)  
-2 - GOES-10 (1999 - 2009)  
-3 - GOES-13 (2010 - Present) DO NOT USE!  
-========================================  
-Enter GOES Satellite Option: 2  
-100% [..........................................................................] 2097840 / 2097840  
-
-</p>
-</details>
-
-
-<img src="Plots/omni_test_legacy.png" width="600">
-
-
-
-# Deprecated Scripts
-Deprecated [scripts](https://github.com/byamashiro/Research_Projects/tree/master/Scripts/deprecated_scripts) are kept for reference. All scripts are working, but most do not incorporate online data fetching. The first [event script](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/deprecated_scripts/deprecated_event.py) that used local files is included in the folder. The event script is highly inefficient as it reads data from year-long data files. This is not the desired method when pulling data from half a day, which in turn will read the entire year data. Old [bash scripts](https://github.com/byamashiro/Research_Projects/tree/master/Scripts/deprecated_scripts/bash_scripts) are also added to archive old/inefficient methods of collecting data and reducing. Most script descriptions were added to the deprecated folder. The omni script has the functionality of all of the deprecated scripts, and will be updated.
-
-
-<details><summary>Example Deprecated Scripts</summary>
-<p>
-
-Filename       | Type | Run Command | Functionality
------------- | ------------- | ------------- | -------------
-[getgoes.sh](https://github.com/byamashiro/Research_Projects/blob/master/Scripts/deprecated_scripts/bash_scripts/getgoes.sh)  | bash                | ./get_goes.sh yyyymm yyyy mm  | Download datafile from GOES-13/15 (first EPEAD then HEPAD), make directory for intermediate files and final converted files, delete all header rows, collect only specified columns, delimit from ',' to ' ', move cleaned data to directory, delete intermediate files.
-
-</p>
-</details>
 
 # Data
 The data consists of mainly flux data from instruments on the ground, Earth orbit, and at the L1 Lagrange point. The data includes a sample from (2012 March), not normalized, and complete in intervals of about 30 seconds to a minute. Data values that were not accepted are denoted at extreme negative values around -9999. The specifics of each data set is commented in each header.
