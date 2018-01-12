@@ -1,4 +1,4 @@
-# Space Weather Projects
+# Group Tasks
 
 **Table of Contents**
 
@@ -20,120 +20,36 @@
 
 
 # Current Tasks and Errors
-<details><summary>Task List</summary>
-<p>
 
-- [ ] Set a variable up in the preface of the code to specify options
-  - [x] If files should be saved (9/6/2017)
-  - [ ] The min/max parameter to draw vertical lines on each subplot
-  - [x] Add an option to use a list for events in OMNI (9/8/2017)
+- [ ] Finish solar parameter catalog (01/11/2018)
+  - Flare (http://www.lmsal.com/solarsoft/latest_events_archive.html)
+    - [ ] Flare start time, max time, end time
+    - [ ] Flare location
+    - [ ] Flare classification
+  - Coronal Mass Ejection
+    - CDAW (https://cdaw.gsfc.nasa.gov/CME_list/)
+      - [ ] CME Time
+      - [ ] CME Speed
+      - [ ] PA Angle
+    - DONKI (https://kauai.ccmc.gsfc.nasa.gov/DONKI/search/)
+      - [ ] CME Time
+      - [ ] CME Speed
+      - [ ] Half width
+  - Solar Energetic Particles
+    - [ ] GOES
+      - [ ] Proton flux
+  - Geomagnetic Storm
+    - Disturbance Storm Time 
+      - [ ] Dst minimum date
+      - [ ] Dst minimum equatorial value
+    - Kp (ftp://ftp.swpc.noaa.gov/pub/indices/old_indices/)
+      - [ ] Kp maximum date
+      - [ ] Kp maximum index
 
-- [ ] Add documentation for system and specifics on set parameters.
-  - [ ] Add python version 3.0+
-  - [ ] Set parameters
-    - [ ] Paths
-    - [ ] Save settings
 
-- [ ] Collect WIND/ACE Solar Wind data
-  - [x] Bulk speed (7/12/2017)
-  - [ ] Temperature
-  - [ ] Magnetic field components/absolute value
+- [ ] Plot correlations (01/11/2018)
+  - [ ] Max proton flux 
 
-
-- [ ] Push headers to data without forcing pandas names with files that have different header line numbers
-  - [ ] regex? solution to accept only header and data rows
-  - [ ] python solution to differentiate between header and data rows, and commented information
-
-
-- [ ] Change 'for' loops into list comprehension
-
-- [ ] Integrate SOHO data
-  - [ ] SOHO proton flux bins
-  - [ ] Proton flux bin detectors
-
-- [ ] Dst and Kp data
-  - [ ] Kp data in boxes form
-  - [ ] AE index interchangeable with Dst index
-  - [ ] Gather datasets and plot individually
-  - [ ] Plot both datasets on one axis canvas
-
-- [ ] Use itertools to sort and group
-  - [ ] Use 'itertools.groupby' to group objects of flare class intensity
-  - [ ] Reached a certain magnitude of proton flux
-
-- [ ] GOES Event Detector
-  - [x] Download data files from web for each year (09/10/2017)
-    - [x] Incorporate both GOES-13 and GOES-15 (09/10/2017)
-  - [x] Set threshold level for each event in the >100 MeV energy range (09/10/2017)
-  - [x] Create sets to show the differences and intersections of both satellites (09/10/2017)
-  - [x] For loops to plot data for each day to confirm proton event (9/11/2017)
-    - [x] Indicate overlaps in events that aren't separated by over a day (9/11/2017)
-    - [ ] Create export files to be able to run with the OMNI event script
-  - [ ] Devise method to mark two thresholds to show the difference between threshold levels
-  - [ ] If statement to not have to determine events every time
-    - [ ] Export file to save generated event lists for time saving
-      - [ ] Option to use an exported list for event plotting
-  - [x] Make the y axis for pfu a constant from 0.01 to 100 to show an equal scaling (09/15/2017)
-  - [ ] Add a counter to show how many events happened for GOES-13, GOES-15, both 
-    - [ ] Run same algorithm as year_full on the unique events to get a count for all total events including lists (i.e [1,2,3])
-  - [x] Add a purge option to remove data files that have incomplete data due to real time retrieval (09/25/2017)
-  - [ ] Create an algorithm that will differentiate between two events that are merged in one (i.e 20140106)
-  - [ ] Add the lower energy channels <100 MeV
-    - [ ] Set a new threshold value for proton events
-    - [ ] Add statement to toggle between energy channels
-  - [ ] If a certain threshold is hit by the respective energy range, highlight in yellow
-
-- [ ] Type III Radio Burst Fitting Program
-  - [ ] Fit multiple models to 20120307 event
-    - [x] Skewed Gaussian (09/15/2017)
-    - [x] Exponential Gaussian (09/15/2017)
-    - [x] Donaich (09/15/2017)
-    - [ ] Log-normal
-  - [ ] Make multiple subplots, separating each fit model
-  - [ ] Create new fitting algorithm that accounts for double peaks (i.e multiple events stack on each other)
-  - [ ] Average the background for multiple days before the event to determine a steady background fit
-
-- [ ] Data analysis of Type III radio bursts (fluence and correction)
-  - [ ] Incorporate a program/function to calculate agreement with Parker Spiral equations
-  - [ ] Agreement plots
-    - [ ] Peak proton flux
-    - [ ] AR Magnetic flux/area
-
-- [ ] STEREO-A/B Data
-  - [ ] Incorporate STEREO-A Data
-    - [ ] Type III Radio Bursts
-    - [ ] Proton Flux
-      - [x] HET (09/18/2017)
-      - [ ] LET
-  - [ ] Incorporate STEREO-B Data
-    - [ ] Type III Radio Bursts
-    - [ ] Proton Flux
-      - [x] HET (09/18/2017)
-      - [ ] LET
-
-- [ ] ACE Magnetic field Data
-  - [ ] Create an algorithm to decode .hdf files
-    - [ ] Magnetic field intensity
-    - [ ] Magnetic field density
-
-- [ ] Type III Radio Burst Event Finder
-  - [ ] Cycle through 2011-present to find events
-  - [ ] Add 'if' statements to assign different inputs
-    - [ ] Red: >100MeV GOES detected events
-    - [ ] Orange: <100MeV GOES detected events
-    - [ ] Blue: Xray flare events
-    - [ ] Green: All other events
-    - [ ] Markers 'o' and 'x': For different events worth differentiating
-
-- [ ] Type III Radio Burst Event Plot Program
-  - [ ] Add legend for different detection energy ranges
-  
-
-- [ ] Remastered Wind Type III Radio Burst Update
-  - [ ] Add the sigma clipping algorithm from the omni script
-
-</p>
-</details>
 
 <details><summary>Current Tasks and Errors</summary>
 <p>
