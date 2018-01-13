@@ -15,28 +15,28 @@
 
 - [ ] Finish solar parameter catalog
   - Flare (http://www.lmsal.com/solarsoft/latest_events_archive.html)
-    - [ ] Flare start time, max time, end time
-    - [ ] Flare location
-    - [ ] Flare classification
+    - Flare start time, max time, end time
+    - Flare location
+    - Flare classification
   - Coronal Mass Ejection
     - CDAW (https://cdaw.gsfc.nasa.gov/CME_list/)
-      - [ ] CME Time
-      - [ ] CME Speed
-      - [ ] PA Angle
+      - CME Time
+      - CME Speed
+      - PA Angle
     - DONKI (https://kauai.ccmc.gsfc.nasa.gov/DONKI/search/)
-      - [ ] CME Time
-      - [ ] CME Speed
-      - [ ] Half width
+      - CME Time
+      - CME Speed
+      - Half width
   - Solar Energetic Particles
-    - [ ] GOES
-      - [ ] Proton "start time" (https://cdaw.gsfc.nasa.gov/CME_list/sepe/)
+    - GOES
+      - Proton "start time" (https://cdaw.gsfc.nasa.gov/CME_list/sepe/)
   - Geomagnetic Storm
     - Disturbance Storm Time (http://wdc.kugi.kyoto-u.ac.jp/dstdir/index.html)
-      - [ ] Dst minimum date
-      - [ ] Dst minimum equatorial value
+      - Dst minimum date
+      - Dst minimum equatorial value
     - Kp Index (ftp://ftp.swpc.noaa.gov/pub/indices/old_indices/)
-      - [ ] Kp maximum date
-      - [ ] Kp maximum index
+      - Kp maximum date
+      - Kp maximum index
 
 
 - [ ] Plot Practice

@@ -1563,7 +1563,7 @@ if length_data == 1:
 if '1' in option_bin_set:
 	next_global()
 	if goes_corrected_option == 'yes':
-		for i in sorted(energy_bin_list):
+		for i in energy_bin_list: # for i in sorted(energy_bin_list): # changed to unsorted because the sort queued off of 10 -> 100 -> 50 rather than 10 -> 50 -> 100
 			axes[length_data_list[j]].plot(proton_df[f'{i[0]}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color=f'{i[2]}', label= f'{i[1]}', zorder=5)#, logy=True)
 		
 		axes[length_data_list[j]].set_yscale('log')

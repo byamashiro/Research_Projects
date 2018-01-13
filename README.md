@@ -138,6 +138,7 @@
 <details><summary>Current Tasks and Errors</summary>
 <p>
 
+
 ### OMNI script crash with multiple dates and downloads
 - When retrieving data for plots, that do not exist locally, a key error is produced while plotting. This value error does not trigger when local files exist. 
 ```python
@@ -817,6 +818,12 @@ datetime
 
 </p>
 </details>
+
+
+### OMNI script proton flux overlapping the wrong energy ranges (01/12/2018)
+* **Resolution**: In the plotting section, a for loop was used with a sorted list of the proton flux. The sorted() algorithm sorted the energy ranges based off of the first integer. Therefore the sort reordered >10 MeV -> >100 MeV -> >50 MeV instead of the desired >10 MeV -> >50 MeV -> >100 MeV. Therefore removing the sorted() algorithm from the for loop parses the list correctly, since the list was generated in order initially.
+- When plotting proton flux using the OMNI script using the "GOES-13/15 Proton Flux", the >50 MeV proton flux was plotted over the >100 MeV proton flux.
+
 
 
 ### A single radio burst event was separated into two detections (12/30/2017)
