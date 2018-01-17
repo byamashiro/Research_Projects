@@ -15,7 +15,7 @@
 
 
 - [ ] Gather proton flux data from GOES-13 (https://satdat.ngdc.noaa.gov/sem/goes/data/avg/)
-   - [ ] Proton max flux for 5min time averaged >100 MeV data
+   - [ ] Proton max flux for 5min time averaged >100 MeV data (g13_epead_cpflux_5m_yyyymmdd_yyyymmdd.csv)
    - [ ] Proton max flux time for 5min time averaged >100 MeV data
 
 - [ ] Plotting
