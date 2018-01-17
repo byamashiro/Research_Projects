@@ -251,10 +251,15 @@ if '1' in option_bin_set:
 					except Exception as e:
 						print(e)
 						print(f'{date_event.month} does not have data.')
-	
+
+				print("im working 1")
 				proton_df.drop(proton_df[proton_df['ZPGT10W'] <= 0.0].index, inplace=True)
 				proton_df.drop(proton_df[proton_df['ZPGT50W'] <= 0.0].index, inplace=True)
 				proton_df.drop(proton_df[proton_df['ZPGT100W'] <= 0.0].index, inplace=True)
+
+
+
+
 
 			# ====== Legacy GOES data protons (GOES-10)
 
@@ -550,6 +555,114 @@ if '1' in option_bin_set:
 
 
 
+
+	# ======= proton event detection
+	# ======= added for event options
+	proton_threshold = pow(10, -0.9) # t3_threshold = 5 # 5
+	proton_channel = 'ZPGT100W' # t3_freq = 120
+
+	proton_data_event = pd.DataFrame([])
+	proton_concat_event = proton_df[[proton_channel]]
+	proton_data_event = proton_data_event.append(proton_concat_event)
+	# proton_data_event.drop(proton_df[proton_df.values == 0.0].index, inplace=True) # proton_data.values == 0.0
+
+	proton_event_df = pd.DataFrame([])
+	proton_list_temp = []
+	proton_list_event = []
+	proton_counter = 0
+
+	for i in proton_data_event[proton_data_event.values > proton_threshold].index: # for i in rb_data[rb_data.values > 300].index: # one level is 1 minute
+		if len(proton_list_temp) == 0:
+			proton_list_temp.append(i)
+
+		elif len(proton_list_temp) >= 1:
+			if (i - proton_list_temp[-1]) <= datetime.timedelta(minutes=30): # originally 5 minutes
+				proton_list_temp.append(i)
+
+			elif (i - proton_list_temp[-1]) > datetime.timedelta(minutes=30): # originally 5 minutes
+				if (proton_list_temp[-1] - proton_list_temp[0]) >= datetime.timedelta(minutes=30):
+					proton_list_event.append(proton_list_temp)
+					proton_list_temp = []
+					proton_list_temp.append(i)
+
+				elif (proton_list_temp[-1] - proton_list_temp[0]) < datetime.timedelta(minutes=30):
+					proton_list_temp = []
+					proton_list_temp.append(i)
+
+	if len(proton_list_temp) > 0:
+		if (proton_list_temp[-1] - proton_list_temp[0]) >= datetime.timedelta(minutes=30):
+			proton_list_event.append(proton_list_temp)
+			proton_list_temp = []
+			proton_list_temp.append(i)
+		elif (proton_list_temp[-1] - proton_list_temp[0]) < datetime.timedelta(minutes=30):
+			proton_list_temp = []
+			proton_list_temp.append(i)
+		proton_list_temp = []
+
+	print("\n")
+	proton_event_df = pd.DataFrame(columns=('start_time', 'end_time', 'proton_duration', 'proton_max_int'))
+
+	# add the lists here
+	# p_10mev_list = pd.read_csv(f'{data_directory}/detected_events/event_dates/1d50pfu_10mev_2011_2017.txt', delim_whitespace=True, header=1)
+
+
+
+	# =========  Outlier list
+	if len( proton_list_event ) == 1:
+		proton_var_list = []
+		proton_outlier_list = []
+
+		proton_mean = proton_df[proton_channel].loc[proton_list_event[0][1]:proton_list_event[0][-1]].mean(axis=0) # stopped here
+		proton_len = len(proton_list_event[0])
+
+		for i in proton_list_event[0]:
+			proton_var = np.sqrt(  pow((proton_data_event[proton_channel].loc[i]  -  proton_mean), 2) / (proton_len - 1)  )
+			if proton_var > 10.0:
+				proton_outlier_list.append(i)
+			proton_var_list.append(proton_var)
+
+		if len(proton_outlier_list) != 0:
+			for i in proton_outlier_list:
+				proton_df.drop(i, inplace=True)
+				proton_data_event.drop(i, inplace=True)
+			# rb_data.drop(rb_data[rb_data.values == 0.0].index, inplace=True)
+
+		proton_event_df.loc[0] = [proton_list_event[0][0], proton_list_event[0][-1], ((proton_list_event[0][-1] - proton_list_event[0][0]).seconds/60), float(proton_data_event.loc[proton_list_event[0][0]:proton_list_event[0][-1]].max().values)] # days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0])
+
+	elif len( proton_list_event ) > 1:
+
+		#====== may not work for multiple events
+		proton_var_list = []
+		proton_outlier_list = []
+
+		proton_mean = proton_df[proton_channel].loc[proton_list_event[0][1]:proton_list_event[0][-1]].mean(axis=0)
+		proton_len = len(proton_list_event[0])
+
+		for i in proton_list_event[0]:
+			proton_var = np.sqrt(  pow((proton_data_event[proton_channel].loc[i]  -  proton_mean), 2) / (proton_len - 1)  )
+			if proton_var > 10.0:
+				proton_outlier_list.append(i)
+			proton_var_list.append(proton_var)
+
+		if len(proton_outlier_list) != 0:
+			for i in proton_outlier_list:
+				proton_df.drop(i, inplace=True)
+				proton_data_event.drop(i, inplace=True)
+		# ======= end might not work
+
+		for i in range(len(proton_list_event)):
+			proton_event_df.loc[i] = [proton_list_event[i][0], proton_list_event[i][-1], ((proton_list_event[i][-1] - proton_list_event[i][0]).seconds/60), float(proton_data_event.loc[proton_list_event[i][0]:proton_list_event[i][-1]].max().values)] # days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0])
+		# print(f"{rb_list_event[i][0]} -- {rb_list_event[i][-1]}", " Total Time: ", days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0]), " minutes")
+
+	print('='*40)
+	print(f"Number of Proton Events ({start} - {end}): ", len(proton_list_event))
+	print(proton_event_df)
+	print('='*40)
+
+	# ============== end proton detection
+
+
+
 #proton flux 2003
 '''
 	if int(start_year) == 2003:
@@ -795,7 +908,7 @@ if '2' in option_bin_set:
 		rb_list_temp = []
 
 	print("\n")
-	rb_event_df = pd.DataFrame(columns=('start_time', 'end_time', 't3_duration', 't3_max_int', 'default_color'))
+	rb_event_df = pd.DataFrame(columns=('start_time', 'end_time', 't3_duration', 't3_max_int'))
 
 	# add the lists here
 	# p_10mev_list = pd.read_csv(f'{data_directory}/detected_events/event_dates/1d50pfu_10mev_2011_2017.txt', delim_whitespace=True, header=1)
@@ -807,11 +920,11 @@ if '2' in option_bin_set:
 		rb_var_list = []
 		rb_outlier_list = []
 
-		rb_mean = rb_data[120].loc[rb_list_event[0][1]:rb_list_event[0][-1]].mean(axis=0)
+		rb_mean = rb_data[t3_freq].loc[rb_list_event[0][1]:rb_list_event[0][-1]].mean(axis=0) # had 120 instead of t3_freq
 		rb_len = len(rb_list_event[0])
 
 		for i in rb_list_event[0]:
-			rb_var = np.sqrt(  pow((rb_data_event[120].loc[i]  -  rb_mean), 2) / (rb_len - 1)  )
+			rb_var = np.sqrt(  pow((rb_data_event[t3_freq].loc[i]  -  rb_mean), 2) / (rb_len - 1)  ) # had 120 instead of t3_freq
 			if rb_var > 10.0:
 				rb_outlier_list.append(i)
 			rb_var_list.append(rb_var)
@@ -822,7 +935,7 @@ if '2' in option_bin_set:
 				rb_data_event.drop(i, inplace=True)
 			# rb_data.drop(rb_data[rb_data.values == 0.0].index, inplace=True)
 
-		rb_event_df.loc[0] = [rb_list_event[0][0], rb_list_event[0][-1], ((rb_list_event[0][-1] - rb_list_event[0][0]).seconds/60), float(rb_data_event.loc[rb_list_event[0][0]:rb_list_event[0][-1]].max().values), 'green'] # days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0])
+		rb_event_df.loc[0] = [rb_list_event[0][0], rb_list_event[0][-1], ((rb_list_event[0][-1] - rb_list_event[0][0]).seconds/60), float(rb_data_event.loc[rb_list_event[0][0]:rb_list_event[0][-1]].max().values)] # days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0])
 
 	elif len( rb_list_event ) > 1:
 
@@ -830,11 +943,11 @@ if '2' in option_bin_set:
 		rb_var_list = []
 		rb_outlier_list = []
 
-		rb_mean = rb_data[120].loc[rb_list_event[0][1]:rb_list_event[0][-1]].mean(axis=0)
+		rb_mean = rb_data[t3_freq].loc[rb_list_event[0][1]:rb_list_event[0][-1]].mean(axis=0) # had 120 instead of t3_freq
 		rb_len = len(rb_list_event[0])
 
 		for i in rb_list_event[0]:
-			rb_var = np.sqrt(  pow((rb_data_event[120].loc[i]  -  rb_mean), 2) / (rb_len - 1)  )
+			rb_var = np.sqrt(  pow((rb_data_event[t3_freq].loc[i]  -  rb_mean), 2) / (rb_len - 1)  ) # had 120 instead of t3_freq
 			if rb_var > 10.0:
 				rb_outlier_list.append(i)
 			rb_var_list.append(rb_var)
@@ -846,11 +959,13 @@ if '2' in option_bin_set:
 		# ======= end might not work
 
 		for i in range(len(rb_list_event)):
-			rb_event_df.loc[i] = [rb_list_event[i][0], rb_list_event[i][-1], ((rb_list_event[i][-1] - rb_list_event[i][0]).seconds/60), float(rb_data_event.loc[rb_list_event[i][0]:rb_list_event[i][-1]].max().values), 'green'] # days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0])
+			rb_event_df.loc[i] = [rb_list_event[i][0], rb_list_event[i][-1], ((rb_list_event[i][-1] - rb_list_event[i][0]).seconds/60), float(rb_data_event.loc[rb_list_event[i][0]:rb_list_event[i][-1]].max().values)] # days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0])
 		# print(f"{rb_list_event[i][0]} -- {rb_list_event[i][-1]}", " Total Time: ", days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0]), " minutes")
 
+	print('='*40)
 	print(f"Number of Radio Events ({start} - {end}): ", len(rb_list_event))
 	print(rb_event_df)
+	print('='*40)
 
 
 
@@ -1580,6 +1695,20 @@ if '1' in option_bin_set:
 	
 		axes[length_data_list[j]].set_yticks([10**-3, 10**-2, 10**-1, 10**0, 10**1, 10**2, 10**3])
 		axes[length_data_list[j]].set_ylabel(f'GOES-{satellite_no} Proton\nFlux [pfu]', fontname="Arial", fontsize = 12)
+
+
+
+	s_time = datetime.datetime.strptime(start_hour, '%H').time()
+	e_time = datetime.datetime.strptime(end_hour, '%H').time()
+
+	s_dtime = datetime.datetime.combine(start, s_time)
+	e_dtime = datetime.datetime.combine(end, e_time)
+
+	for i in range(len(proton_event_df)):
+		if s_dtime <= (proton_event_df['start_time'][i] and proton_event_df['end_time'][i]) <= e_dtime:
+			axes[length_data_list[j]].axvspan(proton_event_df['start_time'][i], proton_event_df['end_time'][i], color='blue', alpha=0.5)
+	axes[length_data_list[j]].axhline(proton_threshold, linewidth=1, zorder=2, color='red', linestyle='-', label=f'{proton_threshold} pfu') #  xmin=0, xmax=1
+
 	applyPlotStyle()
 
 
@@ -1633,7 +1762,7 @@ if '2' in option_bin_set:
 		# axes[length_data_list[j]].axvspan(rb_event_df['start_time'].values, rb_event_df['end_time'].values, color='blue', alpha=0.5)
 
 
-	axes[length_data_list[j]].axhline(t3_threshold, linewidth=1, zorder=1, color='red', linestyle='-', label=f'{t3_threshold} sfu') #  xmin=0, xmax=1
+	axes[length_data_list[j]].axhline(t3_threshold, linewidth=1, zorder=2, color='red', linestyle='-', label=f'{t3_threshold} sfu') #  xmin=0, xmax=1
 
 
 	# axes[length_data_list[j]].set_ylim(0, 100) # commented to allow for auto y-scaling, remove for rigid axis
