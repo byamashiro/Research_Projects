@@ -13,7 +13,26 @@
 
 # Current Tasks and Errors
 
-- [ ] Finish solar parameter catalog
+
+- [ ] Gather proton flux data from GOES-13 (https://satdat.ngdc.noaa.gov/sem/goes/data/avg/)
+  - Use time averaged data, 5 minute intervals
+   - [ ] Proton max flux
+   - [ ] Proton max flux time
+
+- [ ] Plotting
+  - [ ] Max proton flux vs. max Xray intensity
+  - [ ] Max proton flux vs. CME speed
+
+
+
+
+
+# Completed Tasks
+
+<details><summary>Completed Task List</summary>
+<p>
+
+- [x] Finish solar parameter catalog (01/16/2018)
   - Flare (http://www.lmsal.com/solarsoft/latest_events_archive.html)
     - Flare start time, max time, end time
     - Flare location
@@ -38,10 +57,13 @@
       - Kp maximum date
       - Kp maximum index
 
+</p>
+</details>
 
-- [ ] Plot Practice
-  - [ ] Max proton flux vs. max Xray intensity
-  - [ ] Max proton flux vs. CME speed
+
+
+
+
 
 
 <details><summary>Current Tasks and Errors</summary>
