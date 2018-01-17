@@ -14,11 +14,12 @@
 # Current Tasks and Errors
 
 
-- [ ] Gather proton flux data from GOES-13 (https://satdat.ngdc.noaa.gov/sem/goes/data/avg/)
+- [ ] Gather proton flux data from GOES-13 for all events (https://satdat.ngdc.noaa.gov/sem/goes/data/avg/)
    - [ ] Proton max flux for 5min time averaged >100 MeV data
     - g13_epead_cpflux_5m_yyyymmdd_yyyymmdd.csv
     - ZPGT100W
    - [ ] Proton max flux time for 5min time averaged >100 MeV data
+   - [ ] Plot proton flux against time
 
 - [ ] Plotting
   - [ ] Max proton flux vs. max Xray intensity
@@ -60,11 +61,6 @@
 
 </p>
 </details>
-
-
-
-
-
 
 
 <details><summary>Current Tasks and Errors</summary>
