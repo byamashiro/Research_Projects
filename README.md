@@ -139,6 +139,10 @@
 <p>
 
 
+### OMNI script outlier algorithm fails for longer time ranges
+- When compiling a range of dates (20120306 to 20120315), the algorithm fails to remove the outlier data point on 20120307. The algorithm works for shorter time ranges (i.e 1-3 days), therefore the subsequent radio burst events raise raise the variance threshold.
+
+
 ### OMNI script crash with multiple dates and downloads
 - When retrieving data for plots, that do not exist locally, a key error is produced while plotting. This value error does not trigger when local files exist. 
 ```python

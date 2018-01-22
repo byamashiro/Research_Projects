@@ -939,7 +939,7 @@ if '2' in option_bin_set:
 
 	elif len( rb_list_event ) > 1:
 
-		#====== may not work for multiple events
+		#====== may not work for multiple events (more data points with added events lower threshold for variance)
 		rb_var_list = []
 		rb_outlier_list = []
 
