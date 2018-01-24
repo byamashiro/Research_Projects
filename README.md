@@ -132,6 +132,10 @@
 - [ ] Remastered Wind Type III Radio Burst Update
   - [ ] Add the sigma clipping algorithm from the omni script
 
+- [ ] OMNI script proton event clipping
+  - [ ] Slice the month into the event days entered
+  - [ ] Modify the algorithms to operate on the sliced data
+
 </p>
 </details>
 
