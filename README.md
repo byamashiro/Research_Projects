@@ -135,12 +135,18 @@
 - [ ] OMNI script proton event clipping
   - [ ] Slice the month into the event days entered
   - [ ] Modify the algorithms to operate on the sliced data
+  - [ ] Fix the highlighting algorithm to work for single days
+
 
 </p>
 </details>
 
 <details><summary>Current Tasks and Errors</summary>
 <p>
+
+
+### OMNI script highlighting does not work for day intervals
+- To recreate this issue, run OMNI script for 20120307 and the event will not be highlighted. The highlight is present when the full event is parsed, therefore running the script from 20120306 to 20120315 will produce the correct results.
 
 
 ### OMNI script outlier algorithm fails for longer time ranges
