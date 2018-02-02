@@ -145,15 +145,7 @@
 <p>
 
 
-### OMNI script does not report the correct proton event durations
-- When parsing a proton event that is over a day, i.e. [Timestamp('2013-05-22 13:55:00') to Timestamp('2013-05-24 14:00:00')], the reported duration is 5 minutes. Although the timedelta reports the difference correctly, Timedelta('2 days 00:05:00'), the method to change the delta into seconds registers 300 seconds (5 minutes).
-```bash
-In [15]: proton_list_event[0][-1] - proton_list_event[0][0]
-Out[15]: Timedelta('2 days 00:05:00')
 
-In [16]: (proton_list_event[0][-1] - proton_list_event[0][0]).seconds/60
-Out[16]: 5.0
-```
 
 ### OMNI script highlighting does not work for day intervals
 - To recreate this issue, run OMNI script for 20120307 and the event will not be highlighted. The highlight is present when the full event is parsed, therefore running the script from 20120306 to 20120315 will produce the correct results.
@@ -843,6 +835,24 @@ datetime
 </p>
 </details>
 
+
+### OMNI script does not report the correct proton event durations (02/01/2018)
+* **Resolution**: changed the ".seconds" to ".total_seconds()". This reports the total amount of time elapsed, 173100.00 seconds.
+```bash
+In [15]: proton_list_event[0][-1] - proton_list_event[0][0]
+Out[15]: Timedelta('2 days 00:05:00')
+
+In [20]: (proton_list_event[0][-1] - proton_list_event[0][0]).total_seconds()
+Out[20]: 173100.0
+```
+- When parsing a proton event that is over a day, i.e. [Timestamp('2013-05-22 13:55:00') to Timestamp('2013-05-24 14:00:00')], the reported duration is 5 minutes. Although the timedelta reports the difference correctly, Timedelta('2 days 00:05:00'), the method to change the delta into seconds registers 300 seconds (5 minutes).
+```bash
+In [15]: proton_list_event[0][-1] - proton_list_event[0][0]
+Out[15]: Timedelta('2 days 00:05:00')
+
+In [16]: (proton_list_event[0][-1] - proton_list_event[0][0]).seconds/60
+Out[16]: 5.0
+```
 
 
 
