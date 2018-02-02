@@ -144,7 +144,6 @@
 <details><summary>Current Tasks and Errors</summary>
 <p>
 
-
 ### OMNI script highlighting does not work for day intervals
 - To recreate this issue, run OMNI script for 20120307 and the event will not be highlighted. The highlight is present when the full event is parsed, therefore running the script from 20120306 to 20120315 will produce the correct results.
 
@@ -832,6 +831,11 @@ datetime
 
 </p>
 </details>
+
+
+### OMNI script proton highlighting issue for larger data gaps (02/01/2018)
+* **Resolution**: Changed the time delta to 40 minutes to account for the data gap in the algorithm that combined event points. The rest of the parameters were kept at 30 minutes.
+- To recreate this issue, run OMNI script for 20130522 to 20130524. The data gap is large enough to split the >100 MeV proton detection into two separate events. The current settings for timedelta in minutes are set to 30 minutes. The gap of data for proton flux is from 2013-05-22 14:25:00 to 2013-05-22 15:05:00, 40 minutes.
 
 
 ### OMNI script proton flux overlapping the wrong energy ranges (01/12/2018)

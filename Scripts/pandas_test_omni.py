@@ -576,21 +576,21 @@ if '1' in option_bin_set:
 			proton_list_temp.append(i)
 
 		elif len(proton_list_temp) >= 1:
-			if (i - proton_list_temp[-1]) <= datetime.timedelta(minutes=30): # originally 5 minutes
+			if (i - proton_list_temp[-1]) <= datetime.timedelta(minutes=40): # originally 5 minutes # also had at 30 minutes, but increasing to 40 # time between first interval of time event to the second
 				proton_list_temp.append(i)
 
-			elif (i - proton_list_temp[-1]) > datetime.timedelta(minutes=30): # originally 5 minutes
-				if (proton_list_temp[-1] - proton_list_temp[0]) >= datetime.timedelta(minutes=30):
+			elif (i - proton_list_temp[-1]) > datetime.timedelta(minutes=40): # originally 5 minutes
+				if (proton_list_temp[-1] - proton_list_temp[0]) >= datetime.timedelta(minutes=40):
 					proton_list_event.append(proton_list_temp)
 					proton_list_temp = []
 					proton_list_temp.append(i)
 
-				elif (proton_list_temp[-1] - proton_list_temp[0]) < datetime.timedelta(minutes=30):
+				elif (proton_list_temp[-1] - proton_list_temp[0]) < datetime.timedelta(minutes=30): # if the time difference is less than 30 minutes, then create a new event
 					proton_list_temp = []
 					proton_list_temp.append(i)
 
 	if len(proton_list_temp) > 0:
-		if (proton_list_temp[-1] - proton_list_temp[0]) >= datetime.timedelta(minutes=30):
+		if (proton_list_temp[-1] - proton_list_temp[0]) >= datetime.timedelta(minutes=40):
 			proton_list_event.append(proton_list_temp)
 			proton_list_temp = []
 			proton_list_temp.append(i)
@@ -908,7 +908,7 @@ if '2' in option_bin_set:
 		rb_list_temp = []
 
 	print("\n")
-	rb_event_df = pd.DataFrame(columns=('start_time', 'end_time', 't3_duration', 't3_max_int'))
+	rb_event_df = pd.DataFrame(columns=('start_time', 'end_time', 't3_duration', 't3_max_time', 't3_max_int'))
 
 	# add the lists here
 	# p_10mev_list = pd.read_csv(f'{data_directory}/detected_events/event_dates/1d50pfu_10mev_2011_2017.txt', delim_whitespace=True, header=1)
@@ -935,7 +935,7 @@ if '2' in option_bin_set:
 				rb_data_event.drop(i, inplace=True)
 			# rb_data.drop(rb_data[rb_data.values == 0.0].index, inplace=True)
 
-		rb_event_df.loc[0] = [rb_list_event[0][0], rb_list_event[0][-1], ((rb_list_event[0][-1] - rb_list_event[0][0]).seconds/60), float(rb_data_event.loc[rb_list_event[0][0]:rb_list_event[0][-1]].max().values)] # days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0])
+		rb_event_df.loc[0] = [rb_list_event[0][0], rb_list_event[0][-1], ((rb_list_event[0][-1] - rb_list_event[0][0]).seconds/60), rb_data_event[int(f'{t3_freq}')].loc[rb_list_event[0][0]:rb_list_event[0][-1]].idxmax(), float(rb_data_event.loc[rb_list_event[0][0]:rb_list_event[0][-1]].max().values)] # days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0])
 
 	elif len( rb_list_event ) > 1:
 
@@ -959,11 +959,11 @@ if '2' in option_bin_set:
 		# ======= end might not work
 
 		for i in range(len(rb_list_event)):
-			rb_event_df.loc[i] = [rb_list_event[i][0], rb_list_event[i][-1], ((rb_list_event[i][-1] - rb_list_event[i][0]).seconds/60), float(rb_data_event.loc[rb_list_event[i][0]:rb_list_event[i][-1]].max().values)] # days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0])
+			rb_event_df.loc[i] = [rb_list_event[i][0], rb_list_event[i][-1], ((rb_list_event[i][-1] - rb_list_event[i][0]).seconds/60), rb_data_event[int(f'{t3_freq}')].loc[rb_list_event[i][0]:rb_list_event[i][-1]].idxmax(), float(rb_data_event.loc[rb_list_event[i][0]:rb_list_event[i][-1]].max().values), ] # days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0])
 		# print(f"{rb_list_event[i][0]} -- {rb_list_event[i][-1]}", " Total Time: ", days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0]), " minutes")
 
 	print('='*40)
-	print(f"Number of Radio Events ({start} - {end}): ", len(rb_list_event))
+	print(f"Number of Radio Events ({start} - {end}) [{t3_freq} kHz]: ", len(rb_list_event))
 	print(rb_event_df)
 	print('='*40)
 
@@ -1646,6 +1646,10 @@ def applyPlotStyle():
 		# low_bin_proton_str = sorted(energy_bin_list)[0][1]
 		axes[length_data_list[j]].axvline(proton_df[f'{low_bin_proton}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax(), linewidth=1, zorder=1, color='purple', linestyle='--', label='Max >10MeV') # (proton_df.P6W_UNCOR_FLUX.max()) # changed maximum flux to be within time interval specified
 		axes[length_data_list[j]].axvline(proton_df[f'{high_bin_proton}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax(), linewidth=1, zorder=1, color='green', linestyle='--', label='Max >100MeV') # (proton_df.P6W_UNCOR_FLUX.max()) # changed maximum flux to be within time interval specified
+	
+	if '2' in option_bin_set:
+		axes[length_data_list[j]].axvline(rb_event_df['t3_max_time'].loc[rb_event_df['t3_duration'].idxmax()], linewidth=1, zorder=1, color='orange', linestyle='--', label='Max T3 Intensity') # (proton_df.P6W_UNCOR_FLUX.max()) # changed maximum flux to be within time interval specified
+
 	if '5' in option_bin_set:
 		xray_df['B_FLUX'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax()
 		fint = xray_df['B_FLUX'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].max()
