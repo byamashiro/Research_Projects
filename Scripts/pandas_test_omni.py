@@ -17,6 +17,7 @@ from dateutil.relativedelta import relativedelta
 import shutil
 
 plt.close("all")
+plt.ion()
 # ======= Parameters to set
 
 data_directory = '/Users/bryanyamashiro/Documents/Research_Projects/Data'
@@ -558,7 +559,7 @@ if '1' in option_bin_set:
 
 	# ======= proton event detection
 	# ======= added for event options
-	proton_threshold = pow(10, -0.9) # t3_threshold = 5 # 5
+	proton_threshold = pow(10, -0.8) # t3_threshold = 5 # 5 # pow(10, -0.9)
 	proton_channel = 'ZPGT100W' # t3_freq = 120
 
 	proton_data_event = pd.DataFrame([])
@@ -576,11 +577,11 @@ if '1' in option_bin_set:
 			proton_list_temp.append(i)
 
 		elif len(proton_list_temp) >= 1:
-			if (i - proton_list_temp[-1]) <= datetime.timedelta(minutes=40): # originally 5 minutes # also had at 30 minutes, but increasing to 40 # time between first interval of time event to the second
+			if (i - proton_list_temp[-1]) <= datetime.timedelta(minutes=40): # originally 5 minutes # also had at 30 minutes, but increasing to 40 
 				proton_list_temp.append(i)
 
-			elif (i - proton_list_temp[-1]) > datetime.timedelta(minutes=40): # originally 5 minutes
-				if (proton_list_temp[-1] - proton_list_temp[0]) >= datetime.timedelta(minutes=40):
+			elif (i - proton_list_temp[-1]) > datetime.timedelta(minutes=40): # originally 5 minutes # time between first interval of time event to the second
+				if (proton_list_temp[-1] - proton_list_temp[0]) >= datetime.timedelta(minutes=30):
 					proton_list_event.append(proton_list_temp)
 					proton_list_temp = []
 					proton_list_temp.append(i)
@@ -590,7 +591,7 @@ if '1' in option_bin_set:
 					proton_list_temp.append(i)
 
 	if len(proton_list_temp) > 0:
-		if (proton_list_temp[-1] - proton_list_temp[0]) >= datetime.timedelta(minutes=40):
+		if (proton_list_temp[-1] - proton_list_temp[0]) >= datetime.timedelta(minutes=30):
 			proton_list_event.append(proton_list_temp)
 			proton_list_temp = []
 			proton_list_temp.append(i)
