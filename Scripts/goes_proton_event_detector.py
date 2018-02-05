@@ -34,8 +34,8 @@ if energy_parse != 10:
 
 
 if energy_parse == 100:
-	detection_threshold = 0.25 # 0.25
-	detection_threshold_str = '0d25' # 0.50
+	detection_threshold = pow(10, -0.8) # 0.25 # detection threshold changed from 0.25 to pow(10, -0.8) (02/02/2018)
+	detection_threshold_str = 'new' # 0.50 # changed from '0d25' to pow(10, -0.8)
 	energy_channel = 100
 	energy_header = 'ZPGT100W' # just change the integer
 	
@@ -59,7 +59,7 @@ elif energy_parse == 10:
 detection_year = input("Enter year to parse (yyyy) or 'all': ").lower() #yyyypurge or yyyypurgeall
 if detection_year == 'all':
 	year_list = []
-	year_list = ['2011', '2012', '2013', '2014', '2015', '2016', '2017']
+	year_list = ['2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018']
 
 elif 'purge' in detection_year: # detection_year == 'purge'
 	year_list = []
@@ -315,7 +315,7 @@ if plot_option == 'yes':
 
 
 			plt.axhline(detection_threshold, color='yellow', linestyle='-',linewidth=4 , zorder = 1)
-			plt.axhline(0.25, color='green', linestyle='--', label='100 MeV', zorder = 1)
+			plt.axhline(pow(10, -0.8), color='green', linestyle='--', label='100 MeV', zorder = 1) # 0.25
 			plt.axhline(0.60, color='navy', linestyle='--', label='50 MeV', zorder = 1)
 			plt.axhline(1.5, color='crimson', linestyle='--', label='10 MeV', zorder = 1)
 

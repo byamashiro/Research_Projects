@@ -926,7 +926,7 @@ if '2' in option_bin_set:
 
 		for i in rb_list_event[0]:
 			rb_var = np.sqrt(  pow((rb_data_event[t3_freq].loc[i]  -  rb_mean), 2) / (rb_len - 1)  ) # had 120 instead of t3_freq
-			if rb_var > 10.0:
+			if rb_var > 10.0: # was set at 10.0 20120205
 				rb_outlier_list.append(i)
 			rb_var_list.append(rb_var)
 
