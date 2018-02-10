@@ -7,30 +7,37 @@ import sys
 import wget
 import os, errno
 import random
-from spacepy import pycdf
-from urllib import error
-from matplotlib.pyplot import cm
-import glob
+# from spacepy import pycdf
+# from urllib import error
+# from matplotlib.pyplot import cm
+# import glob
 
 import calendar
-
 import shutil
+import scipy.optimize as optimization
 
-
-import cartopy.crs as ccrs
-from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
-from matplotlib.pyplot import cm
 
 plt.close("all")
 plt.ion()
 
 data_directory = '/Users/bryanyamashiro/Documents/Research_Projects/Data'
 
-data = pd.read_csv('corr_data_20180204.csv', sep=',', comment='#')
-
-
 option_bin_set = '1'
 
+
+def func(params, xdata, ydata):
+	return (ydata - np.dot(xdata, params))
+
+data = pd.read_csv('corr_data_20180204.csv', sep=',', comment='#')
+
+'''
+xdata = data['goes_max_proton']
+ydata = data['fluence']
+# Initial guess
+x0 = np.array([0.0, 0.0, 0.0])
+
+print(optimization.leastsq(func, x0, args=(xdata, ydata)))
+'''
 
 #=========== Plotting Data
 '''
@@ -81,11 +88,13 @@ if '1' in option_bin_set:
 
 	axes[length_data_list[j]].plot(data['fluence'], data['goes_max_proton'], 'o', mfc='none', color='blue', label= '120 kHz Fluence', zorder=5)#, logy=True)
 	axes[length_data_list[j]].set_yscale('log')
+	axes[length_data_list[j]].set_xscale('log')
+
 	# axes[length_data_list[j]].set_ylim((10**(-3)), (10**3))
 	
 	# axes[length_data_list[j]].set_yticks([10**-3, 10**-2, 10**-1, 10**0, 10**1, 10**2, 10**3])
-	axes[length_data_list[j]].set_ylabel(f'Max Proton Flux [pfu]', fontname="Arial", fontsize = 12)
-	axes[length_data_list[j]].set_xlabel(r'Corrected Type III Radio Burst Fluence [sfu$\cdot$s$_{TIII}$/s$_{GOES}$]', fontname="Arial", fontsize = 12)
+	axes[length_data_list[j]].set_ylabel(f'log(Max Proton Flux) [pfu]', fontname="Arial", fontsize = 12)
+	axes[length_data_list[j]].set_xlabel(r'log(Corrected Type III Radio Burst Fluence) [(sfu$\cdot$min$_{TIII}$)$\cdot$ min$_{GOES}$]', fontname="Arial", fontsize = 12)
 
 
 	applyPlotStyle()
@@ -164,7 +173,9 @@ if '5' in option_bin_set:
 	next_global()
 	axes[length_data_list[j]].plot(xray_df['B_FLUX'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='blue', label='0.1-0.8 nm', zorder=5)
 	axes[length_data_list[j]].plot(xray_df['A_FLUX'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='red', label='0.05-0.4 nm', zorder=5)
+
 	axes[length_data_list[j]].set_yscale('log')
+
 
 
 	'''

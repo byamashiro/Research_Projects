@@ -57,7 +57,7 @@ def daterange( start_date, end_date ):
 
 #==============Choosing Dataset
 
-print(f'{"="*40}\n{"=" + "DATASETS".center(38," ") + "="}\n{"="*40}\n1 - GOES-13/15 Proton Flux\n2 - Wind Type III Radio Bursts\n3 - Neutron Monitor Counts (Requires Internet Connection)\n4 - ACE/Wind Solar Wind Speed\n5 - GOES-13/15 Xray Flux\n6 - STEREO-A Proton Flux\n7 - STEREO-B Proton Flux\n{"="*40}')
+print(f'{"="*40}\n{"=" + "DATASETS".center(38," ") + "="}\n{"="*40}\n1 - GOES-13/15 Proton Flux\n2 - Wind Type III Radio Bursts\n3 - Neutron Monitor Counts (Requires Internet Connection)\n4 - ACE/Wind Solar Wind Speed\n5 - GOES-13/15 Xray Flux\n6 - STEREO-A Proton Flux\n7 - STEREO-B Proton Flux\n8 - GOES-13/15 HEPAD Proton Flux\n{"="*40}')
 
 '''
 1 - GOES Proton Flux
@@ -71,7 +71,7 @@ print(f'{"="*40}\n{"=" + "DATASETS".center(38," ") + "="}\n{"="*40}\n1 - GOES-13
 option_bin_set = set()
 while True: # energy_bin != 'done':
 	if event_option == 'yes':
-		option_bin_set = {'1', '2', '4', '5', '6', '7'}
+		option_bin_set = {'1', '2', '4', '5', '6', '7', '8'}
 
 		break
 
@@ -80,16 +80,18 @@ while True: # energy_bin != 'done':
 
 		if option_bin != 'done':
 			if option_bin == 'all':
-				option_bin_set.add('1')	# 1 - GOES-13/15 Proton Flux
+				option_bin_set.add('1')	# 1 - GOES-13/15 Epead Proton Flux
 				option_bin_set.add('2')	# 2 - Wind Type III Radio Bursts
 				option_bin_set.add('3')	# 3 - Neutron Monitor Counts (Requires Internet Connection)
 				option_bin_set.add('4')	# 4 - ACE/Wind Solar Wind Speed
 				option_bin_set.add('5')	# 5 - GOES-13/15 Xray Flux
 				option_bin_set.add('6')	# 6 - STEREO-A Proton Flux
 				option_bin_set.add('7')	# 7 - STEREO-B Proton Flux
+				option_bin_set.add('8')	# 8 - GOES-13/15 HEPAD Proton Flux
+
 				break
 			
-			elif int(option_bin) < 8:
+			elif int(option_bin) < 9:
 				option_bin_set.add(option_bin)
 				'''
 				if len(option_bin_set) > 4 and long_plot_option == 'no':
@@ -253,7 +255,6 @@ if '1' in option_bin_set:
 						print(e)
 						print(f'{date_event.month} does not have data.')
 
-				print("im working 1")
 				proton_df.drop(proton_df[proton_df['ZPGT10W'] <= 0.0].index, inplace=True)
 				proton_df.drop(proton_df[proton_df['ZPGT50W'] <= 0.0].index, inplace=True)
 				proton_df.drop(proton_df[proton_df['ZPGT100W'] <= 0.0].index, inplace=True)
@@ -1536,6 +1537,260 @@ if '7' in option_bin_set:
 	stb_df.drop(stb_df[stb_df[29] <= 0.0].index, inplace=True)
 	stb_df.drop(stb_df[stb_df[27] <= 0.0].index, inplace=True)
 
+
+
+
+
+#=========== 8: GOES Proton Flux HEPAD
+if '8' in option_bin_set:
+	if event_option == 'yes':
+		satellite_no = str(event_list['prot_sat'][0])
+
+	if event_option != 'yes':
+		satellite_no = input('Specify which GOES Satellite for Proton Flux (13 or 15): ')
+		if satellite_no != '13':
+			if satellite_no != '15':
+				if satellite_no != '10':
+					print('SATELLITE ERROR: Must specify either 13 or 15.')
+					sys.exit(0)
+
+
+
+	if goes_corrected_option == 'yes':
+		print(f'\n{"="*40}\n{"=" + f"GOES-{satellite_no} Proton Flux HEPAD".center(38," ") + "="}\n{"="*40}')
+
+		HEP_energy_bin_list = []
+
+		if start_date[4:6] != end_date[4:6]: # if the month of the start day is NOT the same as the month of the end date
+			HEP_proton_df = pd.DataFrame([])
+
+			cur_date =  start
+			date_in_year = [cur_date]
+
+			while cur_date < end:
+				# print(cur_date)
+				cur_date += relativedelta(months=1)
+				date_in_year.append(cur_date)
+
+
+			if start.year >= 2011:
+				# cpflux_names = ['time_tag','ZPGT1E_QUAL_FLAG', 'ZPGT1E', 'ZPGT5E_QUAL_FLAG', 'ZPGT5E', 'ZPGT10E_QUAL_FLAG', 'ZPGT10E', 'ZPGT30E_QUAL_FLAG', 'ZPGT30E', 'ZPGT50E_QUAL_FLAG', 'ZPGT50E', 'ZPGT60E_QUAL_FLAG', 'ZPGT60E', 'ZPGT100E_QUAL_FLAG', 'ZPGT100E', 'ZPGT1W_QUAL_FLAG', 'ZPGT1W', 'ZPGT5W_QUAL_FLAG', 'ZPGT5W', 'ZPGT10W_QUAL_FLAG', 'ZPGT10W', 'ZPGT30W_QUAL_FLAG', 'ZPGT30W', 'ZPGT50W_QUAL_FLAG', 'ZPGT50W', 'ZPGT60W_QUAL_FLAG', 'ZPGT60W', 'ZPGT100W_QUAL_FLAG', 'ZPGT100W', 'ZPEQ5E_QUAL_FLAG', 'ZPEQ5E', 'ZPEQ15E_QUAL_FLAG', 'ZPEQ15E', 'ZPEQ30E_QUAL_FLAG', 'ZPEQ30E', 'ZPEQ50E_QUAL_FLAG', 'ZPEQ50E', 'ZPEQ60E_QUAL_FLAG', 'ZPEQ60E', 'ZPEQ100E_QUAL_FLAG', 'ZPEQ100E', 'ZPEQ5W_QUAL_FLAG', 'ZPEQ5W', 'ZPEQ15W_QUAL_FLAG', 'ZPEQ15W', 'ZPEQ30W_QUAL_FLAG', 'ZPEQ30W', 'ZPEQ50W_QUAL_FLAG', 'ZPEQ50W', 'ZPEQ60W_QUAL_FLAG', 'ZPEQ60W', 'ZPEQ100W_QUAL_FLAG', 'ZPEQ100W']
+				HEP_cpflux_names = ['time_tag','A7_QUAL_FLAG','A7_NUM_PTS','A7_FLUX','A8_QUAL_FLAG','A8_NUM_PTS','A8_FLUX','P8_QUAL_FLAG','P8_NUM_PTS','P8_FLUX','P9_QUAL_FLAG','P9_NUM_PTS','P9_FLUX','P10_QUAL_FLAG','P10_NUM_PTS','P10_FLUX','P11_QUAL_FLAG','P11_NUM_PTS','P11_FLUX']
+
+				# energy_bin_list.append(['ZPGT10W','>10 MeV', 'red'])
+				# energy_bin_list.append(['ZPGT50W','>50 MeV', 'blue'])
+				# energy_bin_list.append(['ZPGT100W','>100 MeV', 'lime'])
+
+				HEP_energy_bin_list.append(['P8_FLUX','375 MeV', 'red'])
+				HEP_energy_bin_list.append(['P9_FLUX','465 MeV', 'orange'])
+				HEP_energy_bin_list.append(['P10_FLUX','605 MeV', 'green'])
+				HEP_energy_bin_list.append(['P11_FLUX','>700 MeV', 'blue'])
+
+
+				for date_event in date_in_year:
+					try:
+						f_l_day = calendar.monthrange(int(date_event.year), int(date_event.month)) #	f_l_day = calendar.monthrange(int(detection_year), int(month_event))
+						event_f_day = str(f'{date_event.year}{str(date_event.month).zfill(2)}01') # {str(f_l_day[0]).zfill(2)}
+						event_l_day = str(f'{date_event.year}{str(date_event.month).zfill(2)}{str(f_l_day[1]).zfill(2)}')
+		
+		
+						dir_check = os.path.isdir(f'{data_directory}/GOES/GOES_{satellite_no}/HEPflux/{date_event.year}')
+						if dir_check == False:
+							try:
+							    os.makedirs(f'{data_directory}/GOES/GOES_{satellite_no}/HEPflux/{date_event.year}')
+							except OSError as e:
+							    if e.errno != errno.EEXIST:
+							        raise
+						
+						HEP_proton_name = f'g{satellite_no}_hepad_ap_5m_{event_f_day}_{event_l_day}.csv' #g13_epead_cpflux_5m_20110101_20110131.csv
+						proton_check = os.path.isfile(f'{data_directory}/GOES/GOES_{satellite_no}/HEPflux/{date_event.year}/{HEP_proton_name}')
+			
+						if proton_check == True:
+							dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
+							HEP_proton_df_ind = pd.read_csv(f'{data_directory}/GOES/GOES_{satellite_no}/HEPflux/{date_event.year}/{HEP_proton_name}', skiprows=310, date_parser=dateparse, names=HEP_cpflux_names,index_col='time_tag', header=0)
+							HEP_proton_df = HEP_proton_df.append(HEP_proton_df_ind)
+	
+			
+						elif proton_check == False:
+							HEP_proton_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_avg/{date_event.year}/{date_event.month}/goes{satellite_no}/csv/{HEP_proton_name}'
+							# proton_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_avg/{event_date[:4]}/{event_date[4:6]}/goes{satellite_no}/csv/{proton_name}'
+							proton_in = wget.download(HEP_proton_url)
+							dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
+							HEP_proton_df_ind = pd.read_csv(f'{proton_in}', skiprows=310, date_parser=dateparse, names=HEP_cpflux_names,index_col='time_tag', header=0) # ZPGT100W
+							HEP_proton_df = HEP_proton_df.append(HEP_proton_df_ind)
+	
+							if save_option == 'yes':
+								shutil.move(f'{HEP_proton_name}', f'{data_directory}/GOES/GOES_{satellite_no}/HEPflux/{date_event.year}')
+							elif save_option == 'no':
+								os.remove(HEP_proton_name)
+			
+						continue
+			
+					except Exception as e:
+						print(e)
+						print(f'{date_event.month} does not have data.')
+
+				HEP_proton_df.drop(HEP_proton_df[HEP_proton_df['P8_FLUX'] <= 0.0].index, inplace=True)
+				HEP_proton_df.drop(HEP_proton_df[HEP_proton_df['P9_FLUX'] <= 0.0].index, inplace=True)
+				HEP_proton_df.drop(HEP_proton_df[HEP_proton_df['P10_FLUX'] <= 0.0].index, inplace=True)
+				HEP_proton_df.drop(HEP_proton_df[HEP_proton_df['P11_FLUX'] <= 0.0].index, inplace=True)
+
+
+
+		elif start_date[4:6] == end_date[4:6]: # if the month of the start day is the same as the month of the end date
+
+			if start.year >= 2011:
+				HEP_cpflux_names = ['time_tag','A7_QUAL_FLAG','A7_NUM_PTS','A7_FLUX','A8_QUAL_FLAG','A8_NUM_PTS','A8_FLUX','P8_QUAL_FLAG','P8_NUM_PTS','P8_FLUX','P9_QUAL_FLAG','P9_NUM_PTS','P9_FLUX','P10_QUAL_FLAG','P10_NUM_PTS','P10_FLUX','P11_QUAL_FLAG','P11_NUM_PTS','P11_FLUX']
+
+				HEP_energy_bin_list.append(['P8_FLUX','375 MeV', 'red'])
+				HEP_energy_bin_list.append(['P9_FLUX','465 MeV', 'orange'])
+				HEP_energy_bin_list.append(['P10_FLUX','605 MeV', 'green'])
+				HEP_energy_bin_list.append(['P11_FLUX','>700 MeV', 'blue'])
+
+				f_l_day = calendar.monthrange(int(f'{start_year}'), int(f'{start_month}'))
+				event_f_day = str(f'{start_year}{str(start_month).zfill(2)}01') # {str(f_l_day[0]).zfill(2)}
+				event_l_day = str(f'{start_year}{str(start_month).zfill(2)}{str(f_l_day[1]).zfill(2)}')
+				dir_check = os.path.isdir(f'{data_directory}/GOES/GOES_{satellite_no}/HEPflux/{start_year}')
+				if dir_check == False:
+					try:
+					    os.makedirs(f'{data_directory}/GOES/GOES_{satellite_no}/HEPflux/{start_year}')
+					except OSError as e:
+					    if e.errno != errno.EEXIST:
+					        raise
+				
+		
+				HEP_proton_name = f'g{satellite_no}_hepad_ap_5m_{event_f_day}_{event_l_day}.csv' #g13_epead_cpflux_5m_20110101_20110131.csv
+				proton_check = os.path.isfile(f'{data_directory}/GOES/GOES_{satellite_no}/HEPflux/{start_year}/{HEP_proton_name}')
+		
+				if proton_check == True:
+					dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
+					HEP_proton_df = pd.read_csv(f'{data_directory}/GOES/GOES_{satellite_no}/HEPflux/{start_year}/{HEP_proton_name}', skiprows=310, date_parser=dateparse, names=HEP_cpflux_names,index_col='time_tag', header=0)
+		
+		
+				elif proton_check == False:
+					HEP_proton_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_avg/{start_year}/{start_month}/goes{satellite_no}/csv/{HEP_proton_name}'
+					# proton_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_avg/{event_date[:4]}/{event_date[4:6]}/goes{satellite_no}/csv/{proton_name}'
+					proton_in = wget.download(HEP_proton_url)
+					dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
+					HEP_proton_df = pd.read_csv(f'{proton_in}', skiprows=310, date_parser=dateparse, names=HEP_cpflux_names,index_col='time_tag', header=0) # ZPGT100W
+		
+					if save_option == 'yes':
+						shutil.move(f'{HEP_proton_name}', f'{data_directory}/GOES/GOES_{satellite_no}/HEPflux/{start_year}')
+					elif save_option == 'no':
+						os.remove(HEP_proton_name)
+		
+				HEP_proton_df.drop(HEP_proton_df[HEP_proton_df['P8_FLUX'] <= 0.0].index, inplace=True)
+				HEP_proton_df.drop(HEP_proton_df[HEP_proton_df['P9_FLUX'] <= 0.0].index, inplace=True)
+				HEP_proton_df.drop(HEP_proton_df[HEP_proton_df['P10_FLUX'] <= 0.0].index, inplace=True)
+				HEP_proton_df.drop(HEP_proton_df[HEP_proton_df['P11_FLUX'] <= 0.0].index, inplace=True)
+		
+
+
+	# ======= proton event detection
+	# ======= added for event options
+	
+	HEP_proton_threshold = pow(10, -0.8) # t3_threshold = 5 # 5 # pow(10, -0.9)
+	HEP_proton_channel = 'P8_FLUX' # t3_freq = 120
+
+	HEP_proton_data_event = pd.DataFrame([])
+	HEP_proton_concat_event = HEP_proton_df[[HEP_proton_channel]]
+	HEP_proton_data_event = HEP_proton_data_event.append(HEP_proton_concat_event)
+	# proton_data_event.drop(proton_df[proton_df.values == 0.0].index, inplace=True) # proton_data.values == 0.0
+
+	HEP_proton_event_df = pd.DataFrame([])
+	HEP_proton_list_temp = []
+	HEP_proton_list_event = []
+	proton_counter = 0
+
+	for i in HEP_proton_data_event[HEP_proton_data_event.values > HEP_proton_threshold].index: # for i in rb_data[rb_data.values > 300].index: # one level is 1 minute
+		if len(HEP_proton_list_temp) == 0:
+			HEP_proton_list_temp.append(i)
+
+		elif len(HEP_proton_list_temp) >= 1:
+			if (i - HEP_proton_list_temp[-1]) <= datetime.timedelta(minutes=40): # originally 5 minutes # also had at 30 minutes, but increasing to 40 
+				HEP_proton_list_temp.append(i)
+
+			elif (i - HEP_proton_list_temp[-1]) > datetime.timedelta(minutes=40): # originally 5 minutes # time between first interval of time event to the second
+				if (HEP_proton_list_temp[-1] - HEP_proton_list_temp[0]) >= datetime.timedelta(minutes=30):
+					HEP_proton_list_event.append(HEP_proton_list_temp)
+					HEP_proton_list_temp = []
+					HEP_proton_list_temp.append(i)
+
+				elif (HEP_proton_list_temp[-1] - HEP_proton_list_temp[0]) < datetime.timedelta(minutes=30): # if the time difference is less than 30 minutes, then create a new event
+					HEP_proton_list_temp = []
+					HEP_proton_list_temp.append(i)
+
+	if len(HEP_proton_list_temp) > 0:
+		if (HEP_proton_list_temp[-1] - HEP_proton_list_temp[0]) >= datetime.timedelta(minutes=30):
+			HEP_proton_list_event.append(HEP_proton_list_temp)
+			HEP_proton_list_temp = []
+			HEP_proton_list_temp.append(i)
+		elif (HEP_proton_list_temp[-1] - HEP_proton_list_temp[0]) < datetime.timedelta(minutes=30):
+			HEP_proton_list_temp = []
+			HEP_proton_list_temp.append(i)
+		HEP_proton_list_temp = []
+
+	print("\n")
+	HEP_proton_event_df = pd.DataFrame(columns=('start_time', 'end_time', 'proton_duration', 'proton_max_int'))
+
+	# add the lists here
+	# p_10mev_list = pd.read_csv(f'{data_directory}/detected_events/event_dates/1d50pfu_10mev_2011_2017.txt', delim_whitespace=True, header=1)
+
+
+
+	# =========  Outlier list
+	if len( HEP_proton_list_event ) == 1:
+		HEP_proton_var_list = []
+		HEP_proton_outlier_list = []
+
+		HEP_proton_mean = HEP_proton_df[HEP_proton_channel].loc[HEP_proton_list_event[0][1]:HEP_proton_list_event[0][-1]].mean(axis=0) # stopped here
+		HEP_proton_len = len(HEP_proton_list_event[0])
+
+		for i in HEP_proton_list_event[0]:
+			proton_var = np.sqrt(  pow((HEP_proton_data_event[HEP_proton_channel].loc[i]  -  HEP_proton_mean), 2) / (HEP_proton_len - 1)  )
+			if proton_var > 10.0:
+				HEP_proton_outlier_list.append(i)
+			HEP_proton_var_list.append(proton_var)
+
+		if len(HEP_proton_outlier_list) != 0:
+			for i in HEP_proton_outlier_list:
+				HEP_proton_df.drop(i, inplace=True)
+				HEP_proton_data_event.drop(i, inplace=True)
+			# rb_data.drop(rb_data[rb_data.values == 0.0].index, inplace=True)
+
+		HEP_proton_event_df.loc[0] = [HEP_proton_list_event[0][0], HEP_proton_list_event[0][-1], ((HEP_proton_list_event[0][-1] - HEP_proton_list_event[0][0]).total_seconds()/60), float(HEP_proton_data_event.loc[HEP_proton_list_event[0][0]:HEP_proton_list_event[0][-1]].max().values)] # days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0])
+
+	elif len( HEP_proton_list_event ) > 1:
+
+		#====== may not work for multiple events
+		HEP_proton_var_list = []
+		HEP_proton_outlier_list = []
+
+		HEP_proton_mean = HEP_proton_df[HEP_proton_channel].loc[HEP_proton_list_event[0][1]:HEP_proton_list_event[0][-1]].mean(axis=0)
+		HEP_proton_len = len(HEP_proton_list_event[0])
+
+		for i in HEP_proton_list_event[0]:
+			proton_var = np.sqrt(  pow((HEP_proton_data_event[HEP_proton_channel].loc[i]  -  HEP_proton_mean), 2) / (HEP_proton_len - 1)  )
+			if proton_var > 10.0:
+				HEP_proton_outlier_list.append(i)
+			HEP_proton_var_list.append(proton_var)
+
+		if len(HEP_proton_outlier_list) != 0:
+			for i in HEP_proton_outlier_list:
+				HEP_proton_df.drop(i, inplace=True)
+				HEP_proton_data_event.drop(i, inplace=True)
+		# ======= end might not work
+
+		for i in range(len(HEP_proton_list_event)):
+			HEP_proton_event_df.loc[i] = [HEP_proton_list_event[i][0], HEP_proton_list_event[i][-1], ((HEP_proton_list_event[i][-1] - HEP_proton_list_event[i][0]).total_seconds()/60), float(HEP_proton_data_event.loc[HEP_proton_list_event[i][0]:HEP_proton_list_event[i][-1]].max().values)] # days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0])
+		# print(f"{rb_list_event[i][0]} -- {rb_list_event[i][-1]}", " Total Time: ", days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0]), " minutes")
+
+	print('='*40)
+	print(f"Number of Proton Events ({start} - {end}): ", len(HEP_proton_list_event))
+	print(HEP_proton_event_df)
+	print('='*40)
+
+
 '''
 # Templates for new data
 
@@ -1544,7 +1799,7 @@ print(f'\n{"="*40}\nNew Dataset Name Goes Here\n{"="*40}')
 '''
 
 
-
+# =========================================================== END OF DATA (PLOTTING)
 
 
 
@@ -1690,7 +1945,7 @@ if '1' in option_bin_set:
 		# axes[length_data_list[j]].set_ylim((10**(-3)), (10**3))
 	
 		axes[length_data_list[j]].set_yticks([10**-2, 10**-1, 10**0, 10**1, 10**2, 10**3]) # 10**-3, 
-		axes[length_data_list[j]].set_ylabel(f'GOES-{satellite_no} Proton\nFlux [pfu]', fontname="Arial", fontsize = 12)
+		axes[length_data_list[j]].set_ylabel(f'GOES-{satellite_no} Epead Proton\nFlux [pfu]', fontname="Arial", fontsize = 12)
 
 	elif goes_corrected_option == 'no':
 		for i in sorted(energy_bin_list):
@@ -1699,7 +1954,7 @@ if '1' in option_bin_set:
 		# axes[length_data_list[j]].set_ylim((10**(-3)), (10**3))
 	
 		axes[length_data_list[j]].set_yticks([10**-3, 10**-2, 10**-1, 10**0, 10**1, 10**2, 10**3])
-		axes[length_data_list[j]].set_ylabel(f'GOES-{satellite_no} Proton\nFlux [pfu]', fontname="Arial", fontsize = 12)
+		axes[length_data_list[j]].set_ylabel(f'GOES-{satellite_no} Epead Proton\nFlux [pfu]', fontname="Arial", fontsize = 12)
 
 
 
@@ -1712,7 +1967,7 @@ if '1' in option_bin_set:
 	for i in range(len(proton_event_df)):
 		if s_dtime <= (proton_event_df['start_time'][i] and proton_event_df['end_time'][i]) <= e_dtime:
 			axes[length_data_list[j]].axvspan(proton_event_df['start_time'][i], proton_event_df['end_time'][i], color='palegreen', alpha=0.5)
-	axes[length_data_list[j]].axhline(proton_threshold, linewidth=1, zorder=2, color='red', linestyle='-', label=f'{proton_threshold} pfu') #  xmin=0, xmax=1
+	axes[length_data_list[j]].axhline(proton_threshold, linewidth=1, zorder=2, color='red', linestyle='-.', label=f'{round(proton_threshold, 3)} pfu') #  xmin=0, xmax=1
 
 	applyPlotStyle()
 
@@ -1892,6 +2147,42 @@ if '7' in option_bin_set:
 	axes[length_data_list[j]].set_yscale('log')
 
 	axes[length_data_list[j]].set_ylabel(f'ST-{satellite_no_st} Proton\nFlux [pfu]', fontname="Arial", fontsize = 12)
+	applyPlotStyle()
+
+if '8' in option_bin_set: # HEPAD
+	next_global()
+	if goes_corrected_option == 'yes':
+		for i in HEP_energy_bin_list: # for i in sorted(energy_bin_list): # changed to unsorted because the sort queued off of 10 -> 100 -> 50 rather than 10 -> 50 -> 100
+			axes[length_data_list[j]].plot(HEP_proton_df[f'{i[0]}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color=f'{i[2]}', label= f'{i[1]}', zorder=5)#, logy=True)
+		
+		axes[length_data_list[j]].set_yscale('log')
+		# axes[length_data_list[j]].set_ylim((10**(-3)), (10**3))
+	
+		axes[length_data_list[j]].set_yticks([10**-5, 10**-4, 10**-3, 10**-2, 10**-1, 10**0]) # 10**-3, 
+		axes[length_data_list[j]].set_ylabel(f'GOES-{satellite_no} HEPAD Proton\nFlux [pfu]', fontname="Arial", fontsize = 12)
+
+	elif goes_corrected_option == 'no':
+		for i in sorted(energy_bin_list):
+			axes[length_data_list[j]].plot(HEP_proton_df[f'{i[0]}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color=f'{i[2]}', label= f'{i[1]}', zorder=5)#, logy=True)
+		axes[length_data_list[j]].set_yscale('log')
+		# axes[length_data_list[j]].set_ylim((10**(-3)), (10**3))
+	
+		axes[length_data_list[j]].set_yticks([10**-3, 10**-2, 10**-1, 10**0, 10**1, 10**2, 10**3])
+		axes[length_data_list[j]].set_ylabel(f'GOES-{satellite_no} HEPAD Proton\nFlux [pfu]', fontname="Arial", fontsize = 12)
+
+
+
+	s_time = datetime.datetime.strptime(start_hour, '%H').time()
+	e_time = datetime.datetime.strptime(end_hour, '%H').time()
+
+	s_dtime = datetime.datetime.combine(start, s_time)
+	e_dtime = datetime.datetime.combine(end, e_time)
+
+	for i in range(len(HEP_proton_event_df)):
+		if s_dtime <= (HEP_proton_event_df['start_time'][i] and HEP_proton_event_df['end_time'][i]) <= e_dtime:
+			axes[length_data_list[j]].axvspan(HEP_proton_event_df['start_time'][i], HEP_proton_event_df['end_time'][i], color='palegreen', alpha=0.5)
+	axes[length_data_list[j]].axhline(HEP_proton_threshold, linewidth=1, zorder=2, color='red', linestyle='-.', label=f'{round(HEP_proton_threshold, 3)} pfu' )# label=f'{HEP_proton_threshold} pfu') #  xmin=0, xmax=1
+
 	applyPlotStyle()
 
 
