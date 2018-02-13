@@ -25,6 +25,7 @@ save_option = 'yes' # saves the data files
 save_plot_option = 'no' # saves the plots
 data_collection_option = 'no'
 event_option = 'no' # use event list to plot
+HEPAD_save_option = 'yes'
 
 # long_plot_option = 'yes'
 
@@ -1900,8 +1901,8 @@ def applyPlotStyle():
 	if '1' in option_bin_set:
 		# high_bin_proton_str = sorted(energy_bin_list)[-1][1]
 		# low_bin_proton_str = sorted(energy_bin_list)[0][1]
-		axes[length_data_list[j]].axvline(proton_df[f'{low_bin_proton}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax(), linewidth=1, zorder=1, color='purple', linestyle='--', label='Max >10MeV') # (proton_df.P6W_UNCOR_FLUX.max()) # changed maximum flux to be within time interval specified
-		axes[length_data_list[j]].axvline(proton_df[f'{high_bin_proton}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax(), linewidth=1, zorder=1, color='green', linestyle='--', label='Max >100MeV') # (proton_df.P6W_UNCOR_FLUX.max()) # changed maximum flux to be within time interval specified
+		axes[length_data_list[j]].axvline(proton_df[f'{low_bin_proton}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax(), linewidth=1, zorder=1, color='purple', linestyle='--', label='Max >10 MeV') # (proton_df.P6W_UNCOR_FLUX.max()) # changed maximum flux to be within time interval specified
+		axes[length_data_list[j]].axvline(proton_df[f'{high_bin_proton}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax(), linewidth=1, zorder=1, color='green', linestyle='--', label='Max >100 MeV') # (proton_df.P6W_UNCOR_FLUX.max()) # changed maximum flux to be within time interval specified
 	
 	if '2' in option_bin_set:
 		axes[length_data_list[j]].axvline(rb_event_df['t3_max_time'].loc[rb_event_df['t3_duration'].idxmax()], linewidth=1, zorder=1, color='orange', linestyle='--', label='Max T3 Intensity') # (proton_df.P6W_UNCOR_FLUX.max()) # changed maximum flux to be within time interval specified
@@ -1912,6 +1913,11 @@ def applyPlotStyle():
 		fint_exp = "%0.2E" % fint
 
 		axes[length_data_list[j]].axvline(xray_df['B_FLUX'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax(), linewidth=1, zorder=1, color='red', linestyle='--', label=f'{fint_exp}') # (proton_df.P6W_UNCOR_FLUX.max()) # changed maximum flux to be within time interval specified
+
+	if '8' in option_bin_set:
+		HEP_low_bin_proton = HEP_energy_bin_list[0][0]
+
+		axes[length_data_list[j]].axvline(HEP_proton_df[f'{HEP_low_bin_proton}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax(), linewidth=1, zorder=1, color='orange', linestyle='--', label='Max 375 MeV') # (proton_df.P6W_UNCOR_FLUX.max()) # changed maximum flux to be within time interval specified
 
 		
 
@@ -2201,6 +2207,9 @@ plt.suptitle(f'Space Weather Monitor\n[{event_obj_start_str} -- {event_obj_end_s
 
 plt.subplots_adjust(wspace = 0, hspace = 0, top=0.91)
 #plt.savefig('omni_test_legacy.png', format='png', dpi=900)
+
+if HEPAD_save_option == 'yes':
+	plt.savefig(f'HEPAD_events/HEPAD_event_{str(start)}_{str(end)}.png', format='png', dpi=900)
 
 if event_option == 'yes':
 	plt.savefig(f'xflare_events/omni_test_{event_date}.png', format='png', dpi=900)
