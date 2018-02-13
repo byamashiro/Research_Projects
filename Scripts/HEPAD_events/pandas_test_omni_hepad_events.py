@@ -1,3 +1,4 @@
+print("I am working")
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -57,22 +58,10 @@ def daterange( start_date, end_date ):
             yield start_date - datetime.timedelta( n )
 
 #==============Choosing Dataset
-
-
-
-	# print(f'{"="*40}\n{"=" + "DATASETS".center(38," ") + "="}\n{"="*40}\n1 - GOES-13/15 Proton Flux\n2 - Wind Type III Radio Bursts\n3 - Neutron Monitor Counts (Requires Internet Connection)\n4 - ACE/Wind Solar Wind Speed\n5 - GOES-13/15 Xray Flux\n6 - STEREO-A Proton Flux\n7 - STEREO-B Proton Flux\n8 - GOES-13/15 HEPAD Proton Flux\n{"="*40}')
-	
-	'''
-	1 - GOES Proton Flux
-	2 - Wind Type III Radio Bursts
-	3 - Neutron Monitor Counts
-	4 - ACE/Wind Solar Wind Speed'
-	5 - GOES-15 Xray Flux
-	'''
 event_date_df = pd.read_csv('hepad_event_dates.txt')
-
+print("I am working")
 	
-for event_date in event_date_df['dates']:
+for event_date_ind in event_date_df.index:
 	option_bin_set = set({'1','8'})
 	
 	#===============Time frame
@@ -81,8 +70,8 @@ for event_date in event_date_df['dates']:
 		end_date = str(event_list['event_date_ed'][0])
 	
 	if event_option != 'yes':
-		start_date = input('Enter a start date (yyyymmdd): ')
-		end_date = input('Enter a end date (yyyymmdd): ')
+		start_date = str(event_date_df['dates'][event_date_ind])
+		end_date = str(event_date_df['dates'][event_date_ind])
 	
 	
 	if end_date == '':
@@ -110,7 +99,7 @@ for event_date in event_date_df['dates']:
 		end_hour = str(event_list['event_ed_hr'][0])
 	
 	if event_option != 'yes':
-		start_hour = input('Enter a start hour or "full": ').zfill(2)
+		start_hour = 'full'
 	
 		if start_hour.isdigit() == True:
 			end_hour = input('Enter a end hour: ').zfill(2)
@@ -130,10 +119,16 @@ for event_date in event_date_df['dates']:
 				print('\nTIME ERROR: Not a valid alternative hour.')
 				sys.exit(0)
 	
+
+	start_offset = datetime.timedelta(days=1)
+	end_offset = datetime.timedelta(days=2)
 	
-	start = datetime.date( year = int(f'{start_date[0:4]}'), month = int(f'{start_date[4:6]}') , day = int(f'{start_date[6:8]}') )
-	end = datetime.date( year = int(f'{end_date[0:4]}'), month = int(f'{end_date[4:6]}') , day = int(f'{end_date[6:8]}') )
+	start = datetime.date( year = int(f'{start_date[0:4]}'), month = int(f'{start_date[4:6]}') , day = int(f'{start_date[6:8]}') ) - start_offset
+	end = datetime.date( year = int(f'{end_date[0:4]}'), month = int(f'{end_date[4:6]}') , day = int(f'{end_date[6:8]}') ) + end_offset
 	
+	start_date = str(start)[0:4] + str(start)[5:7] + str(start)[8:10]
+	end_date = str(end)[0:4] + str(end)[5:7] + str(end)[8:10]
+
 	#=========Defining event strings
 	
 	event_obj_start = datetime.datetime.strptime(f'{start_date} {start_hour}', '%Y%m%d %H')
@@ -151,7 +146,7 @@ for event_date in event_date_df['dates']:
 			satellite_no = str(event_list['prot_sat'][0])
 	
 		if event_option != 'yes':
-			satellite_no = input('Specify which GOES Satellite for Proton Flux (13 or 15): ')
+			satellite_no = f"{event_date_df['satellite'][event_date_ind]}"
 			if satellite_no != '13':
 				if satellite_no != '15':
 					if satellite_no != '10':
@@ -1519,7 +1514,7 @@ for event_date in event_date_df['dates']:
 			satellite_no = str(event_list['prot_sat'][0])
 	
 		if event_option != 'yes':
-			satellite_no = input('Specify which GOES Satellite for Proton Flux (13 or 15): ')
+			satellite_no = f"{event_date_df['satellite'][event_date_ind]}"
 			if satellite_no != '13':
 				if satellite_no != '15':
 					if satellite_no != '10':
@@ -1584,8 +1579,10 @@ for event_date in event_date_df['dates']:
 		
 				
 							elif proton_check == False:
-								HEP_proton_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_avg/{date_event.year}/{date_event.month}/goes{satellite_no}/csv/{HEP_proton_name}'
+								# HEP_proton_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_avg/{date_event.year}/{date_event.month}/goes{satellite_no}/csv/{HEP_proton_name}'
 								# proton_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_avg/{event_date[:4]}/{event_date[4:6]}/goes{satellite_no}/csv/{proton_name}'
+								HEP_proton_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_avg/{start_year}/{start_month}/goes{satellite_no}/csv/{HEP_proton_name}'
+
 								proton_in = wget.download(HEP_proton_url)
 								dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
 								HEP_proton_df_ind = pd.read_csv(f'{proton_in}', skiprows=310, date_parser=dateparse, names=HEP_cpflux_names,index_col='time_tag', header=0) # ZPGT100W
@@ -2180,7 +2177,7 @@ for event_date in event_date_df['dates']:
 	#plt.savefig('omni_test_legacy.png', format='png', dpi=900)
 	
 	if HEPAD_save_option == 'yes':
-		plt.savefig(f'HEPAD_event_{str(start)}_{str(end)}.png', format='png', dpi=900)
+		plt.savefig(f'HEPAD_event_{str(start)}_{str(end)}.png', format='png', dpi=100)
 	
 	if event_option == 'yes':
 		plt.savefig(f'xflare_events/omni_test_{event_date}.png', format='png', dpi=900)

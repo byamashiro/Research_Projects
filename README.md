@@ -144,7 +144,8 @@
 <details><summary>Current Tasks and Errors</summary>
 <p>
 
-
+### HEPAD algorithm does not incorporate different months
+- If the months of the start and end date are not identical, the HEPAD data only plots the month corresponding to the "start_date". To recreate the issue, run either the OMNI script or the HEPAD event script with the start date 20130928 to 20131001. The opposite case is also affected when subtracting a day that leaks into the prior month (20140831 to 20140903). The latter case occurs during the HEPAD event script as the start and end date are determined by -1 and +2 of the entered event date, respectively.
 
 
 ### OMNI script highlighting does not work for day intervals
