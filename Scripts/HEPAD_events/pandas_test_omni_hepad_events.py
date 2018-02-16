@@ -1,4 +1,3 @@
-print("I am working")
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -58,10 +57,11 @@ def daterange( start_date, end_date ):
             yield start_date - datetime.timedelta( n )
 
 #==============Choosing Dataset
-event_date_df = pd.read_csv('hepad_event_dates.txt')
-print("I am working")
+event_date_df = pd.read_csv('hepad_event_dates.txt',sep=',',comment="#")
 	
 for event_date_ind in event_date_df.index:
+	plt.close("all")
+
 	option_bin_set = set({'1','8'})
 	
 	#===============Time frame
@@ -1579,9 +1579,10 @@ for event_date_ind in event_date_df.index:
 		
 				
 							elif proton_check == False:
+								HEP_proton_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_avg/{date_event.year}/{str(date_event.month).zfill(2)}/goes{satellite_no}/csv/{HEP_proton_name}'
 								# HEP_proton_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_avg/{date_event.year}/{date_event.month}/goes{satellite_no}/csv/{HEP_proton_name}'
 								# proton_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_avg/{event_date[:4]}/{event_date[4:6]}/goes{satellite_no}/csv/{proton_name}'
-								HEP_proton_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_avg/{start_year}/{start_month}/goes{satellite_no}/csv/{HEP_proton_name}'
+								# HEP_proton_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_avg/{start_year}/{start_month}/goes{satellite_no}/csv/{HEP_proton_name}'
 
 								proton_in = wget.download(HEP_proton_url)
 								dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
@@ -2177,8 +2178,9 @@ for event_date_ind in event_date_df.index:
 	#plt.savefig('omni_test_legacy.png', format='png', dpi=900)
 	
 	if HEPAD_save_option == 'yes':
-		plt.savefig(f'HEPAD_event_{str(start)}_{str(end)}.png', format='png', dpi=100)
-	
+		plt.savefig(f'HEPAD_g{satellite_no}_event_{str(event_date_df["dates"][event_date_ind])}.png', format='png', dpi=200)
+		#plt.savefig(f'HEPAD_{satellite_no}_event_{str(start)}_{str(end)}.png', format='png', dpi=200)
+
 	if event_option == 'yes':
 		plt.savefig(f'xflare_events/omni_test_{event_date}.png', format='png', dpi=900)
 	
@@ -2190,5 +2192,6 @@ for event_date_ind in event_date_df.index:
 		plt.savefig(f'full_omni_plots/omni_full_test_{event_date}.png', format='png', dpi=900)
 	
 	elif save_plot_option != 'yes':
-		plt.show()
+		print("All event plots generated.")
+		# plt.show()
 	

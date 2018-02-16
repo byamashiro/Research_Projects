@@ -25,7 +25,7 @@ save_option = 'yes' # saves the data files
 save_plot_option = 'no' # saves the plots
 data_collection_option = 'no'
 event_option = 'no' # use event list to plot
-HEPAD_save_option = 'yes'
+HEPAD_save_option = 'no'
 
 # long_plot_option = 'yes'
 
@@ -238,7 +238,7 @@ if '1' in option_bin_set:
 	
 			
 						elif proton_check == False:
-							proton_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_avg/{date_event.year}/{date_event.month}/goes{satellite_no}/csv/{proton_name}'
+							proton_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_avg/{date_event.year}/{str(date_event.month).zfill(2)}/goes{satellite_no}/csv/{proton_name}'
 							# proton_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_avg/{event_date[:4]}/{event_date[4:6]}/goes{satellite_no}/csv/{proton_name}'
 							proton_in = wget.download(proton_url)
 							dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
@@ -561,7 +561,7 @@ if '1' in option_bin_set:
 
 	# ======= proton event detection
 	# ======= added for event options
-	proton_threshold = pow(10, -0.8) # t3_threshold = 5 # 5 # pow(10, -0.9)
+	proton_threshold = pow(10,-1.25) # t3_threshold = 5 # 5 # pow(10, -0.9) # pow(10, -0.8)
 	proton_channel = 'ZPGT100W' # t3_freq = 120
 
 	proton_data_event = pd.DataFrame([])
@@ -574,30 +574,34 @@ if '1' in option_bin_set:
 	proton_list_event = []
 	proton_counter = 0
 
+	min_length_event = 1000 # 60
+	min_t_between_pts = 40
+
 	for i in proton_data_event[proton_data_event.values > proton_threshold].index: # for i in rb_data[rb_data.values > 300].index: # one level is 1 minute
 		if len(proton_list_temp) == 0:
 			proton_list_temp.append(i)
 
 		elif len(proton_list_temp) >= 1:
-			if (i - proton_list_temp[-1]) <= datetime.timedelta(minutes=40): # originally 5 minutes # also had at 30 minutes, but increasing to 40 
+			# time between points
+			if (i - proton_list_temp[-1]) <= datetime.timedelta(minutes=min_t_between_pts): # originally 5 minutes # also had at 30 minutes, but increasing to 40
 				proton_list_temp.append(i)
 
-			elif (i - proton_list_temp[-1]) > datetime.timedelta(minutes=40): # originally 5 minutes # time between first interval of time event to the second
-				if (proton_list_temp[-1] - proton_list_temp[0]) >= datetime.timedelta(minutes=30):
+			elif (i - proton_list_temp[-1]) > datetime.timedelta(minutes=min_t_between_pts): # originally 5 minutes # time between first interval of time event to the second
+				if (proton_list_temp[-1] - proton_list_temp[0]) >= datetime.timedelta(minutes=min_length_event): # length of event
 					proton_list_event.append(proton_list_temp)
 					proton_list_temp = []
 					proton_list_temp.append(i)
 
-				elif (proton_list_temp[-1] - proton_list_temp[0]) < datetime.timedelta(minutes=30): # if the time difference is less than 30 minutes, then create a new event
+				elif (proton_list_temp[-1] - proton_list_temp[0]) < datetime.timedelta(minutes=min_length_event): # if the time difference is less than 30 minutes, then create a new event
 					proton_list_temp = []
 					proton_list_temp.append(i)
 
 	if len(proton_list_temp) > 0:
-		if (proton_list_temp[-1] - proton_list_temp[0]) >= datetime.timedelta(minutes=30):
+		if (proton_list_temp[-1] - proton_list_temp[0]) >= datetime.timedelta(minutes=min_length_event):
 			proton_list_event.append(proton_list_temp)
 			proton_list_temp = []
 			proton_list_temp.append(i)
-		elif (proton_list_temp[-1] - proton_list_temp[0]) < datetime.timedelta(minutes=30):
+		elif (proton_list_temp[-1] - proton_list_temp[0]) < datetime.timedelta(minutes=min_length_event):
 			proton_list_temp = []
 			proton_list_temp.append(i)
 		proton_list_temp = []
@@ -1613,7 +1617,7 @@ if '8' in option_bin_set:
 	
 			
 						elif proton_check == False:
-							HEP_proton_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_avg/{start_year}/{start_month}/goes{satellite_no}/csv/{HEP_proton_name}'
+							HEP_proton_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_avg/{date_event.year}/{str(date_event.month).zfill(2)}/goes{satellite_no}/csv/{HEP_proton_name}'
 							# proton_url = f'https://satdat.ngdc.noaa.gov/sem/goes/data/new_avg/{event_date[:4]}/{event_date[4:6]}/goes{satellite_no}/csv/{proton_name}'
 							proton_in = wget.download(HEP_proton_url)
 							dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
@@ -1688,9 +1692,59 @@ if '8' in option_bin_set:
 
 
 	# ======= proton event detection
+	''' # for reference, corrected Epead flux algorithm
+	proton_threshold = pow(10,-1.25) # t3_threshold = 5 # 5 # pow(10, -0.9) # pow(10, -0.8)
+	proton_channel = 'ZPGT100W' # t3_freq = 120
+
+	proton_data_event = pd.DataFrame([])
+	proton_concat_event = proton_df[[proton_channel]]
+	proton_data_event = proton_data_event.append(proton_concat_event)
+	# proton_data_event.drop(proton_df[proton_df.values == 0.0].index, inplace=True) # proton_data.values == 0.0
+
+	proton_event_df = pd.DataFrame([])
+	proton_list_temp = []
+	proton_list_event = []
+	proton_counter = 0
+
+	min_length_event = 1000 # 60
+	min_t_between_pts = 40
+
+	for i in proton_data_event[proton_data_event.values > proton_threshold].index: # for i in rb_data[rb_data.values > 300].index: # one level is 1 minute
+		if len(proton_list_temp) == 0:
+			proton_list_temp.append(i)
+
+		elif len(proton_list_temp) >= 1:
+			# time between points
+			if (i - proton_list_temp[-1]) <= datetime.timedelta(minutes=min_t_between_pts): # originally 5 minutes # also had at 30 minutes, but increasing to 40
+				proton_list_temp.append(i)
+
+			elif (i - proton_list_temp[-1]) > datetime.timedelta(minutes=min_t_between_pts): # originally 5 minutes # time between first interval of time event to the second
+				if (proton_list_temp[-1] - proton_list_temp[0]) >= datetime.timedelta(minutes=min_length_event): # length of event
+					proton_list_event.append(proton_list_temp)
+					proton_list_temp = []
+					proton_list_temp.append(i)
+
+				elif (proton_list_temp[-1] - proton_list_temp[0]) < datetime.timedelta(minutes=min_length_event): # if the time difference is less than 30 minutes, then create a new event
+					proton_list_temp = []
+					proton_list_temp.append(i)
+
+	if len(proton_list_temp) > 0:
+		if (proton_list_temp[-1] - proton_list_temp[0]) >= datetime.timedelta(minutes=min_length_event):
+			proton_list_event.append(proton_list_temp)
+			proton_list_temp = []
+			proton_list_temp.append(i)
+		elif (proton_list_temp[-1] - proton_list_temp[0]) < datetime.timedelta(minutes=min_length_event):
+			proton_list_temp = []
+			proton_list_temp.append(i)
+		proton_list_temp = []
+
+	print("\n")
+	proton_event_df = pd.DataFrame(columns=('start_time', 'end_time', 'proton_duration', 'proton_max_int'))
+	'''
+
 	# ======= added for event options
 	
-	HEP_proton_threshold = pow(10, -0.8) # t3_threshold = 5 # 5 # pow(10, -0.9)
+	HEP_proton_threshold = pow(10, -2.6) # t3_threshold = 5 # 5 # pow(10, -0.9)
 	HEP_proton_channel = 'P8_FLUX' # t3_freq = 120
 
 	HEP_proton_data_event = pd.DataFrame([])
@@ -1703,30 +1757,33 @@ if '8' in option_bin_set:
 	HEP_proton_list_event = []
 	proton_counter = 0
 
+	HEP_min_length_event = 600 # 60
+	HEP_min_t_between_pts = 40
+
 	for i in HEP_proton_data_event[HEP_proton_data_event.values > HEP_proton_threshold].index: # for i in rb_data[rb_data.values > 300].index: # one level is 1 minute
 		if len(HEP_proton_list_temp) == 0:
 			HEP_proton_list_temp.append(i)
 
 		elif len(HEP_proton_list_temp) >= 1:
-			if (i - HEP_proton_list_temp[-1]) <= datetime.timedelta(minutes=40): # originally 5 minutes # also had at 30 minutes, but increasing to 40 
+			if (i - HEP_proton_list_temp[-1]) <= datetime.timedelta(minutes=HEP_min_t_between_pts): # originally 5 minutes # also had at 30 minutes, but increasing to 40 
 				HEP_proton_list_temp.append(i)
 
-			elif (i - HEP_proton_list_temp[-1]) > datetime.timedelta(minutes=40): # originally 5 minutes # time between first interval of time event to the second
-				if (HEP_proton_list_temp[-1] - HEP_proton_list_temp[0]) >= datetime.timedelta(minutes=30):
+			elif (i - HEP_proton_list_temp[-1]) > datetime.timedelta(minutes=HEP_min_t_between_pts): # originally 5 minutes # time between first interval of time event to the second
+				if (HEP_proton_list_temp[-1] - HEP_proton_list_temp[0]) >= datetime.timedelta(minutes=HEP_min_length_event):
 					HEP_proton_list_event.append(HEP_proton_list_temp)
 					HEP_proton_list_temp = []
 					HEP_proton_list_temp.append(i)
 
-				elif (HEP_proton_list_temp[-1] - HEP_proton_list_temp[0]) < datetime.timedelta(minutes=30): # if the time difference is less than 30 minutes, then create a new event
+				elif (HEP_proton_list_temp[-1] - HEP_proton_list_temp[0]) < datetime.timedelta(minutes=HEP_min_length_event): # if the time difference is less than 30 minutes, then create a new event
 					HEP_proton_list_temp = []
 					HEP_proton_list_temp.append(i)
 
 	if len(HEP_proton_list_temp) > 0:
-		if (HEP_proton_list_temp[-1] - HEP_proton_list_temp[0]) >= datetime.timedelta(minutes=30):
+		if (HEP_proton_list_temp[-1] - HEP_proton_list_temp[0]) >= datetime.timedelta(minutes=HEP_min_length_event):
 			HEP_proton_list_event.append(HEP_proton_list_temp)
 			HEP_proton_list_temp = []
 			HEP_proton_list_temp.append(i)
-		elif (HEP_proton_list_temp[-1] - HEP_proton_list_temp[0]) < datetime.timedelta(minutes=30):
+		elif (HEP_proton_list_temp[-1] - HEP_proton_list_temp[0]) < datetime.timedelta(minutes=HEP_min_length_event):
 			HEP_proton_list_temp = []
 			HEP_proton_list_temp.append(i)
 		HEP_proton_list_temp = []
@@ -1905,7 +1962,7 @@ def applyPlotStyle():
 		axes[length_data_list[j]].axvline(proton_df[f'{high_bin_proton}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax(), linewidth=1, zorder=1, color='green', linestyle='--', label='Max >100 MeV') # (proton_df.P6W_UNCOR_FLUX.max()) # changed maximum flux to be within time interval specified
 	
 	if '2' in option_bin_set:
-		axes[length_data_list[j]].axvline(rb_event_df['t3_max_time'].loc[rb_event_df['t3_duration'].idxmax()], linewidth=1, zorder=1, color='orange', linestyle='--', label='Max T3 Intensity') # (proton_df.P6W_UNCOR_FLUX.max()) # changed maximum flux to be within time interval specified
+		axes[length_data_list[j]].axvline(rb_event_df['t3_max_time'].loc[rb_event_df['t3_duration'].idxmax()], linewidth=1, zorder=1, color='orange', linestyle=':', label='Max T3 Intensity') # (proton_df.P6W_UNCOR_FLUX.max()) # changed maximum flux to be within time interval specified
 
 	if '5' in option_bin_set:
 		xray_df['B_FLUX'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax()
@@ -1973,7 +2030,14 @@ if '1' in option_bin_set:
 	for i in range(len(proton_event_df)):
 		if s_dtime <= (proton_event_df['start_time'][i] and proton_event_df['end_time'][i]) <= e_dtime:
 			axes[length_data_list[j]].axvspan(proton_event_df['start_time'][i], proton_event_df['end_time'][i], color='palegreen', alpha=0.5)
-	axes[length_data_list[j]].axhline(proton_threshold, linewidth=1, zorder=2, color='red', linestyle='-.', label=f'{round(proton_threshold, 3)} pfu') #  xmin=0, xmax=1
+			axes[length_data_list[j]].axvline(proton_event_df['start_time'][i], linewidth=1, zorder=2, color='green', linestyle='-') #  xmin=0, xmax=1
+			axes[length_data_list[j]].axvline(proton_event_df['end_time'][i], linewidth=1, zorder=2, color='green', linestyle='-') #  xmin=0, xmax=1
+
+	axes[length_data_list[j]].axhline(proton_threshold, linewidth=1, zorder=2, color='red', linestyle='-.', label=f'{round(proton_threshold, 3)} pfu') #  xmin=0, xmax=1 # threshold
+
+	axes[length_data_list[j]].axvline(s_dtime, linewidth=1, zorder=2, color='green', linestyle=':') #  xmin=0, xmax=1
+	axes[length_data_list[j]].axvline(e_dtime, linewidth=1, zorder=2, color='green', linestyle=':') #  xmin=0, xmax=1
+
 
 	applyPlotStyle()
 
@@ -2186,8 +2250,13 @@ if '8' in option_bin_set: # HEPAD
 
 	for i in range(len(HEP_proton_event_df)):
 		if s_dtime <= (HEP_proton_event_df['start_time'][i] and HEP_proton_event_df['end_time'][i]) <= e_dtime:
-			axes[length_data_list[j]].axvspan(HEP_proton_event_df['start_time'][i], HEP_proton_event_df['end_time'][i], color='palegreen', alpha=0.5)
+			axes[length_data_list[j]].axvspan(HEP_proton_event_df['start_time'][i], HEP_proton_event_df['end_time'][i], color='skyblue', alpha=0.5)
+			axes[length_data_list[j]].axvline(HEP_proton_event_df['start_time'][i], linewidth=1, zorder=2, color='royalblue', linestyle='-') #  xmin=0, xmax=1
+			axes[length_data_list[j]].axvline(HEP_proton_event_df['end_time'][i], linewidth=1, zorder=2, color='royalblue', linestyle='-') #  xmin=0, xmax=1
+
 	axes[length_data_list[j]].axhline(HEP_proton_threshold, linewidth=1, zorder=2, color='red', linestyle='-.', label=f'{round(HEP_proton_threshold, 3)} pfu' )# label=f'{HEP_proton_threshold} pfu') #  xmin=0, xmax=1
+
+
 
 	applyPlotStyle()
 
