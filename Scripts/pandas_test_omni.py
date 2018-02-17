@@ -13,6 +13,9 @@ from matplotlib.pyplot import cm
 import calendar
 from dateutil.relativedelta import relativedelta
 
+from scipy import signal
+from matplotlib.pyplot import cm 
+
 
 import shutil
 
@@ -58,7 +61,7 @@ def daterange( start_date, end_date ):
 
 #==============Choosing Dataset
 
-print(f'{"="*40}\n{"=" + "DATASETS".center(38," ") + "="}\n{"="*40}\n1 - GOES-13/15 Proton Flux\n2 - Wind Type III Radio Bursts\n3 - Neutron Monitor Counts (Requires Internet Connection)\n4 - ACE/Wind Solar Wind Speed\n5 - GOES-13/15 Xray Flux\n6 - STEREO-A Proton Flux\n7 - STEREO-B Proton Flux\n8 - GOES-13/15 HEPAD Proton Flux\n{"="*40}')
+print(f'{"="*40}\n{"=" + "DATASETS".center(38," ") + "="}\n{"="*40}\n1 - GOES-13/15 Proton Flux\n2 - Wind Type III Radio Bursts\n3 - Neutron Monitor Counts (Requires Internet Connection)\n4 - ACE/Wind Solar Wind Speed\n5 - GOES-13/15 Xray Flux\n6 - STEREO-A Proton Flux\n7 - STEREO-B Proton Flux\n8 - GOES-13/15 HEPAD Proton Flux\n9 - GOES-13/15 SEPEM Proton Flux\n{"="*40}')
 
 '''
 1 - GOES Proton Flux
@@ -72,7 +75,7 @@ print(f'{"="*40}\n{"=" + "DATASETS".center(38," ") + "="}\n{"="*40}\n1 - GOES-13
 option_bin_set = set()
 while True: # energy_bin != 'done':
 	if event_option == 'yes':
-		option_bin_set = {'1', '2', '4', '5', '6', '7', '8'}
+		option_bin_set = {'1', '2', '4', '5', '6', '7', '8','9'}
 
 		break
 
@@ -89,10 +92,11 @@ while True: # energy_bin != 'done':
 				option_bin_set.add('6')	# 6 - STEREO-A Proton Flux
 				option_bin_set.add('7')	# 7 - STEREO-B Proton Flux
 				option_bin_set.add('8')	# 8 - GOES-13/15 HEPAD Proton Flux
+				option_bin_set.add('9') # 9 - SEPEM Proton Flux
 
 				break
 			
-			elif int(option_bin) < 9:
+			elif int(option_bin) < 10:
 				option_bin_set.add(option_bin)
 				'''
 				if len(option_bin_set) > 4 and long_plot_option == 'no':
@@ -676,6 +680,18 @@ if '1' in option_bin_set:
 
 	proton_smooth_df_interp_1m = proton_smooth_df_rs_1m.interpolate(method='cubic')
 	proton_smooth_df_interp_1s = proton_smooth_df_rs_1s.interpolate(method='cubic')
+
+
+
+
+	order_list = [1,2,3,4,5,6,7,8,9,10]
+
+
+	for order in order_list:
+		b, a = signal.butter(order, 0.08) # order of the filter (increases in integer values), cut off frequency
+	
+		y1 = signal.filtfilt(b, a, proton_smooth_df['ZPGT100W'])
+		proton_smooth_df[f'butter{order}'] = y1
 
 
 	# ======== (END) Interpolating and smoothing data
@@ -1860,6 +1876,26 @@ if '8' in option_bin_set:
 	print(HEP_proton_event_df)
 	print('='*40)
 
+	HEP_proton_smooth_df = pd.DataFrame(HEP_proton_df['P8_FLUX'].loc[event_obj_start:event_obj_end])
+
+	HEP_proton_smooth_df_rs_1m = HEP_proton_smooth_df.resample('min')
+	HEP_proton_smooth_df_rs_1s = HEP_proton_smooth_df.resample('S')
+
+	HEP_proton_smooth_df_interp_1m = HEP_proton_smooth_df_rs_1m.interpolate(method='cubic')
+	HEP_proton_smooth_df_interp_1s = HEP_proton_smooth_df_rs_1s.interpolate(method='cubic')
+
+
+		
+	HEP_order_list = [1,2,3,4,5,6,7,8,9,10]
+
+	for order in HEP_order_list:
+
+		b, a = signal.butter(order, 0.08) # order of the filter (increases in integer values), cut off frequency
+
+		HEP_y1 = signal.filtfilt(b, a, HEP_proton_smooth_df['P8_FLUX'])
+		HEP_proton_smooth_df[f'butter{order}'] = HEP_y1
+
+
 
 '''
 # Templates for new data
@@ -2014,15 +2050,26 @@ if '1' in option_bin_set:
 	next_global()
 	if goes_corrected_option == 'yes':
 		for i in energy_bin_list: # for i in sorted(energy_bin_list): # changed to unsorted because the sort queued off of 10 -> 100 -> 50 rather than 10 -> 50 -> 100
-			axes[length_data_list[j]].plot(proton_df[f'{i[0]}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color=f'{i[2]}', label= f'{i[1]}', zorder=5)#, logy=True)
+			axes[length_data_list[j]].plot(proton_df[f'{i[0]}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], '.', color=f'{i[2]}', label= f'{i[1]}', zorder=5)#, logy=True)
 		
-		axes[length_data_list[j]].plot(proton_smooth_df_interp_1m, color='red', linestyle='-.', label= '1m Interp.', zorder=5) # interpolated (no time reshape)
-		axes[length_data_list[j]].plot(proton_smooth_df_interp_1s, color='purple', linestyle=':', label= '1s Interp.', zorder=5) # interpolated (1 second)
+		axes[length_data_list[j]].plot(proton_smooth_df['ZPGT100W'].ewm(span=20).mean(), color='red', linewidth=1, label= 'EWM', zorder=5) # butter filter
+
+
+		color_tree = iter(cm.rainbow(np.linspace(0,1,10)))
+
+		for order in range(10):
+			axes[length_data_list[j]].plot(proton_smooth_df[f'butter{order+1}'], color=next(color_tree), linewidth=1, label= f'Butter-{order}', zorder=5) # butter filter
+		# axes[length_data_list[j]].plot(proton_smooth_df_interp_1m, color='red', linestyle='-.', label= '1m Interp.', zorder=5) # interpolated (no time reshape)
+		# axes[length_data_list[j]].plot(proton_smooth_df_interp_1s, color='purple', linestyle=':', label= '1s Interp.', zorder=5) # interpolated (1 second)
 
 		axes[length_data_list[j]].set_yscale('log')
 		# axes[length_data_list[j]].set_ylim((10**(-3)), (10**3))
-	
+
+
+		
+		'''
 		axes[length_data_list[j]].set_yticks([10**-2, 10**-1, 10**0, 10**1, 10**2, 10**3]) # 10**-3, 
+		'''
 		axes[length_data_list[j]].set_ylabel(f'GOES-{satellite_no} Epead Proton\nFlux [pfu]', fontname="Arial", fontsize = 12)
 
 	elif goes_corrected_option == 'no':
@@ -2240,11 +2287,18 @@ if '8' in option_bin_set: # HEPAD
 		for i in HEP_energy_bin_list: # for i in sorted(energy_bin_list): # changed to unsorted because the sort queued off of 10 -> 100 -> 50 rather than 10 -> 50 -> 100
 			axes[length_data_list[j]].plot(HEP_proton_df[f'{i[0]}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color=f'{i[2]}', label= f'{i[1]}', zorder=5)#, logy=True)
 		
+		color_tree = iter(cm.rainbow(np.linspace(0,1,10)))
+
+		for order in range(10):
+			# axes[length_data_list[j]].plot(proton_smooth_df[f'butter{order+1}'], color=next(color_tree), linewidth=1, label= f'Butter-{order}', zorder=5) # butter filter
+			axes[length_data_list[j]].plot(HEP_proton_smooth_df[f'butter{order+1}'], color=next(color_tree), linewidth=1, label=f'Butter-{order}', zorder=5) # butter filter
+
 		axes[length_data_list[j]].set_yscale('log')
 		# axes[length_data_list[j]].set_ylim((10**(-3)), (10**3))
 	
 		axes[length_data_list[j]].set_yticks([10**-5, 10**-4, 10**-3, 10**-2, 10**-1, 10**0]) # 10**-3, 
 		axes[length_data_list[j]].set_ylabel(f'GOES-{satellite_no} HEPAD Proton\nFlux [pfu]', fontname="Arial", fontsize = 12)
+
 
 	elif goes_corrected_option == 'no':
 		for i in sorted(energy_bin_list):
