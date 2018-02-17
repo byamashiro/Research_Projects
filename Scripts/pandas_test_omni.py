@@ -668,6 +668,18 @@ if '1' in option_bin_set:
 
 	# ============== end proton detection
 
+	# ======== (BEGIN) Interpolating and smoothing data
+	proton_smooth_df = pd.DataFrame(proton_df['ZPGT100W'].loc[event_obj_start:event_obj_end])
+
+	proton_smooth_df_rs_1m = proton_smooth_df.resample('min')
+	proton_smooth_df_rs_1s = proton_smooth_df.resample('S')
+
+	proton_smooth_df_interp_1m = proton_smooth_df_rs_1m.interpolate(method='cubic')
+	proton_smooth_df_interp_1s = proton_smooth_df_rs_1s.interpolate(method='cubic')
+
+
+	# ======== (END) Interpolating and smoothing data
+
 
 
 #proton flux 2003
@@ -1962,14 +1974,14 @@ def applyPlotStyle():
 		axes[length_data_list[j]].axvline(proton_df[f'{high_bin_proton}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax(), linewidth=1, zorder=1, color='green', linestyle='--', label='Max >100 MeV') # (proton_df.P6W_UNCOR_FLUX.max()) # changed maximum flux to be within time interval specified
 	
 	if '2' in option_bin_set:
-		axes[length_data_list[j]].axvline(rb_event_df['t3_max_time'].loc[rb_event_df['t3_duration'].idxmax()], linewidth=1, zorder=1, color='orange', linestyle=':', label='Max T3 Intensity') # (proton_df.P6W_UNCOR_FLUX.max()) # changed maximum flux to be within time interval specified
+		axes[length_data_list[j]].axvline(rb_event_df['t3_max_time'].loc[rb_event_df['t3_duration'].idxmax()], linewidth=1, zorder=1, color='orange', linestyle='--', label='Max T3 Intensity') # (proton_df.P6W_UNCOR_FLUX.max()) # changed maximum flux to be within time interval specified
 
 	if '5' in option_bin_set:
 		xray_df['B_FLUX'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax()
 		fint = xray_df['B_FLUX'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].max()
 		fint_exp = "%0.2E" % fint
 
-		axes[length_data_list[j]].axvline(xray_df['B_FLUX'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax(), linewidth=1, zorder=1, color='red', linestyle='--', label=f'{fint_exp}') # (proton_df.P6W_UNCOR_FLUX.max()) # changed maximum flux to be within time interval specified
+		axes[length_data_list[j]].axvline(xray_df['B_FLUX'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax(), linewidth=1, zorder=1, color='red', linestyle=':', label=f'{fint_exp}') # (proton_df.P6W_UNCOR_FLUX.max()) # changed maximum flux to be within time interval specified
 
 	if '8' in option_bin_set:
 		HEP_low_bin_proton = HEP_energy_bin_list[0][0]
@@ -2004,6 +2016,9 @@ if '1' in option_bin_set:
 		for i in energy_bin_list: # for i in sorted(energy_bin_list): # changed to unsorted because the sort queued off of 10 -> 100 -> 50 rather than 10 -> 50 -> 100
 			axes[length_data_list[j]].plot(proton_df[f'{i[0]}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color=f'{i[2]}', label= f'{i[1]}', zorder=5)#, logy=True)
 		
+		axes[length_data_list[j]].plot(proton_smooth_df_interp_1m, color='red', linestyle='-.', label= '1m Interp.', zorder=5) # interpolated (no time reshape)
+		axes[length_data_list[j]].plot(proton_smooth_df_interp_1s, color='purple', linestyle=':', label= '1s Interp.', zorder=5) # interpolated (1 second)
+
 		axes[length_data_list[j]].set_yscale('log')
 		# axes[length_data_list[j]].set_ylim((10**(-3)), (10**3))
 	
