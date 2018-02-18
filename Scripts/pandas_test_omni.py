@@ -1770,13 +1770,49 @@ if '8' in option_bin_set:
 	proton_event_df = pd.DataFrame(columns=('start_time', 'end_time', 'proton_duration', 'proton_max_int'))
 	'''
 
+
+
 	# ======= added for event options
+	HEP_proton_smooth_df = pd.DataFrame(HEP_proton_df['P8_FLUX']) # .loc[event_obj_start:event_obj_end]) # this removes the limitation on the data range of smoothing
+
+	HEP_proton_smooth_df_rs_1m = HEP_proton_smooth_df.resample('min')
+	HEP_proton_smooth_df_rs_1s = HEP_proton_smooth_df.resample('S')
+
+	HEP_proton_smooth_df_interp_1m = HEP_proton_smooth_df_rs_1m.interpolate(method='cubic')
+	HEP_proton_smooth_df_interp_1s = HEP_proton_smooth_df_rs_1s.interpolate(method='cubic')
+
+
+		
+	HEP_order_list = [1,2,3,4,5,6,7,8,9,10]
+
+	for order in HEP_order_list:
+
+		b, a = signal.butter(order, 0.08) # order of the filter (increases in integer values), cut off frequency
+
+		HEP_y1 = signal.filtfilt(b, a, HEP_proton_smooth_df['P8_FLUX'])
+		HEP_proton_smooth_df[f'butter{order}'] = HEP_y1
+
+
+	# =========== Smoothing end
+
+	# ============ Background choice (start)
+	bkg_start = '2012-03-06 22'
+	bkg_end = '2012-03-06 23'
+
+	HEP_proton_threshold = HEP_proton_smooth_df['butter1'].loc[bkg_start:bkg_end].mean() + 0.0002
+	print(HEP_proton_threshold)
+
+	# ============ Background choice (end)
+
+
 	
-	HEP_proton_threshold = pow(10, -2.6) # t3_threshold = 5 # 5 # pow(10, -0.9)
+	# HEP_proton_threshold = pow(10,-2.7) # pow(10, -2.6) # t3_threshold = 5 # 5 # pow(10, -0.9)
 	HEP_proton_channel = 'P8_FLUX' # t3_freq = 120
 
 	HEP_proton_data_event = pd.DataFrame([])
-	HEP_proton_concat_event = HEP_proton_df[[HEP_proton_channel]]
+	HEP_proton_concat_event = HEP_proton_smooth_df[['butter1']]
+	# HEP_proton_concat_event = HEP_proton_df[[HEP_proton_channel]] # old algorithm
+
 	HEP_proton_data_event = HEP_proton_data_event.append(HEP_proton_concat_event)
 	# proton_data_event.drop(proton_df[proton_df.values == 0.0].index, inplace=True) # proton_data.values == 0.0
 
@@ -1785,7 +1821,7 @@ if '8' in option_bin_set:
 	HEP_proton_list_event = []
 	proton_counter = 0
 
-	HEP_min_length_event = 600 # 60
+	HEP_min_length_event = 100 # 60
 	HEP_min_t_between_pts = 40
 
 	for i in HEP_proton_data_event[HEP_proton_data_event.values > HEP_proton_threshold].index: # for i in rb_data[rb_data.values > 300].index: # one level is 1 minute
@@ -1823,9 +1859,9 @@ if '8' in option_bin_set:
 	# p_10mev_list = pd.read_csv(f'{data_directory}/detected_events/event_dates/1d50pfu_10mev_2011_2017.txt', delim_whitespace=True, header=1)
 
 
-
 	# =========  Outlier list
 	if len( HEP_proton_list_event ) == 1:
+		'''
 		HEP_proton_var_list = []
 		HEP_proton_outlier_list = []
 
@@ -1866,16 +1902,18 @@ if '8' in option_bin_set:
 				HEP_proton_df.drop(i, inplace=True)
 				HEP_proton_data_event.drop(i, inplace=True)
 		# ======= end might not work
-
+	'''
 		for i in range(len(HEP_proton_list_event)):
 			HEP_proton_event_df.loc[i] = [HEP_proton_list_event[i][0], HEP_proton_list_event[i][-1], ((HEP_proton_list_event[i][-1] - HEP_proton_list_event[i][0]).total_seconds()/60), float(HEP_proton_data_event.loc[HEP_proton_list_event[i][0]:HEP_proton_list_event[i][-1]].max().values)] # days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0])
 		# print(f"{rb_list_event[i][0]} -- {rb_list_event[i][-1]}", " Total Time: ", days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0]), " minutes")
+	
 
 	print('='*40)
 	print(f"Number of Proton Events ({start} - {end}): ", len(HEP_proton_list_event))
 	print(HEP_proton_event_df)
 	print('='*40)
 
+	'''
 	HEP_proton_smooth_df = pd.DataFrame(HEP_proton_df['P8_FLUX'].loc[event_obj_start:event_obj_end])
 
 	HEP_proton_smooth_df_rs_1m = HEP_proton_smooth_df.resample('min')
@@ -1885,7 +1923,7 @@ if '8' in option_bin_set:
 	HEP_proton_smooth_df_interp_1s = HEP_proton_smooth_df_rs_1s.interpolate(method='cubic')
 
 
-		
+	
 	HEP_order_list = [1,2,3,4,5,6,7,8,9,10]
 
 	for order in HEP_order_list:
@@ -1894,7 +1932,7 @@ if '8' in option_bin_set:
 
 		HEP_y1 = signal.filtfilt(b, a, HEP_proton_smooth_df['P8_FLUX'])
 		HEP_proton_smooth_df[f'butter{order}'] = HEP_y1
-
+	'''
 
 
 '''
@@ -2285,13 +2323,13 @@ if '8' in option_bin_set: # HEPAD
 	next_global()
 	if goes_corrected_option == 'yes':
 		for i in HEP_energy_bin_list: # for i in sorted(energy_bin_list): # changed to unsorted because the sort queued off of 10 -> 100 -> 50 rather than 10 -> 50 -> 100
-			axes[length_data_list[j]].plot(HEP_proton_df[f'{i[0]}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color=f'{i[2]}', label= f'{i[1]}', zorder=5)#, logy=True)
+			axes[length_data_list[j]].plot(HEP_proton_df[f'{i[0]}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color=f'{i[2]}', label= f'{i[1]}', zorder=5)#, logy=True) ,'o',mfc='none'
 		
-		color_tree = iter(cm.rainbow(np.linspace(0,1,10)))
+		color_tree = iter(cm.viridis(np.linspace(0,1,10)))
 
 		for order in range(10):
 			# axes[length_data_list[j]].plot(proton_smooth_df[f'butter{order+1}'], color=next(color_tree), linewidth=1, label= f'Butter-{order}', zorder=5) # butter filter
-			axes[length_data_list[j]].plot(HEP_proton_smooth_df[f'butter{order+1}'], color=next(color_tree), linewidth=1, label=f'Butter-{order}', zorder=5) # butter filter
+			axes[length_data_list[j]].plot(HEP_proton_smooth_df[f'butter{order+1}'].loc[event_obj_start:event_obj_end], color=next(color_tree), linewidth=1, label=f'Butter-{order}', zorder=5) # butter filter
 
 		axes[length_data_list[j]].set_yscale('log')
 		# axes[length_data_list[j]].set_ylim((10**(-3)), (10**3))
@@ -2316,7 +2354,7 @@ if '8' in option_bin_set: # HEPAD
 
 	s_dtime = datetime.datetime.combine(start, s_time)
 	e_dtime = datetime.datetime.combine(end, e_time)
-
+	
 	for i in range(len(HEP_proton_event_df)):
 		if s_dtime <= (HEP_proton_event_df['start_time'][i] and HEP_proton_event_df['end_time'][i]) <= e_dtime:
 			axes[length_data_list[j]].axvspan(HEP_proton_event_df['start_time'][i], HEP_proton_event_df['end_time'][i], color='skyblue', alpha=0.5)
@@ -2324,7 +2362,7 @@ if '8' in option_bin_set: # HEPAD
 			axes[length_data_list[j]].axvline(HEP_proton_event_df['end_time'][i], linewidth=1, zorder=2, color='royalblue', linestyle='-') #  xmin=0, xmax=1
 
 	axes[length_data_list[j]].axhline(HEP_proton_threshold, linewidth=1, zorder=2, color='red', linestyle='-.', label=f'{round(HEP_proton_threshold, 3)} pfu' )# label=f'{HEP_proton_threshold} pfu') #  xmin=0, xmax=1
-
+	
 
 
 	applyPlotStyle()
