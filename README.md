@@ -444,6 +444,9 @@ GOES-13 Peak Proton Flux (>100 MeV): (2012-03-07 15:20:00) 5.681E+01 [pfu]
 
 <img src="Plots/omni_full_test_v4.png" width="700">
 
+#### GOES-13 HEPAD Implementation and Applied Butterworth Filters
+<img src="Plots/fit_butter.png" width="500">
+<img src="Plots/fit_butter_zoom.png" width="500">
 
 
 
