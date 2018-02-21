@@ -1796,17 +1796,19 @@ if '8' in option_bin_set:
 	# =========== Smoothing end
 
 	# ============ Background choice (start)
-	bkg_start = '2012-03-06 22'
+	'''
+	bkg_start = f'2012-03-06 22'
 	bkg_end = '2012-03-06 23'
 
 	HEP_proton_threshold = HEP_proton_smooth_df['butter1'].loc[bkg_start:bkg_end].mean() + 0.0002
 	print(HEP_proton_threshold)
-
+	'''
 	# ============ Background choice (end)
 
 
 	
 	# HEP_proton_threshold = pow(10,-2.7) # pow(10, -2.6) # t3_threshold = 5 # 5 # pow(10, -0.9)
+	HEP_proton_threshold = 0.002
 	HEP_proton_channel = 'P8_FLUX' # t3_freq = 120
 
 	HEP_proton_data_event = pd.DataFrame([])
@@ -1821,8 +1823,8 @@ if '8' in option_bin_set:
 	HEP_proton_list_event = []
 	proton_counter = 0
 
-	HEP_min_length_event = 100 # 60
-	HEP_min_t_between_pts = 40
+	HEP_min_length_event = 100 # 100 # 60
+	HEP_min_t_between_pts = 60
 
 	for i in HEP_proton_data_event[HEP_proton_data_event.values > HEP_proton_threshold].index: # for i in rb_data[rb_data.values > 300].index: # one level is 1 minute
 		if len(HEP_proton_list_temp) == 0:
@@ -1862,6 +1864,7 @@ if '8' in option_bin_set:
 	# =========  Outlier list
 	if len( HEP_proton_list_event ) == 1:
 		'''
+		
 		HEP_proton_var_list = []
 		HEP_proton_outlier_list = []
 
@@ -1879,11 +1882,11 @@ if '8' in option_bin_set:
 				HEP_proton_df.drop(i, inplace=True)
 				HEP_proton_data_event.drop(i, inplace=True)
 			# rb_data.drop(rb_data[rb_data.values == 0.0].index, inplace=True)
-
+		'''
 		HEP_proton_event_df.loc[0] = [HEP_proton_list_event[0][0], HEP_proton_list_event[0][-1], ((HEP_proton_list_event[0][-1] - HEP_proton_list_event[0][0]).total_seconds()/60), float(HEP_proton_data_event.loc[HEP_proton_list_event[0][0]:HEP_proton_list_event[0][-1]].max().values)] # days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0])
 
 	elif len( HEP_proton_list_event ) > 1:
-
+		'''
 		#====== may not work for multiple events
 		HEP_proton_var_list = []
 		HEP_proton_outlier_list = []
@@ -1902,7 +1905,7 @@ if '8' in option_bin_set:
 				HEP_proton_df.drop(i, inplace=True)
 				HEP_proton_data_event.drop(i, inplace=True)
 		# ======= end might not work
-	'''
+		'''
 		for i in range(len(HEP_proton_list_event)):
 			HEP_proton_event_df.loc[i] = [HEP_proton_list_event[i][0], HEP_proton_list_event[i][-1], ((HEP_proton_list_event[i][-1] - HEP_proton_list_event[i][0]).total_seconds()/60), float(HEP_proton_data_event.loc[HEP_proton_list_event[i][0]:HEP_proton_list_event[i][-1]].max().values)] # days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0])
 		# print(f"{rb_list_event[i][0]} -- {rb_list_event[i][-1]}", " Total Time: ", days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0]), " minutes")
@@ -2327,9 +2330,12 @@ if '8' in option_bin_set: # HEPAD
 		
 		color_tree = iter(cm.viridis(np.linspace(0,1,10)))
 
+		'''
 		for order in range(10):
 			# axes[length_data_list[j]].plot(proton_smooth_df[f'butter{order+1}'], color=next(color_tree), linewidth=1, label= f'Butter-{order}', zorder=5) # butter filter
 			axes[length_data_list[j]].plot(HEP_proton_smooth_df[f'butter{order+1}'].loc[event_obj_start:event_obj_end], color=next(color_tree), linewidth=1, label=f'Butter-{order}', zorder=5) # butter filter
+		'''
+		axes[length_data_list[j]].plot(HEP_proton_smooth_df['butter1'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='purple', linewidth=2, label='Butter-1', zorder=5) # butter filter
 
 		axes[length_data_list[j]].set_yscale('log')
 		# axes[length_data_list[j]].set_ylim((10**(-3)), (10**3))
@@ -2361,7 +2367,7 @@ if '8' in option_bin_set: # HEPAD
 			axes[length_data_list[j]].axvline(HEP_proton_event_df['start_time'][i], linewidth=1, zorder=2, color='royalblue', linestyle='-') #  xmin=0, xmax=1
 			axes[length_data_list[j]].axvline(HEP_proton_event_df['end_time'][i], linewidth=1, zorder=2, color='royalblue', linestyle='-') #  xmin=0, xmax=1
 
-	axes[length_data_list[j]].axhline(HEP_proton_threshold, linewidth=1, zorder=2, color='red', linestyle='-.', label=f'{round(HEP_proton_threshold, 3)} pfu' )# label=f'{HEP_proton_threshold} pfu') #  xmin=0, xmax=1
+	axes[length_data_list[j]].axhline(HEP_proton_threshold, linewidth=1, zorder=2, color='black', linestyle='-.', label=f'{round(HEP_proton_threshold, 3)} pfu' )# label=f'{HEP_proton_threshold} pfu') #  xmin=0, xmax=1
 	
 
 
