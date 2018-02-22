@@ -1807,12 +1807,12 @@ if '8' in option_bin_set:
 
 
 	
-	# HEP_proton_threshold = pow(10,-2.7) # pow(10, -2.6) # t3_threshold = 5 # 5 # pow(10, -0.9)
+	# HEP_proton_threshold =  pow(10, -2.6) # t3_threshold = 5 # 5 # pow(10, -0.9) # pow(10,-2.7)
 	HEP_proton_threshold = 0.002
 	HEP_proton_channel = 'P8_FLUX' # t3_freq = 120
 
 	HEP_proton_data_event = pd.DataFrame([])
-	HEP_proton_concat_event = HEP_proton_smooth_df[['butter1']]
+	HEP_proton_concat_event = HEP_proton_smooth_df[['butter7']]
 	# HEP_proton_concat_event = HEP_proton_df[[HEP_proton_channel]] # old algorithm
 
 	HEP_proton_data_event = HEP_proton_data_event.append(HEP_proton_concat_event)
@@ -1824,7 +1824,7 @@ if '8' in option_bin_set:
 	proton_counter = 0
 
 	HEP_min_length_event = 100 # 100 # 60
-	HEP_min_t_between_pts = 60
+	HEP_min_t_between_pts = 70
 
 	for i in HEP_proton_data_event[HEP_proton_data_event.values > HEP_proton_threshold].index: # for i in rb_data[rb_data.values > 300].index: # one level is 1 minute
 		if len(HEP_proton_list_temp) == 0:
