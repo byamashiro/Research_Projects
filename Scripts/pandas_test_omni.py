@@ -561,13 +561,57 @@ if '1' in option_bin_set:
 	'''
 
 
-
-
 	# ======= proton event detection
 	# ======= added for event options
-	proton_threshold = pow(10,-1.25) # t3_threshold = 5 # 5 # pow(10, -0.9) # pow(10, -0.8)
+	 # t3_threshold = 5 # 5 # pow(10, -0.9) # pow(10, -0.8)
 	proton_channel = 'ZPGT100W' # t3_freq = 120
+	proton_event_option = 'smooth' # 'standard' or 'smooth'
 
+	if proton_event_option == 'standard':
+		proton_threshold = pow(10,-1.3)# pow(10,-1.25)
+		proton_data_event = pd.DataFrame([])
+		proton_concat_event = proton_df[[proton_channel]]
+		proton_data_event = proton_data_event.append(proton_concat_event)
+		# proton_data_event.drop(proton_df[proton_df.values == 0.0].index, inplace=True) # proton_data.values == 0.0
+	
+		proton_event_df = pd.DataFrame([])
+		proton_list_temp = []
+		proton_list_event = []
+		proton_counter = 0
+
+
+	# ======== (BEGIN) Interpolating and smoothing data
+	elif proton_event_option == 'smooth':
+		proton_threshold = pow(10,-1.45)
+		proton_smooth_df = pd.DataFrame(proton_df[f'{proton_channel}']) # pd.DataFrame(proton_df[f'{proton_channel}'].loc[event_obj_start:event_obj_end])
+	
+		proton_smooth_df_rs_1m = proton_smooth_df.resample('min')
+		proton_smooth_df_rs_1s = proton_smooth_df.resample('S')
+	
+		proton_smooth_df_interp_1m = proton_smooth_df_rs_1m.interpolate(method='cubic')
+		proton_smooth_df_interp_1s = proton_smooth_df_rs_1s.interpolate(method='cubic')
+	
+		order_list = [1,2,3,4,5,6,7,8,9,10]
+	
+		for order in order_list:
+			b, a = signal.butter(order, 0.08) # order of the filter (increases in integer values), cut off frequency
+		
+			y1 = signal.filtfilt(b, a, proton_smooth_df[f'{proton_channel}'])
+			proton_smooth_df[f'butter{order}'] = y1
+
+
+		proton_data_event = pd.DataFrame([])
+		proton_concat_event = proton_smooth_df[['butter1']] # [[proton_channel]]
+		proton_data_event = proton_data_event.append(proton_concat_event)
+		# proton_data_event.drop(proton_df[proton_df.values == 0.0].index, inplace=True) # proton_data.values == 0.0
+			
+		proton_event_df = pd.DataFrame([])
+		proton_list_temp = []
+		proton_list_event = []
+		proton_counter = 0
+
+	# ======== (END) Interpolating and smoothing data
+	'''
 	proton_data_event = pd.DataFrame([])
 	proton_concat_event = proton_df[[proton_channel]]
 	proton_data_event = proton_data_event.append(proton_concat_event)
@@ -577,6 +621,7 @@ if '1' in option_bin_set:
 	proton_list_temp = []
 	proton_list_event = []
 	proton_counter = 0
+	'''
 
 	min_length_event = 1000 # 60
 	min_t_between_pts = 40
@@ -620,6 +665,7 @@ if '1' in option_bin_set:
 
 	# =========  Outlier list
 	if len( proton_list_event ) == 1:
+		''' # block commented when adding smoothing since the proton channel is no longer used
 		proton_var_list = []
 		proton_outlier_list = []
 
@@ -637,11 +683,11 @@ if '1' in option_bin_set:
 				proton_df.drop(i, inplace=True)
 				proton_data_event.drop(i, inplace=True)
 			# rb_data.drop(rb_data[rb_data.values == 0.0].index, inplace=True)
-
+		'''
 		proton_event_df.loc[0] = [proton_list_event[0][0], proton_list_event[0][-1], ((proton_list_event[0][-1] - proton_list_event[0][0]).total_seconds()/60), float(proton_data_event.loc[proton_list_event[0][0]:proton_list_event[0][-1]].max().values)] # days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0])
 
 	elif len( proton_list_event ) > 1:
-
+		''' # block commented when adding smoothing since the proton channel is no longer used
 		#====== may not work for multiple events
 		proton_var_list = []
 		proton_outlier_list = []
@@ -660,7 +706,7 @@ if '1' in option_bin_set:
 				proton_df.drop(i, inplace=True)
 				proton_data_event.drop(i, inplace=True)
 		# ======= end might not work
-
+		'''
 		for i in range(len(proton_list_event)):
 			proton_event_df.loc[i] = [proton_list_event[i][0], proton_list_event[i][-1], ((proton_list_event[i][-1] - proton_list_event[i][0]).total_seconds()/60), float(proton_data_event.loc[proton_list_event[i][0]:proton_list_event[i][-1]].max().values)] # days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0])
 		# print(f"{rb_list_event[i][0]} -- {rb_list_event[i][-1]}", " Total Time: ", days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0]), " minutes")
@@ -672,29 +718,7 @@ if '1' in option_bin_set:
 
 	# ============== end proton detection
 
-	# ======== (BEGIN) Interpolating and smoothing data
-	proton_smooth_df = pd.DataFrame(proton_df['ZPGT100W'].loc[event_obj_start:event_obj_end])
 
-	proton_smooth_df_rs_1m = proton_smooth_df.resample('min')
-	proton_smooth_df_rs_1s = proton_smooth_df.resample('S')
-
-	proton_smooth_df_interp_1m = proton_smooth_df_rs_1m.interpolate(method='cubic')
-	proton_smooth_df_interp_1s = proton_smooth_df_rs_1s.interpolate(method='cubic')
-
-
-
-
-	order_list = [1,2,3,4,5,6,7,8,9,10]
-
-
-	for order in order_list:
-		b, a = signal.butter(order, 0.08) # order of the filter (increases in integer values), cut off frequency
-	
-		y1 = signal.filtfilt(b, a, proton_smooth_df['ZPGT100W'])
-		proton_smooth_df[f'butter{order}'] = y1
-
-
-	# ======== (END) Interpolating and smoothing data
 
 
 
@@ -2091,15 +2115,18 @@ if '1' in option_bin_set:
 	next_global()
 	if goes_corrected_option == 'yes':
 		for i in energy_bin_list: # for i in sorted(energy_bin_list): # changed to unsorted because the sort queued off of 10 -> 100 -> 50 rather than 10 -> 50 -> 100
-			axes[length_data_list[j]].plot(proton_df[f'{i[0]}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], '.', color=f'{i[2]}', label= f'{i[1]}', zorder=5)#, logy=True)
+			axes[length_data_list[j]].plot(proton_df[f'{i[0]}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], '.', mfc='none', color=f'{i[2]}', label= f'{i[1]}', zorder=5)#, logy=True)
 		
-		axes[length_data_list[j]].plot(proton_smooth_df['ZPGT100W'].ewm(span=20).mean(), color='red', linewidth=1, label= 'EWM', zorder=5) # butter filter
+		# axes[length_data_list[j]].plot(proton_smooth_df['ZPGT100W'].ewm(span=20).mean(), color='red', linewidth=1, label= 'EWM', zorder=5) # butter filter
 
 
 		color_tree = iter(cm.rainbow(np.linspace(0,1,10)))
-
+		'''
 		for order in range(10):
 			axes[length_data_list[j]].plot(proton_smooth_df[f'butter{order+1}'], color=next(color_tree), linewidth=1, label= f'Butter-{order}', zorder=5) # butter filter
+		'''
+		if proton_event_option == 'smooth':
+			axes[length_data_list[j]].plot(proton_smooth_df['butter1'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='purple', linewidth=2, label='Butter-1', zorder=5)
 		# axes[length_data_list[j]].plot(proton_smooth_df_interp_1m, color='red', linestyle='-.', label= '1m Interp.', zorder=5) # interpolated (no time reshape)
 		# axes[length_data_list[j]].plot(proton_smooth_df_interp_1s, color='purple', linestyle=':', label= '1s Interp.', zorder=5) # interpolated (1 second)
 

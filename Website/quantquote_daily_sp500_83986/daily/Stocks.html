@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<!-- saved from url=(0027)http://localhost:5006/daily -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        
+        <title>Stocks</title>
+        
+<link rel="stylesheet" href="./Stocks_files/bokeh.min.css" type="text/css">
+<link rel="stylesheet" href="./Stocks_files/bokeh-widgets.min.css" type="text/css">
+        
+<script type="text/javascript" src="./Stocks_files/bokeh.min.js"></script>
+<script type="text/javascript" src="./Stocks_files/bokeh-widgets.min.js"></script>
+<script type="text/javascript" src="./Stocks_files/bokeh-gl.min.js"></script>
+<script type="text/javascript">
+    Bokeh.set_log_level("info");
+</script>
+        <style>
+          html {
+            width: 100%;
+            height: 100%;
+          }
+          body {
+            width: 90%;
+            height: 100%;
+            margin: auto;
+          }
+        </style>
+    </head>
+    <body>
+        
+        <div class="bk-root">
+            <div class="bk-plotdiv" id="1ed8bbe7-e5e5-42cf-a5b7-a32d014876d0"><div class="bk-grid-column bk-layout-fixed" id="modelid_49b47969-f584-4a40-be82-6a5acc7cccba" style="width: 900px; height: 750px;"><div class="bk-grid-row bk-layout-fixed" id="modelid_2c445b97-9855-47c1-a685-2986934f5d17" style="width: 850px; height: 350px;"><div class="bk-plot-layout bk-layout-fixed" id="modelid_1fc437bb-4430-4922-b4b9-dc0c086cef4f" style="width: 350px; height: 350px;"><div class="bk-toolbar-wrapper bk-layout-null" id="modelid_4942d66c-376b-4f20-aa9b-cf6af172aafb" style="left: 320px; top: 28.964px; width: 30px; height: 321.036px;"><div class="bk-toolbar-right bk-toolbar-sticky"><a href="http://bokeh.pydata.org/" target="_blank" class="bk-logo bk-logo-small"></a><div class="bk-button-bar"><div class="bk-button-bar-list" type="pan"><div class="bk-toolbar-button bk-active" _vimium-has-onclick-listener=""><div class="bk-btn-icon bk-tool-icon-pan"></div><span class="bk-tip">Pan</span></div><div class="bk-toolbar-button" _vimium-has-onclick-listener=""><div class="bk-btn-icon bk-tool-icon-box-select"></div><span class="bk-tip">Box Select</span></div></div><div class="bk-button-bar-list" type="scroll"><div class="bk-toolbar-button" _vimium-has-onclick-listener=""><div class="bk-btn-icon bk-tool-icon-wheel-zoom"></div><span class="bk-tip">Wheel Zoom</span></div></div><div class="bk-button-bar-list" type="pinch"></div><div class="bk-button-bar-list" type="tap"></div><div class="bk-button-bar-list" type="press"></div><div class="bk-button-bar-list" type="rotate"></div><div class="bk-button-bar-list" type="actions"><div class="bk-toolbar-button" _vimium-has-onclick-listener=""><div class="bk-btn-icon bk-tool-icon-reset"></div><span class="bk-tip">Reset</span></div></div><div class="bk-button-bar-list" type="inspectors"></div><div class="bk-button-bar-list" type="help"></div></div></div></div><div class="bk-plot-wrapper" style="position: absolute; left: 0px; top: 0px; width: 350px; height: 350px;"><div class="bk-canvas-wrapper" style="touch-action: none; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); width: 350px; height: 350px; cursor: default;"><div class="bk-canvas-events"></div><div class="bk-canvas-overlays"><div class="bk-shading" style="display: none;"></div></div><canvas class="bk-canvas" width="700" height="700" style="width: 350px; height: 350px;"></canvas></div></div></div><div class="bk-grid-column bk-layout-fixed" id="modelid_1a7badf9-17bb-41bf-b644-5cc3b6a7d4d5" style="width: 500px; height: 289px;"><div class="bk-widget-box bk-layout-fixed" id="modelid_5bd3466d-4dda-4d01-aa9d-dc3bcb937682" style="width: 280px;"><div class="bk-widget bk-layout-fixed" id="modelid_a7ccf74f-c5f9-47f6-8f46-ec4c0b281523"><label for="a7ccf74f-c5f9-47f6-8f46-ec4c0b281523">  </label><select class="bk-widget-form-input" id="a7ccf74f-c5f9-47f6-8f46-ec4c0b281523"><option selected="true" value="AAPL">AAPL</option><option value="INTC">INTC</option><option value="BRCM">BRCM</option><option value="YHOO">YHOO</option></select></div></div><div class="bk-widget-box bk-layout-fixed" id="modelid_b4801a85-50fb-4bbc-aeef-a1c79c07d0fc" style="width: 280px;"><div class="bk-widget bk-layout-fixed" id="modelid_c2715fc4-878a-4f53-a7bb-2c7fac8daf35"><label for="c2715fc4-878a-4f53-a7bb-2c7fac8daf35">  </label><select class="bk-widget-form-input" id="c2715fc4-878a-4f53-a7bb-2c7fac8daf35"><option selected="true" value="GOOG">GOOG</option><option value="INTC">INTC</option><option value="BRCM">BRCM</option><option value="YHOO">YHOO</option></select></div></div><div class="bk-widget-box bk-layout-fixed" id="modelid_8ae681a1-a058-4aaf-bfe6-b0e2b29b76f1" style="width: 480px;"><div class="bk-widget bk-layout-fixed" id="modelid_910159e7-0948-4e25-b6ef-420f3bfe200d" style="width: 500px;"><div class="bk-markup"><pre style="overflow: auto;">              AAPL         GOOG  AAPL_returns  GOOG_returns
+count  2259.000000  2259.000000   2259.000000   2259.000000
+mean    218.622859   494.511681      0.194531      0.349513
+std     171.689673   164.611263      5.238089      9.410682
+min      14.977300    99.950000    -62.237000    -62.400000
+25%      80.444500   392.800000     -1.629450     -4.090000
+50%     163.136000   499.650000      0.146000      0.240000
+75%     337.961000   595.440000      2.153500      4.960000
+max     685.662000   923.670000     48.618000     89.310000</pre></div></div></div></div></div><div class="bk-grid-column bk-layout-fixed" id="modelid_a530facd-e60a-4798-acc9-da98eeea0172" style="width: 900px; height: 400px;"><div class="bk-plot-layout bk-layout-fixed" id="modelid_4cd7eb1e-9220-44fb-8e21-a513786fdf1c" style="width: 900px; height: 200px;"><div class="bk-toolbar-wrapper bk-layout-null" id="modelid_46928308-5ac3-4aa4-9524-cea3a3eac671" style="left: 870px; top: 28.964px; width: 30px; height: 171.036px;"><div class="bk-toolbar-right bk-toolbar-sticky"><a href="http://bokeh.pydata.org/" target="_blank" class="bk-logo bk-logo-small"></a><div class="bk-button-bar"><div class="bk-button-bar-list" type="pan"><div class="bk-toolbar-button" _vimium-has-onclick-listener=""><div class="bk-btn-icon bk-tool-icon-pan"></div><span class="bk-tip">Pan</span></div><div class="bk-toolbar-button bk-active" _vimium-has-onclick-listener=""><div class="bk-btn-icon bk-tool-icon-box-select"></div><span class="bk-tip">Box Select (x-axis)</span></div></div><div class="bk-button-bar-list" type="scroll"><div class="bk-toolbar-button" _vimium-has-onclick-listener=""><div class="bk-btn-icon bk-tool-icon-wheel-zoom"></div><span class="bk-tip">Wheel Zoom</span></div></div><div class="bk-button-bar-list" type="pinch"></div><div class="bk-button-bar-list" type="tap"></div><div class="bk-button-bar-list" type="press"></div><div class="bk-button-bar-list" type="rotate"></div><div class="bk-button-bar-list" type="actions"><div class="bk-toolbar-button" _vimium-has-onclick-listener=""><div class="bk-btn-icon bk-tool-icon-reset"></div><span class="bk-tip">Reset</span></div></div><div class="bk-button-bar-list" type="inspectors"></div><div class="bk-button-bar-list" type="help"></div></div></div></div><div class="bk-plot-wrapper" style="position: absolute; left: 0px; top: 0px; width: 900px; height: 200px;"><div class="bk-canvas-wrapper" style="touch-action: none; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); width: 900px; height: 200px; cursor: default;"><div class="bk-canvas-events"></div><div class="bk-canvas-overlays"><div class="bk-shading" style="display: none;"></div></div><canvas class="bk-canvas" width="1800" height="400" style="width: 900px; height: 200px;"></canvas></div></div></div><div class="bk-plot-layout bk-layout-fixed" id="modelid_69566c0a-9f66-4c38-a219-05873e335edd" style="width: 900px; height: 200px;"><div class="bk-toolbar-wrapper bk-layout-null" id="modelid_efead0b4-c942-42c3-973c-33d7b69d692b" style="left: 870px; top: 28.964px; width: 30px; height: 171.036px;"><div class="bk-toolbar-right bk-toolbar-sticky"><a href="http://bokeh.pydata.org/" target="_blank" class="bk-logo bk-logo-small"></a><div class="bk-button-bar"><div class="bk-button-bar-list" type="pan"><div class="bk-toolbar-button" _vimium-has-onclick-listener=""><div class="bk-btn-icon bk-tool-icon-pan"></div><span class="bk-tip">Pan</span></div><div class="bk-toolbar-button bk-active" _vimium-has-onclick-listener=""><div class="bk-btn-icon bk-tool-icon-box-select"></div><span class="bk-tip">Box Select (x-axis)</span></div></div><div class="bk-button-bar-list" type="scroll"><div class="bk-toolbar-button" _vimium-has-onclick-listener=""><div class="bk-btn-icon bk-tool-icon-wheel-zoom"></div><span class="bk-tip">Wheel Zoom</span></div></div><div class="bk-button-bar-list" type="pinch"></div><div class="bk-button-bar-list" type="tap"></div><div class="bk-button-bar-list" type="press"></div><div class="bk-button-bar-list" type="rotate"></div><div class="bk-button-bar-list" type="actions"><div class="bk-toolbar-button" _vimium-has-onclick-listener=""><div class="bk-btn-icon bk-tool-icon-reset"></div><span class="bk-tip">Reset</span></div></div><div class="bk-button-bar-list" type="inspectors"></div><div class="bk-button-bar-list" type="help"></div></div></div></div><div class="bk-plot-wrapper" style="position: absolute; left: 0px; top: 0px; width: 900px; height: 200px;"><div class="bk-canvas-wrapper" style="touch-action: none; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); width: 900px; height: 200px;"><div class="bk-canvas-events"></div><div class="bk-canvas-overlays"><div class="bk-shading" style="display: none;"></div></div><canvas class="bk-canvas" width="1800" height="400" style="width: 900px; height: 200px;"></canvas></div></div></div></div></div></div>
+        </div>
+        
+        <script type="text/javascript">
+            (function() {
+          var fn = function() {
+            Bokeh.safely(function() {
+              var docs_json = {};
+              var render_items = [{"elementid":"1ed8bbe7-e5e5-42cf-a5b7-a32d014876d0","sessionid":"hRVkYT4EdfNrxE68kg0zkNFOR3J3BifvWvbnJMsGsGn2","use_for_title":true}];
+              
+              Bokeh.embed.embed_items(docs_json, render_items);
+            });
+          };
+          if (document.readyState != "loading") fn();
+          else document.addEventListener("DOMContentLoaded", fn);
+        })();
+        
+        </script>
+    
+</body></html>
