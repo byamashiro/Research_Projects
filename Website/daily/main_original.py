@@ -58,6 +58,7 @@ def get_data(t1, t2):
     data['t2'] = data[t2]
     data['t1_returns'] = data[t1+'_returns']
     data['t2_returns'] = data[t2+'_returns']
+    print(data)
     return data
 
 # set up widgets

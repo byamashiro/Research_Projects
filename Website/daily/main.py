@@ -33,38 +33,52 @@ from bokeh.models import ColumnDataSource
 from bokeh.models.widgets import PreText, Select
 from bokeh.plotting import figure
 
-DATA_DIR = join(dirname(__file__), 'daily')
+DATA_DIR = join(dirname(__file__), 'daily') # '/Users/bryanyamashiro/Documents/Research_Projects/Data/GOES_Detection/GOES_13/2012' # join(dirname(__file__), 'daily')
 
-DEFAULT_TICKERS = ['AAPL', 'GOOG', 'INTC', 'BRCM', 'YHOO']
+DEFAULT_TICKERS = ['proton', 'xray', 'june', 'july'] # ['AAPL', 'GOOG', 'INTC', 'BRCM', 'YHOO']
 
 def nix(val, lst):
     return [x for x in lst if x != val]
 
 @lru_cache()
 def load_ticker(ticker):
-    fname = join(DATA_DIR, 'table_%s.csv' % ticker.lower())
-    data = pd.read_csv(fname, header=None, parse_dates=['date'],
-                       names=['date', 'foo', 'o', 'h', 'l', 'c', 'v'])
+    cpflux_names = ['time_tag','ZPGT1E_QUAL_FLAG', 'ZPGT1E', 'ZPGT5E_QUAL_FLAG', 'ZPGT5E', 'ZPGT10E_QUAL_FLAG', 'ZPGT10E', 'ZPGT30E_QUAL_FLAG', 'ZPGT30E', 'ZPGT50E_QUAL_FLAG', 'ZPGT50E', 'ZPGT60E_QUAL_FLAG', 'ZPGT60E', 'ZPGT100E_QUAL_FLAG', 'ZPGT100E', 'ZPGT1W_QUAL_FLAG', 'ZPGT1W', 'ZPGT5W_QUAL_FLAG', 'ZPGT5W', 'ZPGT10W_QUAL_FLAG', 'ZPGT10W', 'ZPGT30W_QUAL_FLAG', 'ZPGT30W', 'ZPGT50W_QUAL_FLAG', 'ZPGT50W', 'ZPGT60W_QUAL_FLAG', 'ZPGT60W', 'ZPGT100W_QUAL_FLAG', 'ZPGT100W', 'ZPEQ5E_QUAL_FLAG', 'ZPEQ5E', 'ZPEQ15E_QUAL_FLAG', 'ZPEQ15E', 'ZPEQ30E_QUAL_FLAG', 'ZPEQ30E', 'ZPEQ50E_QUAL_FLAG', 'ZPEQ50E', 'ZPEQ60E_QUAL_FLAG', 'ZPEQ60E', 'ZPEQ100E_QUAL_FLAG', 'ZPEQ100E', 'ZPEQ5W_QUAL_FLAG', 'ZPEQ5W', 'ZPEQ15W_QUAL_FLAG', 'ZPEQ15W', 'ZPEQ30W_QUAL_FLAG', 'ZPEQ30W', 'ZPEQ50W_QUAL_FLAG', 'ZPEQ50W', 'ZPEQ60W_QUAL_FLAG', 'ZPEQ60W', 'ZPEQ100W_QUAL_FLAG', 'ZPEQ100W']
+    dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
+
+    fname = f'goes_modified_{ticker}.csv' # join(DATA_DIR, 'table_%s.csv' % ticker.lower())
+    data =  pd.read_csv(f'{DATA_DIR}/{fname}', header=None, parse_dates=['date'], names=['date', 'c'])
+    # data = pd.read_csv(f'{DATA_DIR}/{fname}', skiprows=718, date_parser=dateparse, names=cpflux_names,index_col='time_tag', header=0)
+    # pd.read_csv(fname, header=None, parse_dates=['date'], names=['date', 'foo', 'o', 'h', 'l', 'c', 'v'])
     data = data.set_index('date')
+    data.drop(data[data['c'] <= 0.0].index, inplace=True)
     return pd.DataFrame({ticker: data.c, ticker+'_returns': data.c.diff()})
+    # print(pd.DataFrame({ticker: data['ZPGT100W'], ticker+'_returns': data['ZPGT100W'].diff()}).head(3))
+    # return pd.DataFrame({ticker: data['ZPGT100W'], ticker+'_returns': data['ZPGT100W'].diff()})
+
+
+
 
 @lru_cache()
 def get_data(t1, t2):
     df1 = load_ticker(t1)
     df2 = load_ticker(t2)
+    # df1 = load_ticker(t1)
+    # df2 = load_ticker(t2)
     data = pd.concat([df1, df2], axis=1)
     data = data.dropna()
     data['t1'] = data[t1]
     data['t2'] = data[t2]
     data['t1_returns'] = data[t1+'_returns']
     data['t2_returns'] = data[t2+'_returns']
+    print(data.head(3))
     return data
 
 # set up widgets
 
 stats = PreText(text='', width=500)
-ticker1 = Select(value='AAPL', options=nix('GOOG', DEFAULT_TICKERS))
-ticker2 = Select(value='GOOG', options=nix('AAPL', DEFAULT_TICKERS))
+ticker1 = Select(value='proton', options=nix('xray', DEFAULT_TICKERS)) # ticker1 = Select(value='AAPL', options=nix('GOOG', DEFAULT_TICKERS))
+ticker2 = Select(value='xray', options=nix('proton', DEFAULT_TICKERS)) # ticker2 = Select(value='GOOG', options=nix('AAPL', DEFAULT_TICKERS))
+
 
 # set up plots
 
@@ -77,11 +91,11 @@ corr = figure(plot_width=350, plot_height=350,
 corr.circle('t1_returns', 't2_returns', size=2, source=source,
             selection_color="orange", alpha=0.6, nonselection_alpha=0.1, selection_alpha=0.4)
 
-ts1 = figure(plot_width=900, plot_height=200, tools=tools, x_axis_type='datetime', active_drag="xbox_select")
+ts1 = figure(plot_width=900, plot_height=200, tools=tools, x_axis_type='datetime', active_drag="xbox_select", y_axis_type="log")
 ts1.line('date', 't1', source=source_static)
 ts1.circle('date', 't1', size=1, source=source, color=None, selection_color="orange")
 
-ts2 = figure(plot_width=900, plot_height=200, tools=tools, x_axis_type='datetime', active_drag="xbox_select")
+ts2 = figure(plot_width=900, plot_height=200, tools=tools, x_axis_type='datetime', active_drag="xbox_select", y_axis_type="log")
 ts2.x_range = ts1.x_range
 ts2.line('date', 't2', source=source_static)
 ts2.circle('date', 't2', size=1, source=source, color=None, selection_color="orange")
