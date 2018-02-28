@@ -582,9 +582,11 @@ if '1' in option_bin_set:
 
 	# ======== (BEGIN) Interpolating and smoothing data
 	elif proton_event_option == 'smooth':
-		proton_threshold = pow(10,-1.45)
+		proton_threshold = pow(10,-1.26) # pow(10,-1.45) when Butterworth filter was at (1 or 2, 0.08)
+		butter_order = 1
+		butter_filter = f'butter{butter_order}'
 		proton_smooth_df = pd.DataFrame(proton_df[f'{proton_channel}']) # pd.DataFrame(proton_df[f'{proton_channel}'].loc[event_obj_start:event_obj_end])
-	
+
 		proton_smooth_df_rs_1m = proton_smooth_df.resample('min')
 		proton_smooth_df_rs_1s = proton_smooth_df.resample('S')
 	
@@ -594,14 +596,15 @@ if '1' in option_bin_set:
 		order_list = [1,2,3,4,5,6,7,8,9,10]
 	
 		for order in order_list:
-			b, a = signal.butter(order, 0.08) # order of the filter (increases in integer values), cut off frequency
+			b, a = signal.butter(order, 0.4) # order of the filter (increases in integer values), cut off frequency # 0.08
 		
 			y1 = signal.filtfilt(b, a, proton_smooth_df[f'{proton_channel}'])
 			proton_smooth_df[f'butter{order}'] = y1
 
+		proton_smooth_df[proton_smooth_df[f'{butter_filter}'] <= 0.024] = 0.024
 
 		proton_data_event = pd.DataFrame([])
-		proton_concat_event = proton_smooth_df[['butter1']] # [[proton_channel]]
+		proton_concat_event = proton_smooth_df[[f'{butter_filter}']] # [[proton_channel]]
 		proton_data_event = proton_data_event.append(proton_concat_event)
 		# proton_data_event.drop(proton_df[proton_df.values == 0.0].index, inplace=True) # proton_data.values == 0.0
 			
@@ -624,7 +627,7 @@ if '1' in option_bin_set:
 	'''
 
 	min_length_event = 1000 # 60
-	min_t_between_pts = 40
+	min_t_between_pts = 60 # 40
 
 	for i in proton_data_event[proton_data_event.values > proton_threshold].index: # for i in rb_data[rb_data.values > 300].index: # one level is 1 minute
 		if len(proton_list_temp) == 0:
@@ -2126,7 +2129,7 @@ if '1' in option_bin_set:
 			axes[length_data_list[j]].plot(proton_smooth_df[f'butter{order+1}'], color=next(color_tree), linewidth=1, label= f'Butter-{order}', zorder=5) # butter filter
 		'''
 		if proton_event_option == 'smooth':
-			axes[length_data_list[j]].plot(proton_smooth_df['butter1'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='purple', linewidth=2, label='Butter-1', zorder=5)
+			axes[length_data_list[j]].plot(proton_smooth_df[f'{butter_filter}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='purple', linewidth=2, label=f'Butter-{butter_order}', zorder=5)
 		# axes[length_data_list[j]].plot(proton_smooth_df_interp_1m, color='red', linestyle='-.', label= '1m Interp.', zorder=5) # interpolated (no time reshape)
 		# axes[length_data_list[j]].plot(proton_smooth_df_interp_1s, color='purple', linestyle=':', label= '1s Interp.', zorder=5) # interpolated (1 second)
 
