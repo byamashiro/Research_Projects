@@ -11,6 +11,7 @@ from spacepy import pycdf
 from urllib import error
 from matplotlib.pyplot import cm
 import glob
+from scipy import signal
 
 import calendar
 
@@ -22,6 +23,13 @@ data_directory = '/Users/bryanyamashiro/Documents/Research_Projects/Data'
 save_option = 'yes' # either 'yes' or 'no'
 plot_option = 'yes'
 unique_inclusion_option = 'yes'
+proton_event_option = 'smooth'
+
+proton_event_full_df_13 = pd.DataFrame() # columns=('start_time', 'end_time', 'proton_duration', 'proton_max_int'))
+proton_event_full_df_15 = pd.DataFrame()
+
+proton_smooth_full_df_13 = pd.DataFrame()
+proton_smooth_full_df_15 = pd.DataFrame()
 
 
 # ==== Must change for different energies
@@ -191,15 +199,124 @@ for detection_year in year_list:
 						shutil.move(f'{proton_name}', f'{data_directory}/GOES_Detection/GOES_{satellite_no}/{detection_year}')
 					elif save_option == 'no':
 						os.remove(proton_name)
-			
-				for i in proton_df[proton_df[f'{energy_header}'] > detection_threshold].index:
-					# print(str(i)[:10].replace('-',''))
+				
+				# ========== Adding smoothed (begin)
+				if proton_event_option == 'smooth':
+					detection_threshold = pow(10,-1.26)
+					butter_order = 1
+					butter_filter = f'butter{butter_order}'
+					proton_smooth_df = pd.DataFrame(proton_df[f'{energy_header}']) 
+
+					b, a = signal.butter(butter_order, 0.4)
+					y1 = signal.filtfilt(b, a, proton_smooth_df[f'{energy_header}'])
+					proton_smooth_df[f'{butter_filter}'] = y1
+
+					proton_smooth_df[proton_smooth_df[f'{butter_filter}'] <= 0.024] = 0.024
+					# proton_df = proton_smooth_df
+
 					if satellite_no == '13':
-						event_set_13.add(str(i)[:10].replace('-',''))
-						year_set_13.add(str(i)[:10].replace('-',''))
+						proton_smooth_full_df_13 = proton_smooth_full_df_13.append(proton_smooth_df)
 					elif satellite_no == '15':
-						event_set_15.add(str(i)[:10].replace('-',''))
-						year_set_15.add(str(i)[:10].replace('-',''))
+						proton_smooth_full_df_15 = proton_smooth_full_df_15.append(proton_smooth_df)
+
+
+					proton_data_event = pd.DataFrame([])
+					proton_concat_event = proton_smooth_df[[f'{butter_filter}']] # [[proton_channel]]
+					proton_data_event = proton_data_event.append(proton_concat_event)
+					# proton_data_event.drop(proton_df[proton_df.values == 0.0].index, inplace=True) # proton_data.values == 0.0
+						
+					proton_event_df = pd.DataFrame([])
+					proton_list_temp = []
+					proton_list_event = []
+					proton_counter = 0
+
+
+					min_length_event = 1000 # 60
+					min_t_between_pts = 60 # 40
+
+					for i in proton_data_event[proton_data_event.values > detection_threshold].index: # for i in rb_data[rb_data.values > 300].index: # one level is 1 minute
+						if len(proton_list_temp) == 0:
+							proton_list_temp.append(i)
+					
+						elif len(proton_list_temp) >= 1:
+							# time between points
+							if (i - proton_list_temp[-1]) <= datetime.timedelta(minutes=min_t_between_pts): # originally 5 minutes # also had at 30 minutes, but increasing to 40
+								proton_list_temp.append(i)
+					
+							elif (i - proton_list_temp[-1]) > datetime.timedelta(minutes=min_t_between_pts): # originally 5 minutes # time between first interval of time event to the second
+								if (proton_list_temp[-1] - proton_list_temp[0]) >= datetime.timedelta(minutes=min_length_event): # length of event
+									proton_list_event.append(proton_list_temp)
+									proton_list_temp = []
+									proton_list_temp.append(i)
+					
+								elif (proton_list_temp[-1] - proton_list_temp[0]) < datetime.timedelta(minutes=min_length_event): # if the time difference is less than 30 minutes, then create a new event
+									proton_list_temp = []
+									proton_list_temp.append(i)
+						
+					if len(proton_list_temp) > 0:
+						if (proton_list_temp[-1] - proton_list_temp[0]) >= datetime.timedelta(minutes=min_length_event):
+							proton_list_event.append(proton_list_temp)
+							proton_list_temp = []
+							proton_list_temp.append(i)
+						elif (proton_list_temp[-1] - proton_list_temp[0]) < datetime.timedelta(minutes=min_length_event):
+							proton_list_temp = []
+							proton_list_temp.append(i)
+						proton_list_temp = []
+					
+					# print("\n")
+					proton_event_df = pd.DataFrame(columns=('start_time', 'end_time', 'proton_duration', 'proton_max_int'))
+					
+					if len( proton_list_event ) == 1:
+						proton_event_df.loc[0] = [proton_list_event[0][0], proton_list_event[0][-1], ((proton_list_event[0][-1] - proton_list_event[0][0]).total_seconds()/60), float(proton_data_event.loc[proton_list_event[0][0]:proton_list_event[0][-1]].max().values)] # days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0])
+				
+					elif len( proton_list_event ) > 1:
+						for i in range(len(proton_list_event)):
+							proton_event_df.loc[i] = [proton_list_event[i][0], proton_list_event[i][-1], ((proton_list_event[i][-1] - proton_list_event[i][0]).total_seconds()/60), float(proton_data_event.loc[proton_list_event[i][0]:proton_list_event[i][-1]].max().values)] # days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0])
+					
+					# print(proton_event_df)
+					if len(proton_event_df) > 0 and satellite_no == '13':
+						# print(proton_event_df)
+						proton_event_full_df_13 = proton_event_full_df_13.append(proton_event_df, ignore_index=True)
+
+					elif len(proton_event_df) > 0 and satellite_no == '15':
+						# print(proton_event_df)
+						proton_event_full_df_15 = proton_event_full_df_15.append(proton_event_df, ignore_index=True)
+
+
+
+
+					'''
+					print('='*40)
+					print(f"Number of Proton Events (): ", len(proton_list_event))
+					print(proton_event_df)
+					print('='*40)
+					'''
+
+					'''
+					for i in proton_df[proton_df[f'{butter_filter}'] > detection_threshold].index:
+						# print(str(i)[:10].replace('-',''))
+						if satellite_no == '13':
+							event_set_13.add(str(i)[:10].replace('-',''))
+							year_set_13.add(str(i)[:10].replace('-',''))
+						elif satellite_no == '15':
+							event_set_15.add(str(i)[:10].replace('-',''))
+							year_set_15.add(str(i)[:10].replace('-',''))
+					'''
+
+
+
+					
+				# ========== Adding smooth (end)
+
+				elif proton_event_option != 'smooth':
+					for i in proton_df[proton_df[f'{energy_header}'] > detection_threshold].index:
+						# print(str(i)[:10].replace('-',''))
+						if satellite_no == '13':
+							event_set_13.add(str(i)[:10].replace('-',''))
+							year_set_13.add(str(i)[:10].replace('-',''))
+						elif satellite_no == '15':
+							event_set_15.add(str(i)[:10].replace('-',''))
+							year_set_15.add(str(i)[:10].replace('-',''))				
 	
 				
 	
@@ -209,68 +326,160 @@ for detection_year in year_list:
 				print(e)
 				print(f'{month_event} does not have data.')
 
-	print(f'\n{"=" * 60}')
-	print(f'GOES-13 Events ({detection_year}): {sorted(list(event_set_13))}')
-	print(f'--GOES-13 Unique Events ({detection_year}): {sorted(list(event_set_13.difference(event_set_15)))}')
-	
-	print(f'\nGOES-15 Events ({detection_year}): {sorted(list(event_set_15))}')
-	print(f'--GOES-15 Unique Events ({detection_year}): {sorted(list(event_set_15.difference(event_set_13)))}')
-	print('=' * 60)
-	
-	print(f'\nShared Events ({detection_year}): {sorted(list(event_set_13.intersection(event_set_15)))}')
+	if proton_event_option == 'smooth':
+		print(f'\n{"=" * 60}')
+		print(f'GOES-13 Events ({detection_year}):')
+		print(proton_event_full_df_13[proton_event_full_df_13['start_time'].dt.year == int(detection_year)])
+		
+
+		print(f'GOES-15 Events ({detection_year}):')
+		print(proton_event_full_df_15[proton_event_full_df_15['start_time'].dt.year == int(detection_year)])
+		print('=' * 60)
+
+	elif proton_event_option != 'smooth':
+		print(f'\n{"=" * 60}')
+		print(f'GOES-13 Events ({detection_year}): {sorted(list(event_set_13))}')
+		print(f'--GOES-13 Unique Events ({detection_year}): {sorted(list(event_set_13.difference(event_set_15)))}')
+		
+		print(f'\nGOES-15 Events ({detection_year}): {sorted(list(event_set_15))}')
+		print(f'--GOES-15 Unique Events ({detection_year}): {sorted(list(event_set_15.difference(event_set_13)))}')
+		print('=' * 60)
+		
+		print(f'\nShared Events ({detection_year}): {sorted(list(event_set_13.intersection(event_set_15)))}')
 	
 if len(year_list) > 1:
 	
-
-	print(f'{"="*40}\n{"=" + f"Full Event List".center(38," ") + "="}\n{"="*40}')
-
-	print(f'\n{"=" * 60}')
-	print(f'GOES-13 Events: {sorted(list(year_set_13))}')
-	print(f'--GOES-13 Unique Events: {sorted(list(year_set_13.difference(year_set_15)))}')
+	if proton_event_option != 'smooth':
+		print(f'{"="*40}\n{"=" + f"Full Event List".center(38," ") + "="}\n{"="*40}')
 	
-	print(f'\nGOES-15 Events: {sorted(list(year_set_15))}')
-	print(f'--GOES-15 Unique Events: {sorted(list(year_set_15.difference(year_set_13)))}')
-	print('=' * 60)
+		print(f'\n{"=" * 60}')
+		print(f'GOES-13 Events: {sorted(list(year_set_13))}')
+		print(f'--GOES-13 Unique Events: {sorted(list(year_set_13.difference(year_set_15)))}')
+		
+		print(f'\nGOES-15 Events: {sorted(list(year_set_15))}')
+		print(f'--GOES-15 Unique Events: {sorted(list(year_set_15.difference(year_set_13)))}')
+		print('=' * 60)
+		
+		print(f'\nShared Events: {sorted(list(year_set_13.intersection(year_set_15)))}')
+		year_df = pd.DataFrame([])
+		year_df['g_events'] = sorted(list(year_set_13.intersection(year_set_15)))
 	
-	print(f'\nShared Events: {sorted(list(year_set_13.intersection(year_set_15)))}')
-	year_df = pd.DataFrame([])
-	year_df['g_events'] = sorted(list(year_set_13.intersection(year_set_15)))
+		# year_df.to_csv('hep_events.txt', sep='\t', index=False)
+	
+		if unique_inclusion_option == 'yes':
+			list_of_intersection = list(year_set_13.intersection(year_set_15).union(year_set_13.difference(year_set_15), year_set_15.difference(year_set_13)))
+		elif unique_inclusion_option == 'no':
+			list_of_intersection = list(year_set_13.intersection(year_set_15))
+	
+		full_event = []
+		full_year = []
+		for i in sorted(list_of_intersection):
+			if len(full_event) == 0:
+				full_event.append(i)
+	
+			elif len(full_event) >= 1:
+	
+					# full_event.append(i)
+				
+				if datetime.datetime.strptime(f'{i}', '%Y%m%d') == datetime.datetime.strptime(f'{full_event[-1]}', '%Y%m%d') + datetime.timedelta(days=1): # if int(i) == int(full_event[-1]) + 1:
+					full_event.append(i)
+	
+				elif datetime.datetime.strptime(f'{i}', '%Y%m%d') != datetime.datetime.strptime(f'{full_event[-1]}', '%Y%m%d') + datetime.timedelta(days=1): # int(i) != int(full_event[-1]) + 1:
+					# print(i , " ", int(full_event[-1]), " ", int(full_event[-1]) + 1)
+					full_year.append(full_event)
+					full_event = []
+					full_event.append(i)
+	
+		if len(full_event) != 0:
+			full_year.append(full_event)
+			full_year_df = pd.DataFrame(full_year)
+			full_year_df.fillna(value='none', inplace=True)
+	
+			full_year_df.to_csv(f'{data_directory}/detected_events/event_dates/{detection_threshold_str}pfu_{energy_channel}mev_{year_list[0]}_{year_list[-1]}.txt', sep=',', index=False)
 
-	# year_df.to_csv('hep_events.txt', sep='\t', index=False)
 
-	if unique_inclusion_option == 'yes':
-		list_of_intersection = list(year_set_13.intersection(year_set_15).union(year_set_13.difference(year_set_15), year_set_15.difference(year_set_13)))
-	elif unique_inclusion_option == 'no':
-		list_of_intersection = list(year_set_13.intersection(year_set_15))
 
-	full_event = []
-	full_year = []
-	for i in sorted(list_of_intersection):
-		if len(full_event) == 0:
-			full_event.append(i)
+if plot_option == 'yes':
+	print(f'{"="*40}\n{"=" + f"Plotting Events".center(38," ") + "="}\n{"="*40}')
+	# if os.path.isfile(f'{data_directory}/GOES_Detection/GOES_{sat}/{detection_year}/{proton_name}')
+	for event_day in range(len(proton_event_full_df_13)):
+		event_start_str = str(proton_event_full_df_13['start_time'].iloc[event_day].date()).replace('-','')
+		event_end_str = str(proton_event_full_df_13['end_time'].iloc[event_day].date()).replace('-','')
 
-		elif len(full_event) >= 1:
+		plot_check = os.path.isfile(f'{data_directory}/detected_events/{energy_channel}mev/{detection_threshold_str}pfu_{energy_channel}mev_{event_start_str}.png')
 
-				# full_event.append(i)
+		if plot_check == True:
+			print(f"Plot exists for {event_start_str}")
+
+		elif plot_check == False:
+			print(f'\rGenerating plot for {event_start_str}')
+			plt.close("all")
+			plt.figure(figsize=(10,6))
+		
+			for sat in ['13','15']:
+				if event_start_str[4:6] == event_end_str[4:6]:
+					f_l_day = calendar.monthrange(int(f'{event_start_str[:4]}'), int(f'{event_start_str[4:6]}'))
 			
-			if datetime.datetime.strptime(f'{i}', '%Y%m%d') == datetime.datetime.strptime(f'{full_event[-1]}', '%Y%m%d') + datetime.timedelta(days=1): # if int(i) == int(full_event[-1]) + 1:
-				full_event.append(i)
-
-			elif datetime.datetime.strptime(f'{i}', '%Y%m%d') != datetime.datetime.strptime(f'{full_event[-1]}', '%Y%m%d') + datetime.timedelta(days=1): # int(i) != int(full_event[-1]) + 1:
-				# print(i , " ", int(full_event[-1]), " ", int(full_event[-1]) + 1)
-				full_year.append(full_event)
-				full_event = []
-				full_event.append(i)
-
-	if len(full_event) != 0:
-		full_year.append(full_event)
-		full_year_df = pd.DataFrame(full_year)
-		full_year_df.fillna(value='none', inplace=True)
-
-		full_year_df.to_csv(f'{data_directory}/detected_events/event_dates/{detection_threshold_str}pfu_{energy_channel}mev_{year_list[0]}_{year_list[-1]}.txt', sep=',', index=False)
+					event_f_day = str(f'{event_start_str[:4]}{str(event_start_str[4:6]).zfill(2)}01') # {str(f_l_day[0]).zfill(2)}
+					event_l_day = str(f'{event_start_str[:4]}{str(event_start_str[4:6]).zfill(2)}{str(f_l_day[1]).zfill(2)}')
+	
+					proton_name = f'g{sat}_epead_cpflux_5m_{event_f_day}_{event_l_day}.csv' #g13_epead_cpflux_5m_20110101_20110131.csv
+					# proton_check = os.path.isfile(f'{data_directory}/GOES_Detection/GOES_{sat}/{detection_year}/{proton_name}')
+			
+					proton_df = pd.read_csv(f'{data_directory}/GOES_Detection/GOES_{sat}/{event_start_str[:4]}/{proton_name}', skiprows=718, date_parser=dateparse, names=cpflux_names,index_col='time_tag', header=0)
+					proton_df.loc[proton_df[f'{energy_header}'] <= 0.0] = np.nan
+				
+				elif event_start_str[4:6] != event_end_str[4:6]:
+					print("Event requires additional month parsing")
 
 
+				if sat == '13':
+					marker_sat = 'x'
+				elif sat == '15':
+					marker_sat = 'o'
+			
 
+				# plt.plot(proton_df['ZPGT10W'].loc[f'{event_day[0]}':f'{event_day[-1]}'], label = f'GOES-{sat} >10 MeV', marker=marker_sat, color='red')
+				# plt.plot(proton_df['ZPGT50W'].loc[f'{event_day[0]}':f'{event_day[-1]}'], label = f'GOES-{sat} >50 MeV', marker=marker_sat, color='blue')
+				plt.plot(proton_df['ZPGT100W'].loc[f'{proton_event_full_df_13["start_time"][event_day]}':f'{proton_event_full_df_13["end_time"][event_day]}'], label = f'GOES-{sat} >100 MeV', marker=marker_sat, color='lime')
+			
+			if proton_event_option == 'smooth':
+				plt.plot(proton_smooth_full_df_13[f'{butter_filter}'].loc[f'{proton_event_full_df_13["start_time"][event_day]}':f'{proton_event_full_df_13["end_time"][event_day]}'], label = f'Butter-{butter_order}', color='blue')
+
+
+			myFmt = mdates.DateFormatter('%m/%d\n%H:%M')
+			ax = plt.gca()
+			ax.xaxis.set_major_formatter(myFmt)
+			ax.set_ylim([10**-2,10**4])
+		
+
+
+			plt.axhline(detection_threshold, color='yellow', linestyle='-',linewidth=4 , zorder = 1)
+			plt.axhline(detection_threshold, color='red', linestyle='--', label='Threshold', zorder = 1) # 0.25
+			# plt.axhline(0.60, color='navy', linestyle='--', label='50 MeV', zorder = 1)
+			# plt.axhline(1.5, color='crimson', linestyle='--', label='10 MeV', zorder = 1)
+
+			plt.yscale('log')
+			plt.setp(ax.xaxis.get_majorticklabels(), rotation=0, horizontalalignment='center')
+			plt.minorticks_on()
+			plt.grid(True)
+			plt.legend(loc='upper right', ncol=2,fontsize=8)
+			
+			plt.title(f'Proton Event Detector [GOES-13]\n[{proton_event_full_df_13["start_time"][event_day]} -- {proton_event_full_df_13["end_time"][event_day]}] (Threshold : {detection_threshold} pfu -- {energy_channel} MeV)', fontname="Arial", fontsize = 14) #, y=1.04,
+			
+			plt.ylabel('Proton Flux [pfu]', fontname="Arial", fontsize = 12)
+			plt.xlabel('Time [UT]', fontname="Arial", fontsize = 12)
+		
+			# plt.show()
+			# sys.exit(0)
+			
+
+			plt.savefig(f'{data_directory}/detected_events/{energy_channel}mev/{detection_threshold_str}pfu_{energy_channel}mev_{event_start_str}.png', format='png', dpi=900)
+			#sys.exit(0)
+
+
+
+''' # old plotting technique
 if plot_option == 'yes':
 	print(f'{"="*40}\n{"=" + f"Plotting Events".center(38," ") + "="}\n{"="*40}')
 	# if os.path.isfile(f'{data_directory}/GOES_Detection/GOES_{sat}/{detection_year}/{proton_name}')
@@ -342,4 +551,4 @@ if plot_option == 'yes':
 
 			plt.savefig(f'{data_directory}/detected_events/{energy_channel}mev/{detection_threshold_str}pfu_{energy_channel}mev_{event_day[0]}.png', format='png', dpi=900)
 			#sys.exit(0)
-
+'''

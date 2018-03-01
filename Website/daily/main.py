@@ -149,3 +149,6 @@ update()
 
 curdoc().add_root(layout)
 curdoc().title = "Stocks"
+# html = file_html(filename='plot_test',title='plotter',mode='cdn')
+
+
