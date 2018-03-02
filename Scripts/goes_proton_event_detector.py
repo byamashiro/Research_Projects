@@ -199,13 +199,18 @@ for detection_year in year_list:
 						shutil.move(f'{proton_name}', f'{data_directory}/GOES_Detection/GOES_{satellite_no}/{detection_year}')
 					elif save_option == 'no':
 						os.remove(proton_name)
+
+				proton_df.drop(proton_df[proton_df['ZPGT10W'] <= 0.0].index, inplace=True)
+				proton_df.drop(proton_df[proton_df['ZPGT50W'] <= 0.0].index, inplace=True)
+				proton_df.drop(proton_df[proton_df['ZPGT100W'] <= 0.0].index, inplace=True)
 				
 				# ========== Adding smoothed (begin)
 				if proton_event_option == 'smooth':
 					detection_threshold = pow(10,-1.26)
 					butter_order = 1
 					butter_filter = f'butter{butter_order}'
-					proton_smooth_df = pd.DataFrame(proton_df[f'{energy_header}']) 
+					proton_smooth_df = pd.DataFrame(proton_df[f'{energy_header}'])
+					detection_threshold_str = str(round(detection_threshold,3))
 
 					b, a = signal.butter(butter_order, 0.4)
 					y1 = signal.filtfilt(b, a, proton_smooth_df[f'{energy_header}'])
@@ -398,66 +403,85 @@ if len(year_list) > 1:
 			full_year_df.to_csv(f'{data_directory}/detected_events/event_dates/{detection_threshold_str}pfu_{energy_channel}mev_{year_list[0]}_{year_list[-1]}.txt', sep=',', index=False)
 
 
+proton_event_full_df_13.to_csv(f'{data_directory}/detected_events/event_dates/g13_{detection_threshold_str}pfu_{energy_channel}mev_{year_list[0]}_{year_list[-1]}.txt', sep=',', index=True)
+proton_event_full_df_15.to_csv(f'{data_directory}/detected_events/event_dates/g15_{detection_threshold_str}pfu_{energy_channel}mev_{year_list[0]}_{year_list[-1]}.txt', sep=',', index=True)
+
 
 if plot_option == 'yes':
-	print(f'{"="*40}\n{"=" + f"Plotting Events".center(38," ") + "="}\n{"="*40}')
-	# if os.path.isfile(f'{data_directory}/GOES_Detection/GOES_{sat}/{detection_year}/{proton_name}')
+	# ===== GOES-13 Plotting
+	print(f'{"="*40}\n{"=" + f"Plotting GOES-13 Events".center(38," ") + "="}\n{"="*40}')
 	for event_day in range(len(proton_event_full_df_13)):
-		event_start_str = str(proton_event_full_df_13['start_time'].iloc[event_day].date()).replace('-','')
-		event_end_str = str(proton_event_full_df_13['end_time'].iloc[event_day].date()).replace('-','')
+		event_name_str = str(    (proton_event_full_df_13['start_time'].iloc[event_day] ).date()   ).replace('-','')
 
-		plot_check = os.path.isfile(f'{data_directory}/detected_events/{energy_channel}mev/{detection_threshold_str}pfu_{energy_channel}mev_{event_start_str}.png')
+		event_start_str = str(    (proton_event_full_df_13['start_time'].iloc[event_day] - datetime.timedelta(days=1)).date()   ).replace('-','')
+		event_end_str = str(    (proton_event_full_df_13['end_time'].iloc[event_day] + datetime.timedelta(days=1)).date() ).replace('-','')
+
+		plot_check = os.path.isfile(f'{data_directory}/detected_events/{energy_channel}mev/GOES-13/{event_name_str}_g13_{energy_channel}mev_{detection_threshold_str}pfu.png')
 
 		if plot_check == True:
-			print(f"Plot exists for {event_start_str}")
+			print(f"Plot exists for {event_name_str}")
 
 		elif plot_check == False:
-			print(f'\rGenerating plot for {event_start_str}')
+			print(f'\rGenerating GOES-13 plot for {event_name_str}')
 			plt.close("all")
 			plt.figure(figsize=(10,6))
 		
-			for sat in ['13','15']:
-				if event_start_str[4:6] == event_end_str[4:6]:
-					f_l_day = calendar.monthrange(int(f'{event_start_str[:4]}'), int(f'{event_start_str[4:6]}'))
+			if event_start_str[4:6] == event_end_str[4:6]:
+				f_l_day = calendar.monthrange(int(f'{event_start_str[:4]}'), int(f'{event_start_str[4:6]}'))
 			
-					event_f_day = str(f'{event_start_str[:4]}{str(event_start_str[4:6]).zfill(2)}01') # {str(f_l_day[0]).zfill(2)}
-					event_l_day = str(f'{event_start_str[:4]}{str(event_start_str[4:6]).zfill(2)}{str(f_l_day[1]).zfill(2)}')
+				event_f_day = str(f'{event_start_str[:4]}{str(event_start_str[4:6]).zfill(2)}01') # {str(f_l_day[0]).zfill(2)}
+				event_l_day = str(f'{event_start_str[:4]}{str(event_start_str[4:6]).zfill(2)}{str(f_l_day[1]).zfill(2)}')
 	
-					proton_name = f'g{sat}_epead_cpflux_5m_{event_f_day}_{event_l_day}.csv' #g13_epead_cpflux_5m_20110101_20110131.csv
-					# proton_check = os.path.isfile(f'{data_directory}/GOES_Detection/GOES_{sat}/{detection_year}/{proton_name}')
+				proton_name = f'g13_epead_cpflux_5m_{event_f_day}_{event_l_day}.csv' #g13_epead_cpflux_5m_20110101_20110131.csv
 			
-					proton_df = pd.read_csv(f'{data_directory}/GOES_Detection/GOES_{sat}/{event_start_str[:4]}/{proton_name}', skiprows=718, date_parser=dateparse, names=cpflux_names,index_col='time_tag', header=0)
-					proton_df.loc[proton_df[f'{energy_header}'] <= 0.0] = np.nan
-				
-				elif event_start_str[4:6] != event_end_str[4:6]:
-					print("Event requires additional month parsing")
-
-
-				if sat == '13':
-					marker_sat = 'x'
-				elif sat == '15':
-					marker_sat = 'o'
+				proton_df = pd.read_csv(f'{data_directory}/GOES_Detection/GOES_13/{event_start_str[:4]}/{proton_name}', skiprows=718, date_parser=dateparse, names=cpflux_names,index_col='time_tag', header=0)
+				proton_df.loc[proton_df[f'{energy_header}'] <= 0.0] = np.nan
 			
 
-				# plt.plot(proton_df['ZPGT10W'].loc[f'{event_day[0]}':f'{event_day[-1]}'], label = f'GOES-{sat} >10 MeV', marker=marker_sat, color='red')
-				# plt.plot(proton_df['ZPGT50W'].loc[f'{event_day[0]}':f'{event_day[-1]}'], label = f'GOES-{sat} >50 MeV', marker=marker_sat, color='blue')
-				plt.plot(proton_df['ZPGT100W'].loc[f'{proton_event_full_df_13["start_time"][event_day]}':f'{proton_event_full_df_13["end_time"][event_day]}'], label = f'GOES-{sat} >100 MeV', marker=marker_sat, color='lime')
+			elif event_start_str[4:6] != event_end_str[4:6]:
+
+				print("Event requires additional month parsing")
+
+				f_l_day_1 = calendar.monthrange(int(f'{event_start_str[:4]}'), int(f'{event_start_str[4:6]}'))
+				f_l_day_2 = calendar.monthrange(int(f'{event_end_str[:4]}'), int(f'{event_end_str[4:6]}'))
+			
+				event_f_day_1 = str(f'{event_start_str[:4]}{str(event_start_str[4:6]).zfill(2)}01') # {str(f_l_day[0]).zfill(2)}
+				event_l_day_1 = str(f'{event_start_str[:4]}{str(event_start_str[4:6]).zfill(2)}{str(f_l_day_1[1]).zfill(2)}')
+
+				event_f_day_2 = str(f'{event_end_str[:4]}{str(event_end_str[4:6]).zfill(2)}01') # {str(f_l_day[0]).zfill(2)}
+				event_l_day_2 = str(f'{event_end_str[:4]}{str(event_end_str[4:6]).zfill(2)}{str(f_l_day_2[1]).zfill(2)}')
+	
+				proton_name_1 = f'g13_epead_cpflux_5m_{event_f_day_1}_{event_l_day_1}.csv' #g13_epead_cpflux_5m_20110101_20110131.csv
+				proton_name_2 = f'g13_epead_cpflux_5m_{event_f_day_2}_{event_l_day_2}.csv' #g13_epead_cpflux_5m_20110101_20110131.csv
+			
+				proton_df_1 = pd.read_csv(f'{data_directory}/GOES_Detection/GOES_13/{event_start_str[:4]}/{proton_name_1}', skiprows=718, date_parser=dateparse, names=cpflux_names,index_col='time_tag', header=0)
+				proton_df_2 = pd.read_csv(f'{data_directory}/GOES_Detection/GOES_13/{event_end_str[:4]}/{proton_name_2}', skiprows=718, date_parser=dateparse, names=cpflux_names,index_col='time_tag', header=0)
+
+				proton_df_1.loc[proton_df_1[f'{energy_header}'] <= 0.0] = np.nan
+				proton_df_2.loc[proton_df_2[f'{energy_header}'] <= 0.0] = np.nan
+
+				proton_df = proton_df.append(proton_df_1)
+				proton_df = proton_df.append(proton_df_2)
+
+			plt.axvspan(proton_event_full_df_13["start_time"][event_day], proton_event_full_df_13["end_time"][event_day], color='lightgreen', alpha=0.5, zorder=1)
+			plt.axvline(proton_event_full_df_13["start_time"][event_day], color='green', linestyle='-',linewidth=1 , zorder = 1)
+			plt.axvline(proton_event_full_df_13["end_time"][event_day], color='green', linestyle='-',linewidth=1 , zorder = 1)
+
+			plt.plot(proton_df['ZPGT10W'].loc[f'{proton_event_full_df_13["start_time"][event_day] - datetime.timedelta(days=1) }':f'{proton_event_full_df_13["end_time"][event_day] + datetime.timedelta(days=1)}'], label = f'GOES-13 >10 MeV', color='red')
+			plt.plot(proton_df['ZPGT50W'].loc[f'{proton_event_full_df_13["start_time"][event_day] - datetime.timedelta(days=1) }':f'{proton_event_full_df_13["end_time"][event_day] + datetime.timedelta(days=1)}'], label = f'GOES-13 >50 MeV', color='blue')
+			plt.plot(proton_df['ZPGT100W'].loc[f'{proton_event_full_df_13["start_time"][event_day] - datetime.timedelta(days=1) }':f'{proton_event_full_df_13["end_time"][event_day] + datetime.timedelta(days=1)}'], label = f'GOES-13 >100 MeV', color='lime')
 			
 			if proton_event_option == 'smooth':
-				plt.plot(proton_smooth_full_df_13[f'{butter_filter}'].loc[f'{proton_event_full_df_13["start_time"][event_day]}':f'{proton_event_full_df_13["end_time"][event_day]}'], label = f'Butter-{butter_order}', color='blue')
+				plt.plot(proton_smooth_full_df_13[f'{butter_filter}'].loc[f'{proton_event_full_df_13["start_time"][event_day] - datetime.timedelta(days=1) }':f'{proton_event_full_df_13["end_time"][event_day] + datetime.timedelta(days=1) }'], label = f'Butter-{butter_order}', color='purple')
 
 
 			myFmt = mdates.DateFormatter('%m/%d\n%H:%M')
 			ax = plt.gca()
 			ax.xaxis.set_major_formatter(myFmt)
 			ax.set_ylim([10**-2,10**4])
-		
-
 
 			plt.axhline(detection_threshold, color='yellow', linestyle='-',linewidth=4 , zorder = 1)
 			plt.axhline(detection_threshold, color='red', linestyle='--', label='Threshold', zorder = 1) # 0.25
-			# plt.axhline(0.60, color='navy', linestyle='--', label='50 MeV', zorder = 1)
-			# plt.axhline(1.5, color='crimson', linestyle='--', label='10 MeV', zorder = 1)
 
 			plt.yscale('log')
 			plt.setp(ax.xaxis.get_majorticklabels(), rotation=0, horizontalalignment='center')
@@ -465,17 +489,103 @@ if plot_option == 'yes':
 			plt.grid(True)
 			plt.legend(loc='upper right', ncol=2,fontsize=8)
 			
-			plt.title(f'Proton Event Detector [GOES-13]\n[{proton_event_full_df_13["start_time"][event_day]} -- {proton_event_full_df_13["end_time"][event_day]}] (Threshold : {detection_threshold} pfu -- {energy_channel} MeV)', fontname="Arial", fontsize = 14) #, y=1.04,
+			plt.title(f'Proton Event Detector [GOES-13]\n[{proton_event_full_df_13["start_time"][event_day]} -- {proton_event_full_df_13["end_time"][event_day]}] (Threshold : {round(detection_threshold,3)} pfu -- {energy_channel} MeV)', fontname="Arial", fontsize = 14) #, y=1.04,
 			
 			plt.ylabel('Proton Flux [pfu]', fontname="Arial", fontsize = 12)
 			plt.xlabel('Time [UT]', fontname="Arial", fontsize = 12)
+
+			plt.savefig(f'{data_directory}/detected_events/{energy_channel}mev/GOES-13/{event_name_str}_g13_{energy_channel}mev_{detection_threshold_str}pfu.png', format='png', dpi=900)
+
+
+	# ======= GOES-15 plotting
+	print(f'{"="*40}\n{"=" + f"Plotting GOES-15 Events".center(38," ") + "="}\n{"="*40}')
+	for event_day in range(len(proton_event_full_df_15)):
+		event_name_str = str(    (proton_event_full_df_15['start_time'].iloc[event_day] ).date()   ).replace('-','')
+
+		event_start_str = str(    (proton_event_full_df_15['start_time'].iloc[event_day] - datetime.timedelta(days=1)).date()   ).replace('-','')
+		event_end_str = str(    (proton_event_full_df_15['end_time'].iloc[event_day] + datetime.timedelta(days=1)).date() ).replace('-','')
+
+		plot_check = os.path.isfile(f'{data_directory}/detected_events/{energy_channel}mev/GOES-15/{event_name_str}_g15_{energy_channel}mev_{detection_threshold_str}pfu.png')
+
+		if plot_check == True:
+			print(f"Plot exists for {event_name_str}")
+
+		elif plot_check == False:
+			print(f'\rGenerating GOES-15 plot for {event_name_str}')
+			plt.close("all")
+			plt.figure(figsize=(10,6))
 		
-			# plt.show()
-			# sys.exit(0)
+			if event_start_str[4:6] == event_end_str[4:6]:
+				f_l_day = calendar.monthrange(int(f'{event_start_str[:4]}'), int(f'{event_start_str[4:6]}'))
+			
+				event_f_day = str(f'{event_start_str[:4]}{str(event_start_str[4:6]).zfill(2)}01') # {str(f_l_day[0]).zfill(2)}
+				event_l_day = str(f'{event_start_str[:4]}{str(event_start_str[4:6]).zfill(2)}{str(f_l_day[1]).zfill(2)}')
+	
+				proton_name = f'g15_epead_cpflux_5m_{event_f_day}_{event_l_day}.csv' #g13_epead_cpflux_5m_20110101_20110131.csv
+			
+				proton_df = pd.read_csv(f'{data_directory}/GOES_Detection/GOES_15/{event_start_str[:4]}/{proton_name}', skiprows=718, date_parser=dateparse, names=cpflux_names,index_col='time_tag', header=0)
+				proton_df.loc[proton_df[f'{energy_header}'] <= 0.0] = np.nan
 			
 
-			plt.savefig(f'{data_directory}/detected_events/{energy_channel}mev/{detection_threshold_str}pfu_{energy_channel}mev_{event_start_str}.png', format='png', dpi=900)
-			#sys.exit(0)
+			elif event_start_str[4:6] != event_end_str[4:6]:
+
+				print("Event requires additional month parsing")
+
+				f_l_day_1 = calendar.monthrange(int(f'{event_start_str[:4]}'), int(f'{event_start_str[4:6]}'))
+				f_l_day_2 = calendar.monthrange(int(f'{event_end_str[:4]}'), int(f'{event_end_str[4:6]}'))
+			
+				event_f_day_1 = str(f'{event_start_str[:4]}{str(event_start_str[4:6]).zfill(2)}01') # {str(f_l_day[0]).zfill(2)}
+				event_l_day_1 = str(f'{event_start_str[:4]}{str(event_start_str[4:6]).zfill(2)}{str(f_l_day_1[1]).zfill(2)}')
+
+				event_f_day_2 = str(f'{event_end_str[:4]}{str(event_end_str[4:6]).zfill(2)}01') # {str(f_l_day[0]).zfill(2)}
+				event_l_day_2 = str(f'{event_end_str[:4]}{str(event_end_str[4:6]).zfill(2)}{str(f_l_day_2[1]).zfill(2)}')
+	
+				proton_name_1 = f'g15_epead_cpflux_5m_{event_f_day_1}_{event_l_day_1}.csv' #g13_epead_cpflux_5m_20110101_20110131.csv
+				proton_name_2 = f'g15_epead_cpflux_5m_{event_f_day_2}_{event_l_day_2}.csv' #g13_epead_cpflux_5m_20110101_20110131.csv
+			
+				proton_df_1 = pd.read_csv(f'{data_directory}/GOES_Detection/GOES_15/{event_start_str[:4]}/{proton_name_1}', skiprows=718, date_parser=dateparse, names=cpflux_names,index_col='time_tag', header=0)
+				proton_df_2 = pd.read_csv(f'{data_directory}/GOES_Detection/GOES_15/{event_end_str[:4]}/{proton_name_2}', skiprows=718, date_parser=dateparse, names=cpflux_names,index_col='time_tag', header=0)
+
+				proton_df_1.loc[proton_df[f'{energy_header}'] <= 0.0] = np.nan
+				proton_df_2.loc[proton_df[f'{energy_header}'] <= 0.0] = np.nan
+
+				proton_df = proton_df.append(proton_df_1)
+				proton_df = proton_df.append(proton_df_2)
+
+			plt.axvspan(proton_event_full_df_15["start_time"][event_day], proton_event_full_df_15["end_time"][event_day], color='lightgreen', alpha=0.5, zorder=1)
+			plt.axvline(proton_event_full_df_15["start_time"][event_day], color='green', linestyle='-',linewidth=1 , zorder = 1)
+			plt.axvline(proton_event_full_df_15["end_time"][event_day], color='green', linestyle='-',linewidth=1 , zorder = 1)
+
+			plt.plot(proton_df['ZPGT10W'].loc[f'{proton_event_full_df_15["start_time"][event_day] - datetime.timedelta(days=1) }':f'{proton_event_full_df_15["end_time"][event_day] + datetime.timedelta(days=1)}'], label = f'GOES-15 >10 MeV', color='red')
+			plt.plot(proton_df['ZPGT50W'].loc[f'{proton_event_full_df_15["start_time"][event_day] - datetime.timedelta(days=1) }':f'{proton_event_full_df_15["end_time"][event_day] + datetime.timedelta(days=1)}'], label = f'GOES-15 >50 MeV', color='blue')
+			plt.plot(proton_df['ZPGT100W'].loc[f'{proton_event_full_df_15["start_time"][event_day] - datetime.timedelta(days=1) }':f'{proton_event_full_df_15["end_time"][event_day] + datetime.timedelta(days=1)}'], label = f'GOES-15 >100 MeV', color='lime')
+			
+			if proton_event_option == 'smooth':
+				plt.plot(proton_smooth_full_df_15[f'{butter_filter}'].loc[f'{proton_event_full_df_15["start_time"][event_day] - datetime.timedelta(days=1) }':f'{proton_event_full_df_15["end_time"][event_day] + datetime.timedelta(days=1) }'], label = f'Butter-{butter_order}', color='purple')
+
+
+			myFmt = mdates.DateFormatter('%m/%d\n%H:%M')
+			ax = plt.gca()
+			ax.xaxis.set_major_formatter(myFmt)
+			ax.set_ylim([10**-2,10**4])
+
+
+			plt.axhline(detection_threshold, color='yellow', linestyle='-',linewidth=4 , zorder = 1)
+			plt.axhline(detection_threshold, color='red', linestyle='--', label='Threshold', zorder = 1) # 0.25
+
+			plt.yscale('log')
+			plt.setp(ax.xaxis.get_majorticklabels(), rotation=0, horizontalalignment='center')
+			plt.minorticks_on()
+			plt.grid(True)
+			plt.legend(loc='upper right', ncol=2,fontsize=8)
+			
+			plt.title(f'Proton Event Detector [GOES-15]\n[{proton_event_full_df_15["start_time"][event_day]} -- {proton_event_full_df_15["end_time"][event_day]}] (Threshold : {round(detection_threshold,3)} pfu -- {energy_channel} MeV)', fontname="Arial", fontsize = 14) #, y=1.04,
+			
+			plt.ylabel('Proton Flux [pfu]', fontname="Arial", fontsize = 12)
+			plt.xlabel('Time [UT]', fontname="Arial", fontsize = 12)
+
+			plt.savefig(f'{data_directory}/detected_events/{energy_channel}mev/GOES-15/{event_name_str}_g15_{energy_channel}mev_{detection_threshold_str}pfu.png', format='png', dpi=900)
+
 
 
 
