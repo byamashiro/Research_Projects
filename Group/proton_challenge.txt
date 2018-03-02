@@ -1,0 +1,38 @@
+# Proton Event Onset Time Challenge
+
+Challenge:
+- Create an automated program to detect the start times, durations, and end times for the list of events.
+- Brief description of algorithm (i.e. Used " " filter and threshold)
+
+Rules:
+1. Must be a pythonic solution
+2. Proton onset times must come after X-ray start time
+3. Automation should detect at least 90% of provided events
+4. Enter values on spreadsheet provided
+
+Event List Information
+1. 20+ events to attempt
+2. Dates marked in "red" indicate backside or filament eruptions
+	- This indication represents a delayed proton onset with respect to the start time
+	- Attempt "non-red" events that have flare start times first
+
+Data:
+- 5-min. time-averaged data from NOAA GOES-13 detector will be provided
+	- Separated by months
+- Use >100 MeV channel column, "ZPGT100W"
+	- Description:
+		float ZPGT100W(record);
+		ZPGT100W:description = "Flux of >100 MeV protons from the A detector that faces either East or West depending on the yaw flip of the satellite with	a	correction applied to remove contaminating particles";
+		ZPGT100W:long_label = "protons-gt100-A (>100 MeV) corrected flux";
+		ZPGT100W:short_label = "pgt100A cor fx";
+		ZPGT100W:plot_label = "pA(>100 MeV)c";
+		ZPGT100W:lin_log = "log";
+		ZPGT100W:units = "p/(cm^2 s sr)";
+		ZPGT100W:format = "E10.4";
+		ZPGT100W:nominal_min = "1.0000E-02";
+		ZPGT100W:nominal_max = "1.0000E+06";
+		ZPGT100W:missing_value = "-99999";
+- Caveats
+	- Missing data marked as, "-99999"
+- Can be found online at "https://satdat.ngdc.noaa.gov/sem/goes/data/new_avg/yyyy/mm/goes13/csv/"
+	- File: "g13_epead_cpflux_5m_yyyymmdd_yyyymmdd.csv"

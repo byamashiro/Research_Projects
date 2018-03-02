@@ -546,8 +546,8 @@ if plot_option == 'yes':
 				proton_df_1 = pd.read_csv(f'{data_directory}/GOES_Detection/GOES_15/{event_start_str[:4]}/{proton_name_1}', skiprows=718, date_parser=dateparse, names=cpflux_names,index_col='time_tag', header=0)
 				proton_df_2 = pd.read_csv(f'{data_directory}/GOES_Detection/GOES_15/{event_end_str[:4]}/{proton_name_2}', skiprows=718, date_parser=dateparse, names=cpflux_names,index_col='time_tag', header=0)
 
-				proton_df_1.loc[proton_df[f'{energy_header}'] <= 0.0] = np.nan
-				proton_df_2.loc[proton_df[f'{energy_header}'] <= 0.0] = np.nan
+				proton_df_1.loc[proton_df_1[f'{energy_header}'] <= 0.0] = np.nan
+				proton_df_2.loc[proton_df_2[f'{energy_header}'] <= 0.0] = np.nan
 
 				proton_df = proton_df.append(proton_df_1)
 				proton_df = proton_df.append(proton_df_2)
