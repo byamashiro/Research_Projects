@@ -31,14 +31,39 @@ proton_event_full_df_15 = pd.DataFrame()
 proton_smooth_full_df_13 = pd.DataFrame()
 proton_smooth_full_df_15 = pd.DataFrame()
 
+delete_channel = 100
 
 # ==== Must change for different energies
-energy_parse = int(input("Enter the energy channel (10/50/100): ")) # MeV
+
+print(f'\n{"="*40}\n{"=" + "GOES-13/15 Proton Event Detection".center(38," ") + "="}\n{"="*40}')
+
+
+energy_parse = int(input("Enter the energy channel (10/50/100) or plot removal (9999): ")) # MeV
 if energy_parse != 10:
 	if energy_parse != 50:
 		if energy_parse != 100:
-			print("Please enter a valid energy channel: 10, 50, or 100.")
-			sys.exit(0)
+			if energy_parse == 9999:
+				delete_plot_all_warning = input(f"Confirm data deletion for all >{delete_channel} MeV plots: ")
+				if delete_plot_all_warning == 'yes':
+					plot_del_list_13 = glob.glob(f'{data_directory}/detected_events/100mev/GOES-13/*.png')
+					plot_del_list_15 = glob.glob(f'{data_directory}/detected_events/100mev/GOES-15/*.png')
+					# print(plot_del_list)
+					# sys.exit(0)
+
+					for plot_file_13 in plot_del_list_13:
+						os.remove(plot_file_13)
+					for plot_file_15 in plot_del_list_15:
+						os.remove(plot_file_15)
+
+					print("All plots were deleted successfully.")
+					sys.exit(0)
+
+				elif delete_plot_all_warning != 'yes':
+					print("No plots were deleted.")
+					sys.exit(0)
+			elif energy_parse != 9999:
+				print("Please enter a valid energy channel: 10, 50, or 100.")
+				sys.exit(0)
 
 
 if energy_parse == 100:
@@ -236,8 +261,8 @@ for detection_year in year_list:
 					proton_counter = 0
 
 
-					min_length_event = 1000 # 60
-					min_t_between_pts = 60 # 40
+					min_length_event = 500 # 60
+					min_t_between_pts = 60 # 40 # 60 (30 events GOES-13)
 
 					for i in proton_data_event[proton_data_event.values > detection_threshold].index: # for i in rb_data[rb_data.values > 300].index: # one level is 1 minute
 						if len(proton_list_temp) == 0:
@@ -401,6 +426,25 @@ if len(year_list) > 1:
 			full_year_df.fillna(value='none', inplace=True)
 	
 			full_year_df.to_csv(f'{data_directory}/detected_events/event_dates/{detection_threshold_str}pfu_{energy_channel}mev_{year_list[0]}_{year_list[-1]}.txt', sep=',', index=False)
+
+
+print(f'{"="*40}\n{"=" + f"Full Event List".center(38," ") + "="}\n{"="*40}')
+print(f'\n{"=" * 60}')
+print(f'GOES-13 Events: {len(proton_event_full_df_13)} Total Events')
+print(f'\n{"=" * 60}')
+print(proton_event_full_df_13)
+print(f'\n{"=" * 60}')
+
+print('\n')
+print(f'\n{"=" * 60}')
+print(f'GOES-15 Events: {len(proton_event_full_df_15)} Total Events')
+print(f'\n{"=" * 60}')
+print(proton_event_full_df_15)
+print(f'\n{"=" * 60}')
+
+print('\n')
+print(f'GOES-13: {len(proton_event_full_df_13)} Total Events')
+print(f'GOES-15: {len(proton_event_full_df_15)} Total Events')
 
 
 proton_event_full_df_13.to_csv(f'{data_directory}/detected_events/event_dates/g13_{detection_threshold_str}pfu_{energy_channel}mev_{year_list[0]}_{year_list[-1]}.txt', sep=',', index=True)
