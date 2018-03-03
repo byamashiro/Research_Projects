@@ -43,7 +43,7 @@ if energy_parse != 10:
 	if energy_parse != 50:
 		if energy_parse != 100:
 			if energy_parse == 9999:
-				delete_plot_all_warning = input(f"Confirm data deletion for all >{delete_channel} MeV plots: ")
+				delete_plot_all_warning = input(f"Confirm data deletion for all >{delete_channel} MeV plots (yes or no): ")
 				if delete_plot_all_warning == 'yes':
 					plot_del_list_13 = glob.glob(f'{data_directory}/detected_events/100mev/GOES-13/*.png')
 					plot_del_list_15 = glob.glob(f'{data_directory}/detected_events/100mev/GOES-15/*.png')
@@ -273,17 +273,17 @@ for detection_year in year_list:
 							if (i - proton_list_temp[-1]) <= datetime.timedelta(minutes=min_t_between_pts): # originally 5 minutes # also had at 30 minutes, but increasing to 40
 								proton_list_temp.append(i)
 					
-							elif (i - proton_list_temp[-1]) > datetime.timedelta(minutes=min_t_between_pts): # originally 5 minutes # time between first interval of time event to the second
-								if (proton_list_temp[-1] - proton_list_temp[0]) >= datetime.timedelta(minutes=min_length_event): # length of event
-									proton_list_event.append(proton_list_temp)
-									proton_list_temp = []
-									proton_list_temp.append(i)
+							elif (i - proton_list_temp[-1]) > datetime.timedelta(minutes=min_t_between_pts): # else if the difference between the new entry and the previous entry is greater than the allowed time between points # originally 5 minutes # time between first interval of time event to the second
+								if (proton_list_temp[-1] - proton_list_temp[0]) >= datetime.timedelta(minutes=min_length_event): # if the length of event is greater or equal to the set length of the event
+									proton_list_event.append(proton_list_temp) # append the temporary event to the main event list
+									proton_list_temp = [] # create a new temporary event list
+									proton_list_temp.append(i) # append the entry to the new list
 					
 								elif (proton_list_temp[-1] - proton_list_temp[0]) < datetime.timedelta(minutes=min_length_event): # if the time difference is less than 30 minutes, then create a new event
 									proton_list_temp = []
 									proton_list_temp.append(i)
-						
-					if len(proton_list_temp) > 0:
+					
+					if len(proton_list_temp) > 0: # at the end of the detection, if there is still an event loaded in the temporary list
 						if (proton_list_temp[-1] - proton_list_temp[0]) >= datetime.timedelta(minutes=min_length_event):
 							proton_list_event.append(proton_list_temp)
 							proton_list_temp = []
@@ -311,8 +311,6 @@ for detection_year in year_list:
 					elif len(proton_event_df) > 0 and satellite_no == '15':
 						# print(proton_event_df)
 						proton_event_full_df_15 = proton_event_full_df_15.append(proton_event_df, ignore_index=True)
-
-
 
 
 					'''
@@ -460,7 +458,7 @@ if plot_option == 'yes':
 		event_start_str = str(    (proton_event_full_df_13['start_time'].iloc[event_day] - datetime.timedelta(days=1)).date()   ).replace('-','')
 		event_end_str = str(    (proton_event_full_df_13['end_time'].iloc[event_day] + datetime.timedelta(days=1)).date() ).replace('-','')
 
-		plot_check = os.path.isfile(f'{data_directory}/detected_events/{energy_channel}mev/GOES-13/{event_name_str}_g13_{energy_channel}mev_{detection_threshold_str}pfu.png')
+		plot_check = os.path.isfile(f'{data_directory}/detected_events/{energy_channel}mev/GOES-13/{event_name_str}_g13_{energy_channel}mev_{detection_threshold_str}pfu_{event_day}.png')
 
 		if plot_check == True:
 			print(f"Plot exists for {event_name_str}")
@@ -538,7 +536,7 @@ if plot_option == 'yes':
 			plt.ylabel('Proton Flux [pfu]', fontname="Arial", fontsize = 12)
 			plt.xlabel('Time [UT]', fontname="Arial", fontsize = 12)
 
-			plt.savefig(f'{data_directory}/detected_events/{energy_channel}mev/GOES-13/{event_name_str}_g13_{energy_channel}mev_{detection_threshold_str}pfu.png', format='png', dpi=900)
+			plt.savefig(f'{data_directory}/detected_events/{energy_channel}mev/GOES-13/{event_name_str}_g13_{energy_channel}mev_{detection_threshold_str}pfu_{event_day}.png', format='png', dpi=900)
 
 
 	# ======= GOES-15 plotting
@@ -549,7 +547,7 @@ if plot_option == 'yes':
 		event_start_str = str(    (proton_event_full_df_15['start_time'].iloc[event_day] - datetime.timedelta(days=1)).date()   ).replace('-','')
 		event_end_str = str(    (proton_event_full_df_15['end_time'].iloc[event_day] + datetime.timedelta(days=1)).date() ).replace('-','')
 
-		plot_check = os.path.isfile(f'{data_directory}/detected_events/{energy_channel}mev/GOES-15/{event_name_str}_g15_{energy_channel}mev_{detection_threshold_str}pfu.png')
+		plot_check = os.path.isfile(f'{data_directory}/detected_events/{energy_channel}mev/GOES-15/{event_name_str}_g15_{energy_channel}mev_{detection_threshold_str}pfu_{event_day}.png')
 
 		if plot_check == True:
 			print(f"Plot exists for {event_name_str}")
@@ -628,7 +626,7 @@ if plot_option == 'yes':
 			plt.ylabel('Proton Flux [pfu]', fontname="Arial", fontsize = 12)
 			plt.xlabel('Time [UT]', fontname="Arial", fontsize = 12)
 
-			plt.savefig(f'{data_directory}/detected_events/{energy_channel}mev/GOES-15/{event_name_str}_g15_{energy_channel}mev_{detection_threshold_str}pfu.png', format='png', dpi=900)
+			plt.savefig(f'{data_directory}/detected_events/{energy_channel}mev/GOES-15/{event_name_str}_g15_{energy_channel}mev_{detection_threshold_str}pfu_{event_day}.png', format='png', dpi=900)
 
 
 
