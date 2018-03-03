@@ -58,7 +58,7 @@ def get_data(t1, t2):
     data['t2'] = data[t2]
     data['t1_returns'] = data[t1+'_returns']
     data['t2_returns'] = data[t2+'_returns']
-    print(data)
+    print(data.head(3))
     return data
 
 # set up widgets
@@ -136,3 +136,5 @@ update()
 
 curdoc().add_root(layout)
 curdoc().title = "Stocks"
+
+html = file_html(filename='stock_plot_test.html',title='plotter',mode='cdn')

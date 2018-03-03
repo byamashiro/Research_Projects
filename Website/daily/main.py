@@ -31,7 +31,7 @@ from bokeh.io import curdoc
 from bokeh.layouts import row, column
 from bokeh.models import ColumnDataSource
 from bokeh.models.widgets import PreText, Select
-from bokeh.plotting import figure
+from bokeh.plotting import figure, show
 
 DATA_DIR = join(dirname(__file__), 'daily') # '/Users/bryanyamashiro/Documents/Research_Projects/Data/GOES_Detection/GOES_13/2012' # join(dirname(__file__), 'daily')
 
@@ -147,8 +147,8 @@ layout = column(main_row, series)
 # initialize
 update()
 
+
 curdoc().add_root(layout)
 curdoc().title = "Stocks"
 # html = file_html(filename='plot_test',title='plotter',mode='cdn')
-
 
