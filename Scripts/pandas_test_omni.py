@@ -626,8 +626,8 @@ if '1' in option_bin_set:
 	proton_counter = 0
 	'''
 
-	min_length_event = 1000 # 60
-	min_t_between_pts = 60 # 40
+	min_length_event = 500 # changed thresholds (03/06/2018): 1000 # 60
+	min_t_between_pts = 60 # changed thresholds (03/06/2018): 60 # 40
 
 	for i in proton_data_event[proton_data_event.values > proton_threshold].index: # for i in rb_data[rb_data.values > 300].index: # one level is 1 minute
 		if len(proton_list_temp) == 0:
