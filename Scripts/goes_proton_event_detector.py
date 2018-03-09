@@ -536,7 +536,7 @@ if plot_option == 'yes':
 			plt.ylabel('Proton Flux [pfu]', fontname="Arial", fontsize = 12)
 			plt.xlabel('Time [UT]', fontname="Arial", fontsize = 12)
 
-			plt.savefig(f'{data_directory}/detected_events/{energy_channel}mev/GOES-13/{event_name_str}_g13_{energy_channel}mev_{detection_threshold_str}pfu_{event_day}.png', format='png', dpi=900)
+			plt.savefig(f'{data_directory}/detected_events/{energy_channel}mev/GOES-13/{event_name_str}_g13_{energy_channel}mev_{detection_threshold_str}pfu_{event_day}.png', format='png', dpi=100)
 
 
 	# ======= GOES-15 plotting
@@ -626,7 +626,7 @@ if plot_option == 'yes':
 			plt.ylabel('Proton Flux [pfu]', fontname="Arial", fontsize = 12)
 			plt.xlabel('Time [UT]', fontname="Arial", fontsize = 12)
 
-			plt.savefig(f'{data_directory}/detected_events/{energy_channel}mev/GOES-15/{event_name_str}_g15_{energy_channel}mev_{detection_threshold_str}pfu_{event_day}.png', format='png', dpi=900)
+			plt.savefig(f'{data_directory}/detected_events/{energy_channel}mev/GOES-15/{event_name_str}_g15_{energy_channel}mev_{detection_threshold_str}pfu_{event_day}.png', format='png', dpi=100)
 
 
 
