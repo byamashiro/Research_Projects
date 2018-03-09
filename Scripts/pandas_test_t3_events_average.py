@@ -560,7 +560,7 @@ if '2' in option_bin_set:
 		# ======= end might not work
 
 		for i in range(len(rb_list_event)):
-			rb_event_df.loc[i] = [rb_list_event[i][0], rb_list_event[i][-1], ((rb_list_event[i][-1] - rb_list_event[i][0]).total_seconds()/60), rb_data_event[t3_freq].loc[rb_list_event[i][0]:rb_list_event[i][-1]].idxmax(), float(rb_data_event.loc[rb_list_event[i][0]:rb_list_event[i][-1]].max().values), ] # days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0])
+			rb_event_df.loc[i] = [rb_list_event[i][0], rb_list_event[i][-1], round(((rb_list_event[i][-1] - rb_list_event[i][0]).total_seconds()/60),3), rb_data_event[t3_freq].loc[rb_list_event[i][0]:rb_list_event[i][-1]].idxmax(), round(float(rb_data_event.loc[rb_list_event[i][0]:rb_list_event[i][-1]].max().values),3), ] # days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0])
 		# print(f"{rb_list_event[i][0]} -- {rb_list_event[i][-1]}", " Total Time: ", days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0]), " minutes")
 	
 	'''
