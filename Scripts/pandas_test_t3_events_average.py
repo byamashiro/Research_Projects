@@ -24,7 +24,7 @@ data_collection_option = 'no'
 event_option = 'no' # use event list to plot
 
 t3_freq = 'avg'
-t3_threshold = 10
+t3_threshold = 5
 
 # long_plot_option = 'yes'
 
@@ -104,7 +104,7 @@ while True: # energy_bin != 'done':
 detection_year = input("Enter year to parse (yyyy) or 'all': ").lower()
 if detection_year == 'all':
 	year_list = []
-	year_list = ['2011', '2012', '2013', '2014', '2015', '2016'] # , '2017'] # currently all function does not parse 2017
+	year_list = ['2011', '2012', '2013', '2014', '2015'] # , '2016'] # , '2017'] # currently all function does not parse 2017
 elif detection_year != 'all':
 	year_list = []
 	year_list.append(detection_year)
@@ -480,7 +480,7 @@ if '2' in option_bin_set:
 	rb_counter = 0
 
 	min_length_event = 30 # 10
-	min_t_between_pts = 10 # 10
+	min_t_between_pts = 5 # 10
 
 	for i in rb_data_event[rb_data_event.values > t3_threshold].index: # for i in rb_data[rb_data.values > 300].index: # one level is 1 minute
 		if len(rb_list_temp) == 0:

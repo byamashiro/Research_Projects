@@ -941,30 +941,33 @@ if '2' in option_bin_set:
 	rb_list_event = []
 	rb_counter = 0
 
+	min_length_event = 30 # 10
+	min_t_between_pts = 5 # 10
+
 	for i in rb_data_event[rb_data_event.values > t3_threshold].index: # for i in rb_data[rb_data.values > 300].index: # one level is 1 minute
 		if len(rb_list_temp) == 0:
 			rb_list_temp.append(i)
 
 		elif len(rb_list_temp) >= 1:
-			if (i - rb_list_temp[-1]) <= datetime.timedelta(minutes=10): # originally 5 minutes
+			if (i - rb_list_temp[-1]) <= datetime.timedelta(minutes=min_t_between_pts): # originally 5 minutes
 				rb_list_temp.append(i)
 
-			elif (i - rb_list_temp[-1]) > datetime.timedelta(minutes=10): # originally 5 minutes
-				if (rb_list_temp[-1] - rb_list_temp[0]) >= datetime.timedelta(minutes=10):
+			elif (i - rb_list_temp[-1]) > datetime.timedelta(minutes=min_t_between_pts): # originally 5 minutes
+				if (rb_list_temp[-1] - rb_list_temp[0]) >= datetime.timedelta(minutes=min_length_event):
 					rb_list_event.append(rb_list_temp)
 					rb_list_temp = []
 					rb_list_temp.append(i)
 
-				elif (rb_list_temp[-1] - rb_list_temp[0]) < datetime.timedelta(minutes=10):
+				elif (rb_list_temp[-1] - rb_list_temp[0]) < datetime.timedelta(minutes=min_length_event):
 					rb_list_temp = []
 					rb_list_temp.append(i)
 
 	if len(rb_list_temp) > 0:
-		if (rb_list_temp[-1] - rb_list_temp[0]) >= datetime.timedelta(minutes=10):
+		if (rb_list_temp[-1] - rb_list_temp[0]) >= datetime.timedelta(minutes=min_length_event):
 			rb_list_event.append(rb_list_temp)
 			rb_list_temp = []
 			rb_list_temp.append(i)
-		elif (rb_list_temp[-1] - rb_list_temp[0]) < datetime.timedelta(minutes=10):
+		elif (rb_list_temp[-1] - rb_list_temp[0]) < datetime.timedelta(minutes=min_length_event):
 			rb_list_temp = []
 			rb_list_temp.append(i)
 		rb_list_temp = []
@@ -2084,7 +2087,8 @@ def applyPlotStyle():
 		axes[length_data_list[j]].axvline(proton_df[f'{high_bin_proton}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax(), linewidth=1, zorder=1, color='green', linestyle='--', label='Max >100 MeV') # (proton_df.P6W_UNCOR_FLUX.max()) # changed maximum flux to be within time interval specified
 	
 	if '2' in option_bin_set:
-		axes[length_data_list[j]].axvline(rb_event_df['t3_max_time'].loc[rb_event_df['t3_duration'].idxmax()], linewidth=1, zorder=1, color='orange', linestyle='--', label='Max T3 Intensity') # (proton_df.P6W_UNCOR_FLUX.max()) # changed maximum flux to be within time interval specified
+		if len(rb_event_df) != 0:
+			axes[length_data_list[j]].axvline(rb_event_df['t3_max_time'].loc[rb_event_df['t3_duration'].idxmax()], linewidth=1, zorder=1, color='orange', linestyle='--', label='Max T3 Intensity') # (proton_df.P6W_UNCOR_FLUX.max()) # changed maximum flux to be within time interval specified
 
 	if '5' in option_bin_set:
 		xray_df['B_FLUX'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].idxmax()
@@ -2223,10 +2227,9 @@ if '2' in option_bin_set:
 	
 	# axes[length_data_list[j]].axvline(rb_event_df['start_time'].values, linewidth=1, zorder=1, color='blue', linestyle='--', label='Max >10MeV')
 	# axes[length_data_list[j]].axvline(rb_event_df['end_time'].values, linewidth=1, zorder=1, color='blue', linestyle='--', label='Max >10MeV')
+	
 	for i in range(len(rb_event_df)):
-
 		if s_dtime <= (rb_event_df['start_time'][i] and rb_event_df['end_time'][i]) <= e_dtime:
-
 			axes[length_data_list[j]].axvspan(rb_event_df['start_time'][i], rb_event_df['end_time'][i], color='lightblue', alpha=0.5)
 		# axes[length_data_list[j]].axvspan(rb_event_df['start_time'].values, rb_event_df['end_time'].values, color='blue', alpha=0.5)
 
