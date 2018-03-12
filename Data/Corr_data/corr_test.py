@@ -28,7 +28,9 @@ option_bin_set = '1'
 def func(params, xdata, ydata):
 	return (ydata - np.dot(xdata, params))
 
-data = pd.read_csv('corr_data_20180204.csv', sep=',', comment='#')
+# data = pd.read_csv('corr_data_20180204.csv', sep=',', comment='#')
+data = pd.read_csv('corr_data_20180311.csv', sep=',', comment='#')
+
 
 '''
 xdata = data['goes_max_proton']
@@ -86,7 +88,9 @@ if length_data == 1:
 if '1' in option_bin_set:
 	next_global()
 
-	axes[length_data_list[j]].plot(data['fluence'], data['goes_max_proton'], 'o', mfc='none', color='blue', label= '120 kHz Fluence', zorder=5)#, logy=True)
+	# axes[length_data_list[j]].plot(data['fluence'], data['goes_max_proton'], 'o', mfc='none', color='red', label= 'Averaged Fluence', zorder=5)#, logy=True)
+	axes[length_data_list[j]].plot(data['fluence_old'], data['goes_max_proton'], 'o', mfc='none', color='blue', label= '120 kHz Fluence', zorder=5)#, logy=True)
+
 	axes[length_data_list[j]].set_yscale('log')
 	axes[length_data_list[j]].set_xscale('log')
 

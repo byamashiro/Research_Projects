@@ -24,7 +24,7 @@ data_collection_option = 'no'
 event_option = 'no' # use event list to plot
 
 t3_freq = 'avg'
-t3_threshold = 5
+t3_threshold = 3
 
 # long_plot_option = 'yes'
 
