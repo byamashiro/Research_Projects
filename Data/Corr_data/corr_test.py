@@ -88,8 +88,8 @@ if length_data == 1:
 if '1' in option_bin_set:
 	next_global()
 
-	# axes[length_data_list[j]].plot(data['fluence'], data['goes_max_proton'], 'o', mfc='none', color='red', label= 'Averaged Fluence', zorder=5)#, logy=True)
-	axes[length_data_list[j]].plot(data['fluence_old'], data['goes_max_proton'], 'o', mfc='none', color='blue', label= '120 kHz Fluence', zorder=5)#, logy=True)
+	axes[length_data_list[j]].plot(data['fluence'], data['goes_max_proton'], 'o', mfc='none', color='red', label= 'Averaged Fluence', zorder=5)#, logy=True)
+	# axes[length_data_list[j]].plot(data['fluence_old'], data['goes_max_proton'], 'o', mfc='none', color='blue', label= '120 kHz Fluence', zorder=5)#, logy=True)
 
 	axes[length_data_list[j]].set_yscale('log')
 	axes[length_data_list[j]].set_xscale('log')
