@@ -29,6 +29,7 @@ save_plot_option = 'no' # saves the plots
 data_collection_option = 'no'
 event_option = 'no' # use event list to plot
 HEPAD_save_option = 'no'
+rad2_include = 'yes'
 
 # long_plot_option = 'yes'
 
@@ -854,6 +855,27 @@ if '2' in option_bin_set:
 			data_rad1 = pd.DataFrame(rad1_rb)
 			data_rad1.columns = data_freq['freq']
 			# data_rad1[data_rad1 <= 0.0] = np.nan
+
+			if rad2_include == 'yes':
+				freq_rb2 = []
+				for i in cdf['Frequency_RAD2']:
+					freq_rb2.append(i)
+					
+				rad2_rb = []
+				for i in cdf['E_VOLTAGE_RAD2']:
+					rad2_rb.append(i)
+	
+				# data_time = pd.DataFrame(time_rb)
+				# data_time.columns = ['date_time']
+	
+				data_freq = pd.DataFrame(freq_rb2)
+				data_freq.columns = ['freq']
+	
+				data_rad1 = pd.DataFrame(rad1_rb)
+				data_rad1.columns = data_freq['freq']
+
+				data_freq_rad2 = 
+
 
 			rb_concat = pd.concat([data_time, data_rad1], axis=1)
 			rb_concat.set_index(['date_time'], inplace=True)
