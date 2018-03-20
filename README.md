@@ -16,6 +16,8 @@
 - [Data](#data)
 - [Completed Tasks](#completed-tasks)
 - [Resolved Errors](#resolved-errors)
+- [Delayed Tasks](#delayed-tasks)
+
 
 
 
@@ -38,28 +40,6 @@
   - [x] Bulk speed (7/12/2017)
   - [ ] Temperature
   - [ ] Magnetic field components/absolute value
-
-
-- [ ] Push headers to data without forcing pandas names with files that have different header line numbers
-  - [ ] regex? solution to accept only header and data rows
-  - [ ] python solution to differentiate between header and data rows, and commented information
-
-
-- [ ] Change 'for' loops into list comprehension
-
-- [ ] Integrate SOHO data
-  - [ ] SOHO proton flux bins
-  - [ ] Proton flux bin detectors
-
-- [ ] Dst and Kp data
-  - [ ] Kp data in boxes form
-  - [ ] AE index interchangeable with Dst index
-  - [ ] Gather datasets and plot individually
-  - [ ] Plot both datasets on one axis canvas
-
-- [ ] Use itertools to sort and group
-  - [ ] Use 'itertools.groupby' to group objects of flare class intensity
-  - [ ] Reached a certain magnitude of proton flux
 
 - [ ] GOES Event Detector
   - [x] Download data files from web for each year (09/10/2017)
@@ -99,43 +79,14 @@
     - [ ] Peak proton flux
     - [ ] AR Magnetic flux/area
 
-- [ ] STEREO-A/B Data
-  - [ ] Incorporate STEREO-A Data
-    - [ ] Type III Radio Bursts
-    - [ ] Proton Flux
-      - [x] HET (09/18/2017)
-      - [ ] LET
-  - [ ] Incorporate STEREO-B Data
-    - [ ] Type III Radio Bursts
-    - [ ] Proton Flux
-      - [x] HET (09/18/2017)
-      - [ ] LET
 
-- [ ] ACE Magnetic field Data
-  - [ ] Create an algorithm to decode .hdf files
-    - [ ] Magnetic field intensity
-    - [ ] Magnetic field density
+- [ ] OMNI Script Radio Bursts
+  - [ ] Add RAD2 data to the Wind Radio Bursts
+  - [ ] Update algorithm for sigma clipping
+  - [ ] Test the higher level frequencies for intensity anomalies
 
-- [ ] Type III Radio Burst Event Finder
-  - [ ] Cycle through 2011-present to find events
-  - [ ] Add 'if' statements to assign different inputs
-    - [ ] Red: >100MeV GOES detected events
-    - [ ] Orange: <100MeV GOES detected events
-    - [ ] Blue: Xray flare events
-    - [ ] Green: All other events
-    - [ ] Markers 'o' and 'x': For different events worth differentiating
-
-- [ ] Type III Radio Burst Event Plot Program
-  - [ ] Add legend for different detection energy ranges
-  
-
-- [ ] Remastered Wind Type III Radio Burst Update
-  - [ ] Add the sigma clipping algorithm from the omni script
-
-- [ ] OMNI script proton event clipping
-  - [ ] Slice the month into the event days entered
-  - [ ] Modify the algorithms to operate on the sliced data
-  - [ ] Fix the highlighting algorithm to work for single days
+- [ ] Fluence Correlation Plots
+  - [ ] Remake correlation with new intensities from RAD2 integration
 
 
 </p>
@@ -739,6 +690,14 @@ datetime
 <details><summary>Completed Task List</summary>
 <p>
 
+- [x] Remastered Wind Type III Radio Burst Update (03/19/2018)
+  - [x] Add the sigma clipping algorithm from the omni script (03/19/2018)
+
+- [x] OMNI script proton event clipping (03/19/2018)
+  - [x] Slice the month into the event days entered (03/19/2018)
+  - [x] Modify the algorithms to operate on the sliced data (03/19/2018)
+  - [x] Fix the highlighting algorithm to work for single days (03/19/2018)
+
 - [x] OMNI Type III Radio Bursts (12/30/2017)
   - [x] Implement the radio detection for a given frequency and duration limit (12/30/2017)
    - [x] Integrate radio burst detection algorithm into OMNI script (11/22/2017)
@@ -989,3 +948,68 @@ ax.xaxis.set_major_formatter(myFmt) #this is line that breaks code (ValueError: 
 
 </p>
 </details>
+
+
+
+# Delayed Tasks
+
+<details><summary>Delayed Task List</summary>
+<p>
+
+- [ ] Push headers to data without forcing pandas names with files that have different header line numbers
+  - [ ] regex? solution to accept only header and data rows
+  - [ ] python solution to differentiate between header and data rows, and commented information
+
+
+- [ ] Change 'for' loops into list comprehension
+
+- [ ] Integrate SOHO data
+  - [ ] SOHO proton flux bins
+  - [ ] Proton flux bin detectors
+
+- [ ] Dst and Kp data
+  - [ ] Kp data in boxes form
+  - [ ] AE index interchangeable with Dst index
+  - [ ] Gather datasets and plot individually
+  - [ ] Plot both datasets on one axis canvas
+
+- [ ] Use itertools to sort and group
+  - [ ] Use 'itertools.groupby' to group objects of flare class intensity
+  - [ ] Reached a certain magnitude of proton flux
+
+
+- [ ] STEREO-A/B Data
+  - [ ] Incorporate STEREO-A Data
+    - [ ] Type III Radio Bursts
+    - [ ] Proton Flux
+      - [x] HET (09/18/2017)
+      - [ ] LET
+  - [ ] Incorporate STEREO-B Data
+    - [ ] Type III Radio Bursts
+    - [ ] Proton Flux
+      - [x] HET (09/18/2017)
+      - [ ] LET
+
+- [ ] ACE Magnetic field Data
+  - [ ] Create an algorithm to decode .hdf files
+    - [ ] Magnetic field intensity
+    - [ ] Magnetic field density
+
+- [ ] Type III Radio Burst Event Finder
+  - [ ] Cycle through 2011-present to find events
+  - [ ] Add 'if' statements to assign different inputs
+    - [ ] Red: >100MeV GOES detected events
+    - [ ] Orange: <100MeV GOES detected events
+    - [ ] Blue: Xray flare events
+    - [ ] Green: All other events
+    - [ ] Markers 'o' and 'x': For different events worth differentiating
+
+- [ ] Type III Radio Burst Event Plot Program
+  - [ ] Add legend for different detection energy ranges
+
+
+</p>
+</details>
+
+
+
