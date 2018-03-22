@@ -818,6 +818,7 @@ if '2' in option_bin_set:
 
 			#print(event_date[0:6])
 			radio_name = f'wi_h1_wav_{event_date}_v01.cdf'
+
 			radio_check = os.path.isfile(f'{data_directory}/WIND/RAD1/{radio_name}')
 
 			if radio_check == True:
@@ -860,7 +861,7 @@ if '2' in option_bin_set:
 				freq_rb2 = []
 				for i in cdf['Frequency_RAD2']:
 					freq_rb2.append(i)
-					
+
 				rad2_rb = []
 				for i in cdf['E_VOLTAGE_RAD2']:
 					rad2_rb.append(i)
@@ -868,22 +869,25 @@ if '2' in option_bin_set:
 				# data_time = pd.DataFrame(time_rb)
 				# data_time.columns = ['date_time']
 	
-				data_freq = pd.DataFrame(freq_rb2)
-				data_freq.columns = ['freq']
+				data_freq2 = pd.DataFrame(freq_rb2)
+				data_freq2.columns = ['freq']
 	
 				data_rad1 = pd.DataFrame(rad1_rb)
 				data_rad1.columns = data_freq['freq']
 
-				data_freq_rad2 = 
-
-
-			rb_concat = pd.concat([data_time, data_rad1], axis=1)
-			rb_concat.set_index(['date_time'], inplace=True)
-			rb_data = rb_data.append(rb_concat)
+				data_rad2 = pd.DataFrame(rad2_rb)
+				data_rad2.columns = data_freq2['freq']
 
 
 
-
+			if rad2_include != 'yes':
+				rb_concat = pd.concat([data_time, data_rad1], axis=1)
+				rb_concat.set_index(['date_time'], inplace=True)
+				rb_data = rb_data.append(rb_concat)
+			elif rad2_include == 'yes':
+				rb_concat = pd.concat([data_time, data_rad1, data_rad2], axis=1)
+				rb_concat.set_index(['date_time'], inplace=True)
+				rb_data = rb_data.append(rb_concat)
 
 
 
@@ -928,8 +932,24 @@ if '2' in option_bin_set:
 			print(f'\nMISSING DATA FOR: {date}\n')
 			continue
 	
-	 # 256 columns (frequencies) + 1 column (average)
-	rb_data['avg'] = rb_data.mean(axis=1, numeric_only=True)
+	# 256 columns (frequencies) + 1 column (average)
+	freq_rad1 = []
+	full_freq = []
+	freq_rad2 = []
+
+	for rad1 in data_freq['freq']:
+		freq_rad1.append(rad1)
+		full_freq.append(rad1)
+
+	for rad2 in data_freq2['freq']:
+		full_freq.append(rad2)
+		freq_rad2.append(rad2)
+
+	rb_data.drop(rb_data[rb_data.values == 0.0].index, inplace=True)
+
+	rb_data['avg'] = rb_data[full_freq].mean(axis=1, numeric_only=True)
+	rb_data['rad1_avg'] = rb_data[freq_rad1].mean(axis=1, numeric_only=True)
+
 	'''
 	for radio_line in rb_data.values:
 		# print("rad line", radio_line)
@@ -945,7 +965,6 @@ if '2' in option_bin_set:
 	'''
 	# rb_data[rb_data.values == 0.0].index.values
 
-	rb_data.drop(rb_data[rb_data.values == 0.0].index, inplace=True)
 
 
 	# ======= TIII radio burst event detection
@@ -2240,11 +2259,15 @@ if '2' in option_bin_set:
 
 
 	color_cm=iter(cm.viridis(np.linspace(0,1, 5 )))
-	freq_list = [120,100,'avg'] # changed (20180306) to incorporate more frequencies, originally [120] # [100, 300, 500, 700, 900]
-	
+	if rad2_include != 'yes':
+		freq_list = [120,100,'avg'] # changed (20180306) to incorporate more frequencies, originally [120] # [100, 300, 500, 700, 900]
+	elif rad2_include =='yes':
+		freq_list = [120,100,'rad1_avg','avg'] # changed (20180306) to incorporate more frequencies, originally [120] # [100, 300, 500, 700, 900]
+
+
 	for frequency in freq_list:
 		color_choice = next(color_cm)
-	
+		
 		axes[length_data_list[j]].plot(rb_data[frequency].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color=color_choice, label= f'{frequency} kHz', zorder=5)
 	
 	# axes[length_data_list[j]].axvline(rb_event_df['start_time'].values, linewidth=1, zorder=1, color='blue', linestyle='--', label='Max >10MeV')

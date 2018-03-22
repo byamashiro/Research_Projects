@@ -88,12 +88,31 @@
 - [ ] Fluence Correlation Plots
   - [ ] Remake correlation with new intensities from RAD2 integration
 
+- [ ] WAVES script
 
 </p>
 </details>
 
 <details><summary>Current Tasks and Errors</summary>
 <p>
+
+### Datetime format x-axis issue using contourf
+- Context: When using the "pandas_test_waves.py" program, the "contourf" procedure from "matplotlib" utilizes 3 inputs for the x-, y-, and z-axis. The x and y inputs were generated using the "np.meshgrid" method to create 2D elements since there exist multiple y and z values for each x value. The "np.meshgrid" operation doesn't accept datetime values as inputs, thus the datetimes were either converted to numeric values via "string_date_to_numeric()" or given a proxy integer value of length "len(index)".
+- Note there are two issues for this entry.
+  - When adding the datetime xlabels, using either of the following, the daterange for a full day (0 UT to 23 UT) is not projected. The length of the proxy integers is 1382 when the program is run for 20120307(full), thus the 1382 datetime indices should project evenly across the axis. Initial thoughts lie in the shape of the x-axis (512,1382), and the indices may only project on the first 512 elements instead of the full 1382.
+  ```python
+  ax.set_xticklabels(rb_data.index)
+  ax.xaxis.set_major_formatter(mdates.ticker.FixedFormatter(rb_data.index))
+  ```
+    - Initial solutions are to project on the 2nd axis of the 2D x-axis.
+  - The formatting method for datetime outputs an error. Other scripts use the following code, but since "contourf" is a "matplotlib" procedure, the formatting procedure may not format the datetime values correctly when the proxy integers are converted to datetime.
+  ```python
+  myFmt = mdates.DateFormatter('%m/%d\n%H:%M')
+  ax = plt.gca()
+  ax.xaxis.set_major_formatter(myFmt)
+  ```
+    - The above code works for "pandas" plotting, therefore there may be an overwrite that will allow formatting of datetime values.
+
 
 ### HEPAD algorithm does not incorporate different months
 - If the months of the start and end date are not identical, the HEPAD data only plots the month corresponding to the "start_date". To recreate the issue, run either the OMNI script or the HEPAD event script with the start date 20130928 to 20131001. The opposite case is also affected when subtracting a day that leaks into the prior month (20140831 to 20140903). The latter case occurs during the HEPAD event script as the start and end date are determined by -1 and +2 of the entered event date, respectively.
