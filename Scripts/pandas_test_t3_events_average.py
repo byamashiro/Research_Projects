@@ -24,7 +24,7 @@ data_collection_option = 'no'
 event_option = 'no' # use event list to plot
 
 t3_freq = 'avg'
-t3_threshold = 3
+t3_threshold = 1.5
 
 # long_plot_option = 'yes'
 
@@ -451,18 +451,72 @@ if '2' in option_bin_set:
 			data_rad1.columns = data_freq['freq']
 			# data_rad1[data_rad1 <= 0.0] = np.nan
 
-			rb_concat = pd.concat([data_time, data_rad1], axis=1)
-			rb_concat.set_index(['date_time'], inplace=True)
-			rb_data = rb_data.append(rb_concat)
+			rad2_include = 'yes'
+
+
+			if rad2_include == 'yes':
+				freq_rb2 = []
+				for i in cdf['Frequency_RAD2']:
+					freq_rb2.append(i)
+
+				rad2_rb = []
+				for i in cdf['E_VOLTAGE_RAD2']:
+					rad2_rb.append(i)
+	
+				# data_time = pd.DataFrame(time_rb)
+				# data_time.columns = ['date_time']
+	
+				data_freq2 = pd.DataFrame(freq_rb2)
+				data_freq2.columns = ['freq']
+	
+				data_rad1 = pd.DataFrame(rad1_rb)
+				data_rad1.columns = data_freq['freq']
+
+				data_rad2 = pd.DataFrame(rad2_rb)
+				data_rad2.columns = data_freq2['freq']
+
+
+
+			if rad2_include != 'yes':
+				rb_concat = pd.concat([data_time, data_rad1], axis=1)
+				rb_concat.set_index(['date_time'], inplace=True)
+				rb_data = rb_data.append(rb_concat)
+			elif rad2_include == 'yes':
+				rb_concat = pd.concat([data_time, data_rad1, data_rad2], axis=1)
+				rb_concat.set_index(['date_time'], inplace=True)
+				rb_data = rb_data.append(rb_concat)
+
+
 
 		except:
 			print(f'\nMISSING DATA FOR: {date}\n')
 			continue
 	
-	 # 256 columns (frequencies) + 1 column (average)
-	rb_data['avg'] = rb_data.mean(axis=1, numeric_only=True)
-	rb_data.drop(rb_data[rb_data.values == 0.0].index, inplace=True)
+	# 256 columns (frequencies) + 1 column (average)
+	# rb_data['avg'] = rb_data.mean(axis=1, numeric_only=True)
+	# rb_data.drop(rb_data[rb_data.values == 0.0].index, inplace=True)
+	
+	print("length of rbdata 1: ",len(rb_data))
 
+
+	freq_rad1 = []
+	full_freq = []
+	freq_rad2 = []
+	for rad1 in data_freq['freq']:
+		freq_rad1.append(rad1)
+		full_freq.append(rad1)
+	for rad2 in data_freq2['freq']:
+		full_freq.append(rad2)
+		freq_rad2.append(rad2)
+
+	print("length of rbdata 2: ",len(rb_data))
+	print("shape of rbdata", np.shape(rb_data))
+	sys.exit(0)
+	rb_data.drop(rb_data[rb_data.values == 0.0].index, inplace=True)
+	rb_data['avg'] = rb_data[full_freq].mean(axis=1, numeric_only=True)
+
+	# rb_data['rad1_avg'] = rb_data[freq_rad1].mean(axis=1, numeric_only=True)
+	print("length of rbdata 3: ",len(rb_data))
 
 	# ======= TIII radio burst event detection
 	# ======= added for event options
@@ -512,7 +566,8 @@ if '2' in option_bin_set:
 
 	print("\n")
 	rb_event_df = pd.DataFrame(columns=('start_time', 'end_time', 't3_duration', 't3_max_time', 't3_max_int'))
-
+	print(rb_event_df.head(3))
+	print("length of radio burst events", len(rb_event_df))
 
 	# =========  Outlier list
 	t3_freq_outlier = 120
@@ -575,9 +630,11 @@ if '2' in option_bin_set:
 
 	print(f"Number of Radio Events ({start} - {end}): ", len(rb_list_event))
 	print(rb_event_df.head(2))
+
+	'''
 	rb_event_df.to_csv(f'{data_directory}/T3_Detection/rbevents_{t3_freq}khz_{t3_threshold}_{start_date}_{end_date}.txt', sep=',', index=False)
 	print(f"Data saved to {data_directory}/T3_Detection/rbevents_{t3_freq}khz_{t3_threshold}_{start_date}_{end_date}.txt")
-
+	'''
 		
 		# counter here
 	'''

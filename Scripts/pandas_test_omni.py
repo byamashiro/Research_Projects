@@ -969,7 +969,7 @@ if '2' in option_bin_set:
 
 	# ======= TIII radio burst event detection
 	# ======= added for event options
-	t3_threshold = 5 # 5
+	t3_threshold = 1.5 # 5
 	t3_freq = 'avg' # 120
 
 	rb_data_event = pd.DataFrame([])

@@ -96,6 +96,13 @@
 <details><summary>Current Tasks and Errors</summary>
 <p>
 
+### Radio burst detection too large
+- Running "pandas_test_t3_events_average.py" with the new frequencies of RAD2 leads to the error "Killed: 9". This occurs when values of 0.0 are dropped by the following command.
+```python
+rb_data.drop(rb_data[rb_data.values == 0.0].index, inplace=True)
+```
+- The amount of time could be reduced to months as the program parses full years. The shape of the data for a year (2011) is currently (525600, 512).
+
 ### Datetime format x-axis issue using contourf
 - Context: When using the "pandas_test_waves.py" program, the "contourf" procedure from "matplotlib" utilizes 3 inputs for the x-, y-, and z-axis. The x and y inputs were generated using the "np.meshgrid" method to create 2D elements since there exist multiple y and z values for each x value. The "np.meshgrid" operation doesn't accept datetime values as inputs, thus the datetimes were either converted to numeric values via "string_date_to_numeric()" or given a proxy integer value of length "len(index)".
 - Note there are two issues for this entry.
