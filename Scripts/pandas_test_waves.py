@@ -1118,6 +1118,8 @@ for label in ax.xaxis.get_ticklabels():
     if label not in visible:
         label.set_visible(False)
 '''
+
+
 # ax.set_xticklabels(rb_data.index)
 # ax.xaxis.set_major_formatter(mdates.ticker.FixedFormatter(rb_data.index))
 
@@ -1139,11 +1141,19 @@ ax.set_xticklabels(labels)
 # ax.xaxis_date()
 # ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y'))
 
+# Create your ticker object with M ticks
+M = 20
+xticks = ticker.MaxNLocator(M)
+
+# Set the yaxis major locator using your ticker object. You can also choose the minor
+# tick positions with set_minor_locator.
+ax.xaxis.set_major_locator(xticks)
+ax.set_xticklabels(rb_data.index[::5, :])
 
 
 # ax.xaxis.set_major_formatter(mdates.DateFormatter('%b %d'))
 
-fig.autofmt_xdate()
+# fig.autofmt_xdate()
 # ax.xaxis.set_major_formatter(mdates.DateFormatter("%w %H:%M:%S"))
 # ax.fmt_xdata = mdates.DateFormatter('%Y')
 
@@ -1151,10 +1161,13 @@ plt.yscale('log')
 
 # plt.setp(ax.xaxis.get_majorticklabels(), rotation=0, horizontalalignment='center')
 
-plt.tight_layout()
+# plt.tight_layout()
+
 plt.show()
 
-rb_data.to_csv("test_data.csv", sep=",")
+
+
+# rb_data.to_csv("test_data.csv", sep=",")
 # rb_data.plot.scatter(x=rb_data.index, y=data_rad1, c=rb_data.values)
 sys.exit(0)
 

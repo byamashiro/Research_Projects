@@ -947,8 +947,13 @@ if '2' in option_bin_set:
 
 	rb_data.drop(rb_data[rb_data.values == 0.0].index, inplace=True)
 
-	rb_data['avg'] = rb_data[full_freq].mean(axis=1, numeric_only=True)
+	# RAD1 and RAD2
+	# rb_data['avg'] = rb_data[full_freq].mean(axis=1, numeric_only=True)
+
+	# RAD 1 only
+	rb_data['avg'] = rb_data[freq_rad1].mean(axis=1, numeric_only=True)
 	rb_data['rad1_avg'] = rb_data[freq_rad1].mean(axis=1, numeric_only=True)
+
 
 	'''
 	for radio_line in rb_data.values:
@@ -969,7 +974,7 @@ if '2' in option_bin_set:
 
 	# ======= TIII radio burst event detection
 	# ======= added for event options
-	t3_threshold = 1.5 # 5
+	t3_threshold = 2.0 # 5
 	t3_freq = 'avg' # 120
 
 	rb_data_event = pd.DataFrame([])
@@ -983,7 +988,7 @@ if '2' in option_bin_set:
 	rb_counter = 0
 
 	min_length_event = 30 # 10
-	min_t_between_pts = 5 # 10
+	min_t_between_pts = 10 # 10
 
 	for i in rb_data_event[rb_data_event.values > t3_threshold].index: # for i in rb_data[rb_data.values > 300].index: # one level is 1 minute
 		if len(rb_list_temp) == 0:
@@ -2268,7 +2273,7 @@ if '2' in option_bin_set:
 	for frequency in freq_list:
 		color_choice = next(color_cm)
 		
-		axes[length_data_list[j]].plot(rb_data[frequency].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color=color_choice, label= f'{frequency} kHz', zorder=5)
+		axes[length_data_list[j]].plot(rb_data[frequency].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], 'o', mfc='none', color=color_choice, label= f'{frequency} kHz', zorder=5)
 	
 	# axes[length_data_list[j]].axvline(rb_event_df['start_time'].values, linewidth=1, zorder=1, color='blue', linestyle='--', label='Max >10MeV')
 	# axes[length_data_list[j]].axvline(rb_event_df['end_time'].values, linewidth=1, zorder=1, color='blue', linestyle='--', label='Max >10MeV')

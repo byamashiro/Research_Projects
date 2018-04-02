@@ -29,7 +29,8 @@ def func(params, xdata, ydata):
 	return (ydata - np.dot(xdata, params))
 
 # data = pd.read_csv('corr_data_20180204.csv', sep=',', comment='#')
-data = pd.read_csv('corr_data_20180311.csv', sep=',', comment='#')
+# data = pd.read_csv('corr_data_20180311.csv', sep=',', comment='#')
+data = pd.read_csv('corr_data_20180322.csv', sep=',', comment='#')
 
 
 '''
@@ -88,11 +89,44 @@ if length_data == 1:
 if '1' in option_bin_set:
 	next_global()
 
-	axes[length_data_list[j]].plot(data['fluence'], data['goes_max_proton'], 'o', mfc='none', color='red', label= 'Averaged Fluence', zorder=5)#, logy=True)
+	sorted_data = data.sort_values(by=['fluence'])
+
+	# poly fit
+	z=np.arange(1, len(sorted_data['fluence'])+1)
+	logA = np.log(z) #no need for list comprehension since all z values >= 1
+	logB = np.log(sorted_data['goes_max_proton'])
+	m, c = np.polyfit(logA, logB, 1) # fit log(y) = m*log(x) + c
+	y_fit = np.exp(m*logA + c) # calculate the fitted values of y 
+
+
+	# exponential fit
+	from scipy.optimize import curve_fit
+
+	def myExpFunc(x, a, b):
+		return a * np.power(x, b)
+
+	# poly fit deg 3
+	logx = np.log(sorted_data['fluence'])
+	logy = np.log(sorted_data['goes_max_proton'])
+	coeffs = np.polyfit(logx, logy, deg=3)
+	poly = np.poly1d(coeffs)
+	yfit = lambda x: np.exp(poly(np.log(sorted_data['fluence'])))
+	
+	popt, pcov = curve_fit(myExpFunc, data['fluence'], data['goes_max_proton'])
+
+	''' fits
+	axes[length_data_list[j]].plot(data['fluence'], myExpFunc(data['fluence'], *popt), 'r-', label="({0:.3f}*x**{1:.3f})".format(*popt), color='b')
+	axes[length_data_list[j]].plot(sorted_data['fluence'], yfit(sorted_data['fluence']), color='g')
+	axes[length_data_list[j]].plot(sorted_data['fluence'], y_fit, ':', color='red', label= 'Fit')#, logy=True)
+	'''
+
+	axes[length_data_list[j]].plot(data['fluence'], data['goes_max_proton'], 'o', mfc='none', color='blue', zorder=5)#, logy=True)
+
 	# axes[length_data_list[j]].plot(data['fluence_old'], data['goes_max_proton'], 'o', mfc='none', color='blue', label= '120 kHz Fluence', zorder=5)#, logy=True)
 
 	axes[length_data_list[j]].set_yscale('log')
 	axes[length_data_list[j]].set_xscale('log')
+	axes[length_data_list[j]].grid(linestyle=':')
 
 	# axes[length_data_list[j]].set_ylim((10**(-3)), (10**3))
 	
@@ -256,7 +290,7 @@ plt.setp(ax.xaxis.get_majorticklabels(), rotation=0, horizontalalignment='center
 #plt.tight_layout()
 
 plt.subplots_adjust(wspace = 0, hspace = 0, top=0.91)
-plt.savefig('corr_fluence.png', format='png', dpi=900)
+plt.savefig('corr_fluence_20180322.png', format='png', dpi=900)
 
 
 #plt.savefig('omni_test_legacy.png', format='png', dpi=900)
