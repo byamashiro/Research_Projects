@@ -81,14 +81,27 @@
 
 
 - [ ] OMNI Script Radio Bursts
-  - [ ] Add RAD2 data to the Wind Radio Bursts
-  - [ ] Update algorithm for sigma clipping
+  - [x] Add RAD2 data to the Wind Radio Bursts (04/02/2018)
+    - Note: Merged RAD1 and RAD2 data sets (04/02/2018)
+  - [x] Update algorithm for sigma clipping (04/02/2018)
+    - Note: sigma clipping now uses only the 120 kHz frequency channel (04/02/2018)
   - [ ] Test the higher level frequencies for intensity anomalies
+  - [ ] Integrate over time rather than taking the area of the burst
+    - [ ] Interpolate missing values of 5 minute intervals
+
 
 - [ ] Fluence Correlation Plots
-  - [ ] Remake correlation with new intensities from RAD2 integration
+  - [x] Remake correlation with new intensities from RAD2 integration (04/02/2018)
+  - [ ] Redo correlations with the integral rather than area of radio burst
+  - [ ] Generate two separate plots for corrected and uncorrected
+  - [ ] Modify x-axis ticks to the inner plot region
+  - [ ] Add grey-dotted grid to correlation plots
+
+- [ ] Radio burst histogram
+  - [ ] Histogram of durations to reflect: delta T_min << delta T_event
 
 - [ ] WAVES script
+  - [ ] Modify time axis into 9 separate ticks from 0 UT to 24 UT
 
 </p>
 </details>
