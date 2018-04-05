@@ -93,9 +93,10 @@
 - [ ] Fluence Correlation Plots
   - [x] Remake correlation with new intensities from RAD2 integration (04/02/2018)
   - [ ] Redo correlations with the integral rather than area of radio burst
-  - [ ] Generate two separate plots for corrected and uncorrected
+  - [x] Generate two separate plots for corrected and uncorrected (04/02/2018)
   - [ ] Modify x-axis ticks to the inner plot region
-  - [ ] Add grey-dotted grid to correlation plots
+  - [x] Add grey-dotted grid to correlation plots (04/02/2018)
+  - [x] Change dimensions to 1x1 (04/02/2018)
 
 - [ ] Radio burst histogram
   - [ ] Histogram of durations to reflect: delta T_min << delta T_event

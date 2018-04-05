@@ -945,7 +945,8 @@ if '2' in option_bin_set:
 		full_freq.append(rad2)
 		freq_rad2.append(rad2)
 
-	rb_data.drop(rb_data[rb_data.values == 0.0].index, inplace=True)
+	rb_true_index = list(rb_data.index)
+	rb_data.drop(rb_data[rb_data.values == 0.0].index, inplace=True) # drop indices that contain values of values <= 0
 
 	# RAD1 and RAD2
 	# rb_data['avg'] = rb_data[full_freq].mean(axis=1, numeric_only=True)
@@ -1086,12 +1087,120 @@ if '2' in option_bin_set:
 
 
 
+	# ======== (BEGIN) Interpolating and smoothing data for T3 data
+	rb_data_interpolate_df = rb_data.reindex(rb_true_index).interpolate(method='cubic')
+
+
+	# ======= Event parameters for interpolated t3 data
+	t3_threshold_interp = 2.0 # 5
+	t3_freq_interp = 'avg' # 120
+
+	rb_data_event = pd.DataFrame([])
+	rb_concat_event = rb_data[[t3_freq]]
+	rb_data_event = rb_data_event.append(rb_concat_event)
+	rb_data_event.drop(rb_data[rb_data.values == 0.0].index, inplace=True)
+
+	rb_event_df = pd.DataFrame([])
+	rb_list_temp = []
+	rb_list_event = []
+	rb_counter = 0
+
+	min_length_event = 30 # 10
+	min_t_between_pts = 10 # 10
+
+	for i in rb_data_event[rb_data_event.values > t3_threshold].index: # for i in rb_data[rb_data.values > 300].index: # one level is 1 minute
+		if len(rb_list_temp) == 0:
+			rb_list_temp.append(i)
+
+		elif len(rb_list_temp) >= 1:
+			if (i - rb_list_temp[-1]) <= datetime.timedelta(minutes=min_t_between_pts): # originally 5 minutes
+				rb_list_temp.append(i)
+
+			elif (i - rb_list_temp[-1]) > datetime.timedelta(minutes=min_t_between_pts): # originally 5 minutes
+				if (rb_list_temp[-1] - rb_list_temp[0]) >= datetime.timedelta(minutes=min_length_event):
+					rb_list_event.append(rb_list_temp)
+					rb_list_temp = []
+					rb_list_temp.append(i)
+
+				elif (rb_list_temp[-1] - rb_list_temp[0]) < datetime.timedelta(minutes=min_length_event):
+					rb_list_temp = []
+					rb_list_temp.append(i)
+
+	if len(rb_list_temp) > 0:
+		if (rb_list_temp[-1] - rb_list_temp[0]) >= datetime.timedelta(minutes=min_length_event):
+			rb_list_event.append(rb_list_temp)
+			rb_list_temp = []
+			rb_list_temp.append(i)
+		elif (rb_list_temp[-1] - rb_list_temp[0]) < datetime.timedelta(minutes=min_length_event):
+			rb_list_temp = []
+			rb_list_temp.append(i)
+		rb_list_temp = []
+
+	print("\n")
+	rb_event_df = pd.DataFrame(columns=('start_time', 'end_time', 't3_duration', 't3_max_time', 't3_max_int'))
+
+	# =========  Outlier list
+	t3_freq_outlier = 120
+	if len( rb_list_event ) == 1:
+		rb_var_list = []
+		rb_outlier_list = []
+
+		rb_mean = rb_data[t3_freq_outlier].loc[rb_list_event[0][1]:rb_list_event[0][-1]].mean(axis=0) # had 120 instead of t3_freq
+		rb_len = len(rb_list_event[0])
+
+		for i in rb_list_event[0]:
+			rb_var = np.sqrt(  pow((rb_data[t3_freq_outlier].loc[i]  -  rb_mean), 2) / (rb_len - 1)  ) # changed rb_data_event to rb_data due to outlier only showing well in 120 kHz channel # had 120 instead of t3_freq 
+			# rb_var = np.sqrt(  pow((rb_data_event[t3_freq_outlier].loc[i]  -  rb_mean), 2) / (rb_len - 1)  ) # had 120 instead of t3_freq (20180308) removed for new algorithm
+			if rb_var > 10.0: # was set at 10.0 20120205
+				rb_outlier_list.append(i)
+			rb_var_list.append(rb_var)
+
+		if len(rb_outlier_list) != 0:
+			for i in rb_outlier_list:
+				rb_data.drop(i, inplace=True)
+				rb_data_event.drop(i, inplace=True)
+			# rb_data.drop(rb_data[rb_data.values == 0.0].index, inplace=True)
+
+		rb_event_df.loc[0] = [rb_list_event[0][0], rb_list_event[0][-1], ((rb_list_event[0][-1] - rb_list_event[0][0]).total_seconds()/60), rb_data_event[f'{t3_freq}'].loc[rb_list_event[0][0]:rb_list_event[0][-1]].idxmax(), float(rb_data_event.loc[rb_list_event[0][0]:rb_list_event[0][-1]].max().values)] # days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0])
+		# elif t3_freq != 'avg':
+		#	rb_event_df.loc[0] = [rb_list_event[0][0], rb_list_event[0][-1], ((rb_list_event[0][-1] - rb_list_event[0][0]).total_seconds()/60), rb_data_event[int(f'{t3_freq}')].loc[rb_list_event[0][0]:rb_list_event[0][-1]].idxmax(), float(rb_data_event.loc[rb_list_event[0][0]:rb_list_event[0][-1]].max().values)] # days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0])
+
+	elif len( rb_list_event ) > 1:
+
+		#====== may not work for multiple events (more data points with added events lower threshold for variance)
+		rb_var_list = []
+		rb_outlier_list = []
+
+		rb_mean = rb_data[t3_freq_outlier].loc[rb_list_event[0][1]:rb_list_event[0][-1]].mean(axis=0) # had 120 instead of t3_freq
+		rb_len = len(rb_list_event[0])
+
+		for i in rb_list_event[0]:
+			rb_var = np.sqrt(  pow((rb_data[t3_freq_outlier].loc[i]  -  rb_mean), 2) / (rb_len - 1)  ) # had 120 instead of t3_freq
+			# rb_var = np.sqrt(  pow((rb_data_event[t3_freq].loc[i]  -  rb_mean), 2) / (rb_len - 1)  ) # had 120 instead of t3_freq
+
+			if rb_var > 10.0: # 10.0
+				rb_outlier_list.append(i)
+			rb_var_list.append(rb_var)
+
+		if len(rb_outlier_list) != 0:
+			for i in rb_outlier_list:
+				rb_data.drop(i, inplace=True)
+				rb_data_event.drop(i, inplace=True)
+		# ======= end might not work
+
+		for i in range(len(rb_list_event)):
+			rb_event_df.loc[i] = [rb_list_event[i][0], rb_list_event[i][-1], ((rb_list_event[i][-1] - rb_list_event[i][0]).total_seconds()/60), rb_data_event[t3_freq].loc[rb_list_event[i][0]:rb_list_event[i][-1]].idxmax(), float(rb_data_event.loc[rb_list_event[i][0]:rb_list_event[i][-1]].max().values), ] # days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0])
+		# print(f"{rb_list_event[i][0]} -- {rb_list_event[i][-1]}", " Total Time: ", days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0]), " minutes")
+
+	print('='*40)
+	print(f"Number of Radio Events ({start} - {end}) [{t3_freq} kHz]: ", len(rb_list_event))
+	print(rb_event_df)
+	print('='*40)
+	# ======== (END) Interpolating and smoothing data for T3 data
+
+
+
 	# rb_event_df.to_csv(f'{data_directory}/T3_Detection/rbevents_{t3_freq}khz_{t3_threshold}_{start_date}_{end_date}.txt', sep=',', index=False)
-
-
-
-
-
 
 	# if radio_null > 200:
 	#	rb_data = rb_data[rb_data['avg'] != 0.0]
@@ -2267,14 +2376,30 @@ if '2' in option_bin_set:
 	if rad2_include != 'yes':
 		freq_list = [120,100,'avg'] # changed (20180306) to incorporate more frequencies, originally [120] # [100, 300, 500, 700, 900]
 	elif rad2_include =='yes':
-		freq_list = [120,100,'rad1_avg','avg'] # changed (20180306) to incorporate more frequencies, originally [120] # [100, 300, 500, 700, 900]
+		freq_list = ['avg']
+		# freq_list = [120,100,'rad1_avg','avg'] # changed (20180306) to incorporate more frequencies, originally [120] # [100, 300, 500, 700, 900]
 
 
 	for frequency in freq_list:
 		color_choice = next(color_cm)
+		# axes[length_data_list[j]].stem(rb_data[frequency].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'])
+		axes[length_data_list[j]].plot(rb_data_interpolate_df[frequency].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], 'o', mfc='none', color='green', label= f'{frequency} kHz Interp.', zorder=4)
+		axes[length_data_list[j]].plot(rb_data[frequency].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], 'o', mfc='none', color=color_choice, label= f'{frequency} kHz', zorder=5) # working plotting feature, without stem
 		
-		axes[length_data_list[j]].plot(rb_data[frequency].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], 'o', mfc='none', color=color_choice, label= f'{frequency} kHz', zorder=5)
-	
+		'''
+		date_test = '2012-03-07 00:33:30'
+		axes[length_data_list[j]].vlines(x=date_test, ymin=t3_threshold, ymax=rb_data['avg'].loc[date_test], linewidth=1, color='lightgreen', zorder=5)
+		'''
+
+	for rbevent_no in range(len(rb_list_event)):
+		# print(rbevent_no)
+		for rbpoint in rb_list_event[rbevent_no]:
+			axes[length_data_list[j]].vlines(x=rbpoint, ymin=t3_threshold, ymax=rb_data['avg'].loc[rbpoint], linewidth=1, color='blue', zorder=2)
+		
+		'''
+		for fpoint in range(len(rb_data)):
+			axes[length_data_list[j]].axvline(x=fpoint, color='blue', linestyle='-')
+		'''
 	# axes[length_data_list[j]].axvline(rb_event_df['start_time'].values, linewidth=1, zorder=1, color='blue', linestyle='--', label='Max >10MeV')
 	# axes[length_data_list[j]].axvline(rb_event_df['end_time'].values, linewidth=1, zorder=1, color='blue', linestyle='--', label='Max >10MeV')
 	

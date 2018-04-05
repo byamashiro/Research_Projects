@@ -80,7 +80,7 @@ if length_data > 1:
 
 if length_data == 1:
 	length_data_list[0] = 0,0
-	f, axes = plt.subplots(nrows=length_data, ncols=1, sharex=False, figsize=(10, 6), squeeze=False)
+	f, axes = plt.subplots(nrows=length_data, ncols=1, sharex=False, figsize=(7, 7), squeeze=False)
 
 
 #======dataset plotting
@@ -119,6 +119,28 @@ if '1' in option_bin_set:
 	axes[length_data_list[j]].plot(sorted_data['fluence'], yfit(sorted_data['fluence']), color='g')
 	axes[length_data_list[j]].plot(sorted_data['fluence'], y_fit, ':', color='red', label= 'Fit')#, logy=True)
 	'''
+	# ============= Uncorrected Data
+
+	axes[length_data_list[j]].plot(data['uncorr_fluence'], data['goes_max_proton'], 'o', mfc='none', color='red', zorder=5)#, logy=True)
+
+	# axes[length_data_list[j]].plot(data['fluence_old'], data['goes_max_proton'], 'o', mfc='none', color='blue', label= '120 kHz Fluence', zorder=5)#, logy=True)
+
+	axes[length_data_list[j]].set_yscale('log')
+	axes[length_data_list[j]].set_xscale('log')
+	axes[length_data_list[j]].grid(linestyle=':')
+
+	# axes[length_data_list[j]].set_ylim((10**(-3)), (10**3))
+	
+	# axes[length_data_list[j]].set_yticks([10**-3, 10**-2, 10**-1, 10**0, 10**1, 10**2, 10**3])
+	axes[length_data_list[j]].set_ylabel(f'log(Max Proton Flux) [pfu]', fontname="Arial", fontsize = 12)
+	axes[length_data_list[j]].set_xlabel(r'log(Unorrected Type III Radio Burst Fluence) [sfu$\cdot$min$_{TIII}$]', fontname="Arial", fontsize = 12)
+
+	applyPlotStyle()
+	plt.show()
+
+	# ============= Corrected Data
+	length_data_list[0] = 0,0
+	f, axes = plt.subplots(nrows=length_data, ncols=1, sharex=False, figsize=(7, 7), squeeze=False)
 
 	axes[length_data_list[j]].plot(data['fluence'], data['goes_max_proton'], 'o', mfc='none', color='blue', zorder=5)#, logy=True)
 
@@ -134,9 +156,10 @@ if '1' in option_bin_set:
 	axes[length_data_list[j]].set_ylabel(f'log(Max Proton Flux) [pfu]', fontname="Arial", fontsize = 12)
 	axes[length_data_list[j]].set_xlabel(r'log(Corrected Type III Radio Burst Fluence) [(sfu$\cdot$min$_{TIII}$)$\cdot$ min$_{GOES}$]', fontname="Arial", fontsize = 12)
 
-
 	applyPlotStyle()
-	# plt.show()
+	plt.show()
+
+	sys.exit(0)
 
 
 
