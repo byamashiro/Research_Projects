@@ -948,6 +948,7 @@ if '2' in option_bin_set:
 	rb_true_index = list(rb_data.index)
 	rb_data.drop(rb_data[rb_data.values == 0.0].index, inplace=True) # drop indices that contain values of values <= 0
 
+
 	# RAD1 and RAD2
 	# rb_data['avg'] = rb_data[full_freq].mean(axis=1, numeric_only=True)
 
@@ -1020,7 +1021,7 @@ if '2' in option_bin_set:
 		rb_list_temp = []
 
 	print("\n")
-	rb_event_df = pd.DataFrame(columns=('start_time', 'end_time', 't3_duration', 't3_max_time', 't3_max_int'))
+	rb_event_df = pd.DataFrame(columns=('start_time', 'end_time', 't3_duration', 't3_max_time', 't3_max_int', 'points_no'))
 
 	# add the lists here
 	# p_10mev_list = pd.read_csv(f'{data_directory}/detected_events/event_dates/1d50pfu_10mev_2011_2017.txt', delim_whitespace=True, header=1)
@@ -1049,7 +1050,7 @@ if '2' in option_bin_set:
 				rb_data_event.drop(i, inplace=True)
 			# rb_data.drop(rb_data[rb_data.values == 0.0].index, inplace=True)
 
-		rb_event_df.loc[0] = [rb_list_event[0][0], rb_list_event[0][-1], ((rb_list_event[0][-1] - rb_list_event[0][0]).total_seconds()/60), rb_data_event[f'{t3_freq}'].loc[rb_list_event[0][0]:rb_list_event[0][-1]].idxmax(), float(rb_data_event.loc[rb_list_event[0][0]:rb_list_event[0][-1]].max().values)] # days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0])
+		rb_event_df.loc[0] = [rb_list_event[0][0], rb_list_event[0][-1], ((rb_list_event[0][-1] - rb_list_event[0][0]).total_seconds()/60), rb_data_event[f'{t3_freq}'].loc[rb_list_event[0][0]:rb_list_event[0][-1]].idxmax(), float(rb_data_event.loc[rb_list_event[0][0]:rb_list_event[0][-1]].max().values), len(rb_list_event[0]), ] # days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0])
 		# elif t3_freq != 'avg':
 		#	rb_event_df.loc[0] = [rb_list_event[0][0], rb_list_event[0][-1], ((rb_list_event[0][-1] - rb_list_event[0][0]).total_seconds()/60), rb_data_event[int(f'{t3_freq}')].loc[rb_list_event[0][0]:rb_list_event[0][-1]].idxmax(), float(rb_data_event.loc[rb_list_event[0][0]:rb_list_event[0][-1]].max().values)] # days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0])
 
@@ -1077,7 +1078,7 @@ if '2' in option_bin_set:
 		# ======= end might not work
 
 		for i in range(len(rb_list_event)):
-			rb_event_df.loc[i] = [rb_list_event[i][0], rb_list_event[i][-1], ((rb_list_event[i][-1] - rb_list_event[i][0]).total_seconds()/60), rb_data_event[t3_freq].loc[rb_list_event[i][0]:rb_list_event[i][-1]].idxmax(), float(rb_data_event.loc[rb_list_event[i][0]:rb_list_event[i][-1]].max().values), ] # days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0])
+			rb_event_df.loc[i] = [rb_list_event[i][0], rb_list_event[i][-1], ((rb_list_event[i][-1] - rb_list_event[i][0]).total_seconds()/60), rb_data_event[t3_freq].loc[rb_list_event[i][0]:rb_list_event[i][-1]].idxmax(), float(rb_data_event.loc[rb_list_event[i][0]:rb_list_event[i][-1]].max().values),len(rb_list_event[i]), ] # days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0])
 		# print(f"{rb_list_event[i][0]} -- {rb_list_event[i][-1]}", " Total Time: ", days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0]), " minutes")
 
 	print('='*40)
@@ -1087,61 +1088,65 @@ if '2' in option_bin_set:
 
 
 
+
+
+
 	# ======== (BEGIN) Interpolating and smoothing data for T3 data
-	rb_data_interpolate_df = rb_data.reindex(rb_true_index).interpolate(method='cubic')
+	rb_data_df_interp = rb_data.reindex(rb_true_index).interpolate(method='cubic').ffill()
 
-
+	
 	# ======= Event parameters for interpolated t3 data
 	t3_threshold_interp = 2.0 # 5
 	t3_freq_interp = 'avg' # 120
 
-	rb_data_event = pd.DataFrame([])
-	rb_concat_event = rb_data[[t3_freq]]
-	rb_data_event = rb_data_event.append(rb_concat_event)
-	rb_data_event.drop(rb_data[rb_data.values == 0.0].index, inplace=True)
+	rb_data_event_interp = pd.DataFrame([])
+	rb_concat_event_interp = rb_data_df_interp[[t3_freq_interp]]
+	rb_data_event_interp = rb_data_event_interp.append(rb_concat_event_interp)
+	# rb_data_event.drop(rb_data[rb_data.values == 0.0].index, inplace=True)
 
-	rb_event_df = pd.DataFrame([])
-	rb_list_temp = []
-	rb_list_event = []
-	rb_counter = 0
+	rb_event_df_interp = pd.DataFrame([])
+	rb_list_temp_interp = []
+	rb_list_event_interp = []
+	rb_counter_interp = 0
 
-	min_length_event = 30 # 10
-	min_t_between_pts = 10 # 10
+	min_length_event_interp = 30 # 10
+	min_t_between_pts_interp = 10 # 10
 
-	for i in rb_data_event[rb_data_event.values > t3_threshold].index: # for i in rb_data[rb_data.values > 300].index: # one level is 1 minute
-		if len(rb_list_temp) == 0:
-			rb_list_temp.append(i)
+	for i in rb_data_event_interp[rb_data_event_interp.values > t3_threshold_interp].index: # for i in rb_data[rb_data.values > 300].index: # one level is 1 minute
+		if len(rb_list_temp_interp) == 0:
+			rb_list_temp_interp.append(i)
 
-		elif len(rb_list_temp) >= 1:
-			if (i - rb_list_temp[-1]) <= datetime.timedelta(minutes=min_t_between_pts): # originally 5 minutes
-				rb_list_temp.append(i)
+		elif len(rb_list_temp_interp) >= 1:
+			if (i - rb_list_temp_interp[-1]) <= datetime.timedelta(minutes=min_t_between_pts_interp): # originally 5 minutes
+				rb_list_temp_interp.append(i)
 
-			elif (i - rb_list_temp[-1]) > datetime.timedelta(minutes=min_t_between_pts): # originally 5 minutes
-				if (rb_list_temp[-1] - rb_list_temp[0]) >= datetime.timedelta(minutes=min_length_event):
-					rb_list_event.append(rb_list_temp)
-					rb_list_temp = []
-					rb_list_temp.append(i)
+			elif (i - rb_list_temp_interp[-1]) > datetime.timedelta(minutes=min_t_between_pts_interp): # originally 5 minutes
+				if (rb_list_temp_interp[-1] - rb_list_temp_interp[0]) >= datetime.timedelta(minutes=min_length_event_interp):
+					rb_list_event_interp.append(rb_list_temp_interp)
+					rb_list_temp_interp = []
+					rb_list_temp_interp.append(i)
 
-				elif (rb_list_temp[-1] - rb_list_temp[0]) < datetime.timedelta(minutes=min_length_event):
-					rb_list_temp = []
-					rb_list_temp.append(i)
+				elif (rb_list_temp_interp[-1] - rb_list_temp_interp[0]) < datetime.timedelta(minutes=min_length_event_interp):
+					rb_list_temp_interp = []
+					rb_list_temp_interp.append(i)
 
-	if len(rb_list_temp) > 0:
-		if (rb_list_temp[-1] - rb_list_temp[0]) >= datetime.timedelta(minutes=min_length_event):
-			rb_list_event.append(rb_list_temp)
-			rb_list_temp = []
-			rb_list_temp.append(i)
-		elif (rb_list_temp[-1] - rb_list_temp[0]) < datetime.timedelta(minutes=min_length_event):
-			rb_list_temp = []
-			rb_list_temp.append(i)
-		rb_list_temp = []
+	if len(rb_list_temp_interp) > 0:
+		if (rb_list_temp_interp[-1] - rb_list_temp_interp[0]) >= datetime.timedelta(minutes=min_length_event_interp):
+			rb_list_event_interp.append(rb_list_temp_interp)
+			rb_list_temp_interp = []
+			rb_list_temp_interp.append(i)
+		elif (rb_list_temp_interp[-1] - rb_list_temp_interp[0]) < datetime.timedelta(minutes=min_length_event_interp):
+			rb_list_temp_interp = []
+			rb_list_temp_interp.append(i)
+		rb_list_temp_interp = []
 
 	print("\n")
-	rb_event_df = pd.DataFrame(columns=('start_time', 'end_time', 't3_duration', 't3_max_time', 't3_max_int'))
+	rb_event_df_interp = pd.DataFrame(columns=('start_time', 'end_time', 't3_duration', 't3_max_time', 't3_max_int', 'points_no'))
 
 	# =========  Outlier list
-	t3_freq_outlier = 120
-	if len( rb_list_event ) == 1:
+	# t3_freq_outlier = 120
+	if len( rb_list_event_interp ) == 1:
+		'''
 		rb_var_list = []
 		rb_outlier_list = []
 
@@ -1160,14 +1165,15 @@ if '2' in option_bin_set:
 				rb_data.drop(i, inplace=True)
 				rb_data_event.drop(i, inplace=True)
 			# rb_data.drop(rb_data[rb_data.values == 0.0].index, inplace=True)
-
-		rb_event_df.loc[0] = [rb_list_event[0][0], rb_list_event[0][-1], ((rb_list_event[0][-1] - rb_list_event[0][0]).total_seconds()/60), rb_data_event[f'{t3_freq}'].loc[rb_list_event[0][0]:rb_list_event[0][-1]].idxmax(), float(rb_data_event.loc[rb_list_event[0][0]:rb_list_event[0][-1]].max().values)] # days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0])
+		'''
+		rb_event_df_interp.loc[0] = [rb_list_event_interp[0][0], rb_list_event_interp[0][-1], ((rb_list_event_interp[0][-1] - rb_list_event_interp[0][0]).total_seconds()/60), rb_data_event_interp[f'{t3_freq_interp}'].loc[rb_list_event_interp[0][0]:rb_list_event_interp[0][-1]].idxmax(), float(rb_data_event_interp.loc[rb_list_event_interp[0][0]:rb_list_event_interp[0][-1]].max().values), len(rb_list_event_interp[0]), ] # days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0])
 		# elif t3_freq != 'avg':
-		#	rb_event_df.loc[0] = [rb_list_event[0][0], rb_list_event[0][-1], ((rb_list_event[0][-1] - rb_list_event[0][0]).total_seconds()/60), rb_data_event[int(f'{t3_freq}')].loc[rb_list_event[0][0]:rb_list_event[0][-1]].idxmax(), float(rb_data_event.loc[rb_list_event[0][0]:rb_list_event[0][-1]].max().values)] # days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0])
+		# rb_event_df.loc[0] = [rb_list_event[0][0], rb_list_event[0][-1], ((rb_list_event[0][-1] - rb_list_event[0][0]).total_seconds()/60), rb_data_event[int(f'{t3_freq}')].loc[rb_list_event[0][0]:rb_list_event[0][-1]].idxmax(), float(rb_data_event.loc[rb_list_event[0][0]:rb_list_event[0][-1]].max().values)] # days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0])
 
-	elif len( rb_list_event ) > 1:
+	elif len( rb_list_event_interp ) > 1:
 
 		#====== may not work for multiple events (more data points with added events lower threshold for variance)
+		'''
 		rb_var_list = []
 		rb_outlier_list = []
 
@@ -1187,18 +1193,17 @@ if '2' in option_bin_set:
 				rb_data.drop(i, inplace=True)
 				rb_data_event.drop(i, inplace=True)
 		# ======= end might not work
-
-		for i in range(len(rb_list_event)):
-			rb_event_df.loc[i] = [rb_list_event[i][0], rb_list_event[i][-1], ((rb_list_event[i][-1] - rb_list_event[i][0]).total_seconds()/60), rb_data_event[t3_freq].loc[rb_list_event[i][0]:rb_list_event[i][-1]].idxmax(), float(rb_data_event.loc[rb_list_event[i][0]:rb_list_event[i][-1]].max().values), ] # days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0])
+		'''
+		for i in range(len(rb_list_event_interp)):
+			rb_event_df_interp.loc[i] = [rb_list_event_interp[i][0], rb_list_event_interp[i][-1], ((rb_list_event_interp[i][-1] - rb_list_event_interp[i][0]).total_seconds()/60), rb_data_event_interp[t3_freq_interp].loc[rb_list_event_interp[i][0]:rb_list_event_interp[i][-1]].idxmax(), float(rb_data_event_interp.loc[rb_list_event_interp[i][0]:rb_list_event_interp[i][-1]].max().values), len(rb_list_event_interp[i]), ] # days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0])
 		# print(f"{rb_list_event[i][0]} -- {rb_list_event[i][-1]}", " Total Time: ", days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0]), " minutes")
 
 	print('='*40)
-	print(f"Number of Radio Events ({start} - {end}) [{t3_freq} kHz]: ", len(rb_list_event))
-	print(rb_event_df)
+	print(f"Number of Radio Events by Interpolation ({start} - {end}) [{t3_freq_interp} kHz]: ", len(rb_list_event_interp))
+	print(rb_event_df_interp)
 	print('='*40)
 	# ======== (END) Interpolating and smoothing data for T3 data
-
-
+	
 
 	# rb_event_df.to_csv(f'{data_directory}/T3_Detection/rbevents_{t3_freq}khz_{t3_threshold}_{start_date}_{end_date}.txt', sep=',', index=False)
 
@@ -2383,13 +2388,19 @@ if '2' in option_bin_set:
 	for frequency in freq_list:
 		color_choice = next(color_cm)
 		# axes[length_data_list[j]].stem(rb_data[frequency].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'])
-		axes[length_data_list[j]].plot(rb_data_interpolate_df[frequency].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], 'o', mfc='none', color='green', label= f'{frequency} kHz Interp.', zorder=4)
+		axes[length_data_list[j]].plot(rb_data_df_interp[frequency].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], 'o', mfc='none', color='green', label= f'{frequency} kHz Interp.', zorder=4)
 		axes[length_data_list[j]].plot(rb_data[frequency].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], 'o', mfc='none', color=color_choice, label= f'{frequency} kHz', zorder=5) # working plotting feature, without stem
 		
 		'''
 		date_test = '2012-03-07 00:33:30'
 		axes[length_data_list[j]].vlines(x=date_test, ymin=t3_threshold, ymax=rb_data['avg'].loc[date_test], linewidth=1, color='lightgreen', zorder=5)
 		'''
+
+	for rbevent_no_interp in range(len(rb_list_event_interp)):
+		# print(rbevent_no)
+		for rbpoint_interp in rb_list_event_interp[rbevent_no_interp]:
+			axes[length_data_list[j]].vlines(x=rbpoint_interp, ymin=t3_threshold_interp, ymax=rb_data_df_interp['avg'].loc[rbpoint_interp], linewidth=1, color='fuchsia', zorder=2)
+		
 
 	for rbevent_no in range(len(rb_list_event)):
 		# print(rbevent_no)
@@ -2402,18 +2413,18 @@ if '2' in option_bin_set:
 		'''
 	# axes[length_data_list[j]].axvline(rb_event_df['start_time'].values, linewidth=1, zorder=1, color='blue', linestyle='--', label='Max >10MeV')
 	# axes[length_data_list[j]].axvline(rb_event_df['end_time'].values, linewidth=1, zorder=1, color='blue', linestyle='--', label='Max >10MeV')
-	
+
 	for i in range(len(rb_event_df)):
 		if s_dtime <= (rb_event_df['start_time'][i] and rb_event_df['end_time'][i]) <= e_dtime:
 			axes[length_data_list[j]].axvspan(rb_event_df['start_time'][i], rb_event_df['end_time'][i], color='lightblue', alpha=0.5)
 		# axes[length_data_list[j]].axvspan(rb_event_df['start_time'].values, rb_event_df['end_time'].values, color='blue', alpha=0.5)
 
 
-	axes[length_data_list[j]].axhline(t3_threshold, linewidth=1, zorder=2, color='red', linestyle='-', label=f'{t3_threshold} sfu') #  xmin=0, xmax=1
+	axes[length_data_list[j]].axhline(t3_threshold, linewidth=1, zorder=2, color='red', linestyle='-', label=f'{t3_threshold} dB') #  xmin=0, xmax=1
 
 
 	# axes[length_data_list[j]].set_ylim(0, 100) # commented to allow for auto y-scaling, remove for rigid axis
-	axes[length_data_list[j]].set_ylabel('Wind Type III\nRadio Burst [sfu]', fontname="Arial", fontsize = 12)
+	axes[length_data_list[j]].set_ylabel('Wind Type III\nRadio Burst [dB]', fontname="Arial", fontsize = 12)
 	# axes[length_data_list[j]].set_ylabel('Type III Radio\nBurst Int. [sfu]', fontname="Arial", fontsize = 12)
 	
 
