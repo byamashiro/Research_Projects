@@ -110,6 +110,10 @@
 <details><summary>Current Tasks and Errors</summary>
 <p>
 
+### Interpolation and sigma removal errors in OMNI script
+- Running "pandas_test_omni.py" with the interpolation method breaks the plotting procedure when the "non-events" are plotted over the interpolated points. The problem occurs because some event indices do not exist in the "non-event" data. Therefore attempts to plot vertical lines for an index that does not have data for the respective time will break the plotting. For example in the omni program, the error will occur when running 20110607 for the radio burst option.
+- The second problem arises when removing outliers, there is a warning for boolean values when running the program for 20110607. A date the sigma removal will not work is 20130411.
+
 ### Radio burst detection too large
 - Running "pandas_test_t3_events_average.py" with the new frequencies of RAD2 leads to the error "Killed: 9". This occurs when values of 0.0 are dropped by the following command.
 ```python

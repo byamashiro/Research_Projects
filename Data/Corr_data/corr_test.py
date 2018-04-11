@@ -30,7 +30,7 @@ def func(params, xdata, ydata):
 
 # data = pd.read_csv('corr_data_20180204.csv', sep=',', comment='#')
 # data = pd.read_csv('corr_data_20180311.csv', sep=',', comment='#')
-data = pd.read_csv('corr_data_20180322.csv', sep=',', comment='#')
+data = pd.read_csv('corr_data_20180409.csv', sep=',', comment='#')
 
 
 '''
@@ -155,6 +155,28 @@ if '1' in option_bin_set:
 	# axes[length_data_list[j]].set_yticks([10**-3, 10**-2, 10**-1, 10**0, 10**1, 10**2, 10**3])
 	axes[length_data_list[j]].set_ylabel(f'log(Max Proton Flux) [pfu]', fontname="Arial", fontsize = 12)
 	axes[length_data_list[j]].set_xlabel(r'log(Corrected Type III Radio Burst Fluence) [(sfu$\cdot$min$_{TIII}$)$\cdot$ min$_{GOES}$]', fontname="Arial", fontsize = 12)
+
+	applyPlotStyle()
+	plt.show()
+
+
+	# ============= Integral Data
+	length_data_list[0] = 0,0
+	f, axes = plt.subplots(nrows=length_data, ncols=1, sharex=False, figsize=(7, 7), squeeze=False)
+
+	axes[length_data_list[j]].plot(data['integral'], data['goes_max_proton'], 'o', mfc='none', color='green', zorder=5)#, logy=True)
+
+	# axes[length_data_list[j]].plot(data['fluence_old'], data['goes_max_proton'], 'o', mfc='none', color='blue', label= '120 kHz Fluence', zorder=5)#, logy=True)
+
+	axes[length_data_list[j]].set_yscale('log')
+	axes[length_data_list[j]].set_xscale('log')
+	axes[length_data_list[j]].grid(linestyle=':')
+
+	# axes[length_data_list[j]].set_ylim((10**(-3)), (10**3))
+	
+	# axes[length_data_list[j]].set_yticks([10**-3, 10**-2, 10**-1, 10**0, 10**1, 10**2, 10**3])
+	axes[length_data_list[j]].set_ylabel(f'log(Max Proton Flux) [pfu]', fontname="Arial", fontsize = 12)
+	axes[length_data_list[j]].set_xlabel(r'log(Corrected Type III Radio Burst Integral Intensity) [(sfu$\cdot$min$_{TIII}$)$\cdot$ min$_{GOES}$]', fontname="Arial", fontsize = 12)
 
 	applyPlotStyle()
 	plt.show()
