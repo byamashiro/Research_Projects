@@ -941,10 +941,18 @@ if '2' in option_bin_set:
 		full_freq.append(rad2)
 		freq_rad2.append(rad2)
 
-	rb_data.drop(rb_data[rb_data.values == 0.0].index, inplace=True)
+	rb_true_index = list(rb_data.index)
+	rb_data.drop(rb_data[rb_data.values == 0.0].index, inplace=True) # drop indices that contain values of values <= 0
 
+
+	# RAD1 and RAD2
 	rb_data['avg'] = rb_data[full_freq].mean(axis=1, numeric_only=True)
+
+	# RAD 1 only
+	# rb_data['avg'] = rb_data[freq_rad1].mean(axis=1, numeric_only=True)
 	rb_data['rad1_avg'] = rb_data[freq_rad1].mean(axis=1, numeric_only=True)
+	# sys.exit(0)
+
 
 	'''
 	for radio_line in rb_data.values:
@@ -965,7 +973,7 @@ if '2' in option_bin_set:
 
 	# ======= TIII radio burst event detection
 	# ======= added for event options
-	t3_threshold = 5 # 5
+	t3_threshold = 2.0 # 5
 	t3_freq = 'avg' # 120
 
 	rb_data_event = pd.DataFrame([])
@@ -979,7 +987,7 @@ if '2' in option_bin_set:
 	rb_counter = 0
 
 	min_length_event = 30 # 10
-	min_t_between_pts = 5 # 10
+	min_t_between_pts = 10 # 10
 
 	for i in rb_data_event[rb_data_event.values > t3_threshold].index: # for i in rb_data[rb_data.values > 300].index: # one level is 1 minute
 		if len(rb_list_temp) == 0:
@@ -1010,14 +1018,133 @@ if '2' in option_bin_set:
 		rb_list_temp = []
 
 	print("\n")
-	rb_event_df = pd.DataFrame(columns=('start_time', 'end_time', 't3_duration', 't3_max_time', 't3_max_int'))
+	rb_event_df = pd.DataFrame(columns=('start_time', 'end_time', 't3_duration', 't3_max_time', 't3_max_int', 'points_no'))
 
 	# add the lists here
 	# p_10mev_list = pd.read_csv(f'{data_directory}/detected_events/event_dates/1d50pfu_10mev_2011_2017.txt', delim_whitespace=True, header=1)
 
+
+
 	# =========  Outlier list
 	t3_freq_outlier = 120
 	if len( rb_list_event ) == 1:
+		rb_var_list = []
+		rb_outlier_list = []
+		test_var_list = []
+
+		rb_mean = rb_data[t3_freq_outlier].loc[rb_list_event[0][1]:rb_list_event[0][-1]].mean(axis=0) # had 120 instead of t3_freq
+		rb_len = len(rb_list_event[0])
+
+		for i in rb_list_event[0]:
+			rb_var = np.sqrt(  pow((rb_data[t3_freq_outlier].loc[i]  -  rb_mean), 2) / (rb_len - 1)  ) # changed rb_data_event to rb_data due to outlier only showing well in 120 kHz channel # had 120 instead of t3_freq 
+			# rb_var = np.sqrt(  pow((rb_data_event[t3_freq_outlier].loc[i]  -  rb_mean), 2) / (rb_len - 1)  ) # had 120 instead of t3_freq (20180308) removed for new algorithm
+			if rb_var > 20.0: # was set at 10.0 20120205
+				print("Outliers: ", i, " :  ",rb_var)
+				rb_outlier_list.append(i)
+			rb_var_list.append(rb_var)
+			test_var_list.append(str(f"{i} {rb_var} {rb_data[120].loc[i]}"))
+
+		if len(rb_outlier_list) != 0:
+			for i in rb_outlier_list:
+				rb_data.drop(i, inplace=True)
+				rb_data_event.drop(i, inplace=True)
+			# rb_data.drop(rb_data[rb_data.values == 0.0].index, inplace=True)
+
+		rb_event_df.loc[0] = [rb_list_event[0][0], rb_list_event[0][-1], ((rb_list_event[0][-1] - rb_list_event[0][0]).total_seconds()/60), rb_data_event[f'{t3_freq}'].loc[rb_list_event[0][0]:rb_list_event[0][-1]].idxmax(), float(rb_data_event.loc[rb_list_event[0][0]:rb_list_event[0][-1]].max().values), len(rb_list_event[0]), ] # days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0])
+		# elif t3_freq != 'avg':
+		#	rb_event_df.loc[0] = [rb_list_event[0][0], rb_list_event[0][-1], ((rb_list_event[0][-1] - rb_list_event[0][0]).total_seconds()/60), rb_data_event[int(f'{t3_freq}')].loc[rb_list_event[0][0]:rb_list_event[0][-1]].idxmax(), float(rb_data_event.loc[rb_list_event[0][0]:rb_list_event[0][-1]].max().values)] # days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0])
+
+	elif len( rb_list_event ) > 1:
+
+		#====== may not work for multiple events (more data points with added events lower threshold for variance)
+		rb_var_list = []
+		rb_outlier_list = []
+
+		rb_mean = rb_data[t3_freq_outlier].loc[rb_list_event[0][1]:rb_list_event[0][-1]].mean(axis=0) # had 120 instead of t3_freq
+		rb_len = len(rb_list_event[0])
+
+		for i in rb_list_event[0]:
+			print(i)
+			rb_var = np.sqrt(  pow((rb_data[t3_freq_outlier].loc[i]  -  rb_mean), 2) / (rb_len - 1)  ) # had 120 instead of t3_freq
+			# rb_var = np.sqrt(  pow((rb_data_event[t3_freq].loc[i]  -  rb_mean), 2) / (rb_len - 1)  ) # had 120 instead of t3_freq
+
+			if rb_var > 20.0: # 10.0
+				print("Outliers: ", i, " :  ",rb_var)
+				rb_outlier_list.append(i)
+			rb_var_list.append(rb_var)
+
+		if len(rb_outlier_list) != 0:
+			for i in rb_outlier_list:
+				rb_data.drop(i, inplace=True)
+				rb_data_event.drop(i, inplace=True)
+		# ======= end might not work
+
+		for i in range(len(rb_list_event)):
+			rb_event_df.loc[i] = [rb_list_event[i][0], rb_list_event[i][-1], ((rb_list_event[i][-1] - rb_list_event[i][0]).total_seconds()/60), rb_data_event[t3_freq].loc[rb_list_event[i][0]:rb_list_event[i][-1]].idxmax(), float(rb_data_event.loc[rb_list_event[i][0]:rb_list_event[i][-1]].max().values),len(rb_list_event[i]), ] # days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0])
+		# print(f"{rb_list_event[i][0]} -- {rb_list_event[i][-1]}", " Total Time: ", days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0]), " minutes")
+
+	print('='*40)
+	print(f"Number of Radio Events ({start} - {end}) [{t3_freq} kHz]: ", len(rb_list_event))
+	print(rb_event_df)
+	print('='*40)
+
+
+
+	# ======== (BEGIN) Interpolating and smoothing data for T3 data
+	rb_data_df_interp = rb_data.reindex(rb_true_index).interpolate(method='linear').ffill()
+
+	# ======= Event parameters for interpolated t3 data
+	t3_threshold_interp = 2.0 # 5
+	t3_freq_interp = 'avg' # 120
+
+	rb_data_event_interp = pd.DataFrame([])
+	rb_concat_event_interp = rb_data_df_interp[[t3_freq_interp]]
+	rb_data_event_interp = rb_data_event_interp.append(rb_concat_event_interp)
+	# rb_data_event.drop(rb_data[rb_data.values == 0.0].index, inplace=True)
+
+	rb_event_df_interp = pd.DataFrame([])
+	rb_list_temp_interp = []
+	rb_list_event_interp = []
+	rb_counter_interp = 0
+
+	min_length_event_interp = 30 # 10
+	min_t_between_pts_interp = 10 # 10
+
+	for i in rb_data_event_interp[rb_data_event_interp.values > t3_threshold_interp].index: # for i in rb_data[rb_data.values > 300].index: # one level is 1 minute
+		if len(rb_list_temp_interp) == 0:
+			rb_list_temp_interp.append(i)
+
+		elif len(rb_list_temp_interp) >= 1:
+			if (i - rb_list_temp_interp[-1]) <= datetime.timedelta(minutes=min_t_between_pts_interp): # originally 5 minutes
+				rb_list_temp_interp.append(i)
+
+			elif (i - rb_list_temp_interp[-1]) > datetime.timedelta(minutes=min_t_between_pts_interp): # originally 5 minutes
+				if (rb_list_temp_interp[-1] - rb_list_temp_interp[0]) >= datetime.timedelta(minutes=min_length_event_interp):
+					rb_list_event_interp.append(rb_list_temp_interp)
+					rb_list_temp_interp = []
+					rb_list_temp_interp.append(i)
+
+				elif (rb_list_temp_interp[-1] - rb_list_temp_interp[0]) < datetime.timedelta(minutes=min_length_event_interp):
+					rb_list_temp_interp = []
+					rb_list_temp_interp.append(i)
+
+	if len(rb_list_temp_interp) > 0:
+		if (rb_list_temp_interp[-1] - rb_list_temp_interp[0]) >= datetime.timedelta(minutes=min_length_event_interp):
+			rb_list_event_interp.append(rb_list_temp_interp)
+			rb_list_temp_interp = []
+			rb_list_temp_interp.append(i)
+		elif (rb_list_temp_interp[-1] - rb_list_temp_interp[0]) < datetime.timedelta(minutes=min_length_event_interp):
+			rb_list_temp_interp = []
+			rb_list_temp_interp.append(i)
+		rb_list_temp_interp = []
+
+	print("\n")
+	rb_event_df_interp = pd.DataFrame(columns=('start_time', 'end_time', 't3_duration', 't3_max_time', 't3_max_int', 'points_no', 'intgl_int_dur'))
+
+	# =========  Outlier list
+	# t3_freq_outlier = 120
+	if len( rb_list_event_interp ) == 1:
+		'''
 		rb_var_list = []
 		rb_outlier_list = []
 
@@ -1036,14 +1163,15 @@ if '2' in option_bin_set:
 				rb_data.drop(i, inplace=True)
 				rb_data_event.drop(i, inplace=True)
 			# rb_data.drop(rb_data[rb_data.values == 0.0].index, inplace=True)
-
-		rb_event_df.loc[0] = [rb_list_event[0][0], rb_list_event[0][-1], ((rb_list_event[0][-1] - rb_list_event[0][0]).total_seconds()/60), rb_data_event[f'{t3_freq}'].loc[rb_list_event[0][0]:rb_list_event[0][-1]].idxmax(), float(rb_data_event.loc[rb_list_event[0][0]:rb_list_event[0][-1]].max().values)] # days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0])
+		'''
+		rb_event_df_interp.loc[0] = [rb_list_event_interp[0][0], rb_list_event_interp[0][-1], ((rb_list_event_interp[0][-1] - rb_list_event_interp[0][0]).total_seconds()/60), rb_data_event_interp[f'{t3_freq_interp}'].loc[rb_list_event_interp[0][0]:rb_list_event_interp[0][-1]].idxmax(), float(rb_data_event_interp.loc[rb_list_event_interp[0][0]:rb_list_event_interp[0][-1]].max().values), len(rb_list_event_interp[0]), round(rb_data_df_interp['avg'][rb_list_event_interp[0]].sum(),3), ] # days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0])
 		# elif t3_freq != 'avg':
-		#	rb_event_df.loc[0] = [rb_list_event[0][0], rb_list_event[0][-1], ((rb_list_event[0][-1] - rb_list_event[0][0]).total_seconds()/60), rb_data_event[int(f'{t3_freq}')].loc[rb_list_event[0][0]:rb_list_event[0][-1]].idxmax(), float(rb_data_event.loc[rb_list_event[0][0]:rb_list_event[0][-1]].max().values)] # days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0])
+		# rb_event_df.loc[0] = [rb_list_event[0][0], rb_list_event[0][-1], ((rb_list_event[0][-1] - rb_list_event[0][0]).total_seconds()/60), rb_data_event[int(f'{t3_freq}')].loc[rb_list_event[0][0]:rb_list_event[0][-1]].idxmax(), float(rb_data_event.loc[rb_list_event[0][0]:rb_list_event[0][-1]].max().values)] # days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0])
 
-	elif len( rb_list_event ) > 1:
+	elif len( rb_list_event_interp ) > 1:
 
 		#====== may not work for multiple events (more data points with added events lower threshold for variance)
+		'''
 		rb_var_list = []
 		rb_outlier_list = []
 
@@ -1063,117 +1191,21 @@ if '2' in option_bin_set:
 				rb_data.drop(i, inplace=True)
 				rb_data_event.drop(i, inplace=True)
 		# ======= end might not work
+		'''
+		for i in range(len(rb_list_event_interp)):
+			rb_event_df_interp.loc[i] = [rb_list_event_interp[i][0], rb_list_event_interp[i][-1], ((rb_list_event_interp[i][-1] - rb_list_event_interp[i][0]).total_seconds()/60), rb_data_event_interp[t3_freq_interp].loc[rb_list_event_interp[i][0]:rb_list_event_interp[i][-1]].idxmax(), float(rb_data_event_interp.loc[rb_list_event_interp[i][0]:rb_list_event_interp[i][-1]].max().values), len(rb_list_event_interp[i]), round(rb_data_df_interp['avg'][rb_list_event_interp[i]].sum(),3),  ] # days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0])
 
-		for i in range(len(rb_list_event)):
-			rb_event_df.loc[i] = [rb_list_event[i][0], rb_list_event[i][-1], ((rb_list_event[i][-1] - rb_list_event[i][0]).total_seconds()/60), rb_data_event[t3_freq].loc[rb_list_event[i][0]:rb_list_event[i][-1]].idxmax(), float(rb_data_event.loc[rb_list_event[i][0]:rb_list_event[i][-1]].max().values), ] # days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0])
-		# print(f"{rb_list_event[i][0]} -- {rb_list_event[i][-1]}", " Total Time: ", days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0]), " minutes")
+
+
+		# print(f"{rb_list_event[i][0]} -- {rb_list_event[i][-1]}", " Total Time: ", days_hours_minutes(rb_list_event[i][-1] - rb_list_event[i][0]), " minutes")		
+
 
 	print('='*40)
-	print(f"Number of Radio Events ({start} - {end}) [{t3_freq} kHz]: ", len(rb_list_event))
-	print(rb_event_df)
+	print(f"Number of Radio Events by Interpolation ({start} - {end}) [{t3_freq_interp} kHz]: ", len(rb_list_event_interp))
+	print(rb_event_df_interp)
 	print('='*40)
 
 
-# ======================== Modified Code, change things in here
-def string_date_to_numeric(li):
-    series = pd.Series(li)
-    datetime = pd.to_datetime(series)
-    numeric = pd.to_numeric(datetime)
-    return numeric
-
-# x = string_date_to_numeric(rb_data.index)
-x = np.arange(0,len(rb_data.index))
-y = full_freq
-X, Y = np.meshgrid(x,y)
-Xt = np.transpose(X)
-Yt = np.transpose(Y)
-print(np.shape(Xt))
-# print(X, Y)
-
-# Z = rb_data[full_freq].values
-z = rb_data[full_freq].values
-Z = np.transpose(z)
-
-
-fig, ax = plt.subplots(figsize=(8, 6))
-# fig = plt.figure()
-# ax = fig.add_subplot(111)
-
-# ax = fig.add_subplot(111, projection='3d')
-# ax.plot_surface(X,Y,Z, cmap=cm.viridis)
-lower_bound = -10
-upper_bound = 30
-
-plt.contourf(X,Y,Z,40, vmin=lower_bound, vmax=upper_bound, cmap=cm.jet, levels=np.linspace(lower_bound,upper_bound,100), extend='both')
-plt.colorbar()
-
-# plt.contourf(X,Y,Z,40, vmin=lower_bound, vmax=upper_bound, cmap=cm.jet, levels=np.linspace(lower_bound,upper_bound,100), extend='both')
-# plt.contourf(X,Y,Z,100, norm=colors.SymLogNorm(linthresh=0.03, linscale=0.03, vmin=-1.0, vmax=100.0), cmap=cm.rainbow)
-
-
-
-
-'''
-plt.xticks(x, rb_data.index, rotation='vertical')
-
-spacing = 100
-visible = ax.xaxis.get_ticklabels()[::spacing]
-for label in ax.xaxis.get_ticklabels():
-    if label not in visible:
-        label.set_visible(False)
-'''
-
-
-# ax.set_xticklabels(rb_data.index)
-# ax.xaxis.set_major_formatter(mdates.ticker.FixedFormatter(rb_data.index))
-
-'''
-# Get the current axis
-ax = plt.gca()
-
-# Only label every 20th value
-ticks_to_use = rb_data.index[::20]
-
-# Set format of labels (note year not excluded as requested)
-labels = [ i.strftime("%-H:%M") for i in ticks_to_use ]
-
-# Now set the ticks and labels
-ax.set_xticks(ticks_to_use)
-ax.set_xticklabels(labels)
-'''
-
-# ax.xaxis_date()
-# ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y'))
-
-# Create your ticker object with M ticks
-M = 20
-xticks = ticker.MaxNLocator(M)
-
-# Set the yaxis major locator using your ticker object. You can also choose the minor
-# tick positions with set_minor_locator.
-ax.xaxis.set_major_locator(xticks)
-# ax.set_xticklabels(rb_data.index[::5, :])
-
-
-# ax.xaxis.set_major_formatter(mdates.DateFormatter('%b %d'))
-
-# fig.autofmt_xdate()
-# ax.xaxis.set_major_formatter(mdates.DateFormatter("%w %H:%M:%S"))
-# ax.fmt_xdata = mdates.DateFormatter('%Y')
-
-plt.yscale('log')
-
-# plt.setp(ax.xaxis.get_majorticklabels(), rotation=0, horizontalalignment='center')
-
-# plt.tight_layout()
-
-plt.show()
-
-
-
-# rb_data.to_csv("test_data.csv", sep=",")
-# rb_data.plot.scatter(x=rb_data.index, y=data_rad1, c=rb_data.values)
-sys.exit(0)
 
 
 
@@ -1988,6 +2020,258 @@ if '8' in option_bin_set:
 #===========
 print(f'\n{"="*40}\nNew Dataset Name Goes Here\n{"="*40}')
 '''
+
+
+
+# ======================== Modified Code for plotting, change things in here
+f, (ax1, ax2, ax3, ax4) = plt.subplots(nrows=4, ncols=1, sharex=True, figsize=(8, 6))
+
+def string_date_to_numeric(li):
+    series = pd.Series(li)
+    datetime = pd.to_datetime(series)
+    numeric = pd.to_numeric(datetime)
+    return numeric
+
+x = string_date_to_numeric(rb_data.index)
+# x = np.arange(0,len(rb_data.index))
+y = full_freq
+X, Y = np.meshgrid(x,y)
+Xt = np.transpose(X)
+Yt = np.transpose(Y)
+# print(np.shape(Xt))
+# print(X, Y)
+
+# Z = rb_data[full_freq].values
+z = rb_data[full_freq].values
+Z = np.transpose(z)
+
+
+
+s_time = datetime.datetime.strptime(start_hour, '%H').time()
+e_time = datetime.datetime.strptime(end_hour, '%H').time()
+
+s_dtime = datetime.datetime.combine(start, s_time)
+e_dtime = datetime.datetime.combine(end, e_time)
+
+
+# fig, (ax1, ax2) = plt.subplots(1, 2, sharex=True, figsize=(8, 6))
+# fig = plt.figure()
+# ax = fig.add_subplot(111)
+
+# ax = fig.add_subplot(111, projection='3d')
+# ax.plot_surface(X,Y,Z, cmap=cm.viridis)
+
+
+# ========= xray flux (ax1)
+def flare_class(X):
+	if X == 10**-4:
+		return "X"
+	#return ["%.3f" % z for z in V]
+
+ax1.plot(string_date_to_numeric(xray_df['B_FLUX'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].index), xray_df['B_FLUX'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='blue', label='0.1-0.8 nm', zorder=5)
+ax1.plot(string_date_to_numeric(xray_df['A_FLUX'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].index), xray_df['A_FLUX'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='red', label='0.05-0.4 nm', zorder=5)
+ax1.set_yscale('log')
+
+
+flare_classes = ['', 'A', 'B', 'C', 'M', 'X']
+ax7 = ax1.twinx()
+ax7.set_yscale('log')
+ax7.set_ylim(ax1.get_ylim())
+ax7.set_yticks([10**-9, 10**-8, 10**-7, 10**-6, 10**-5, 10**-4, 10**-3, 10**-2])
+ax7.set_yticklabels(labels=flare_classes)
+ax7.tick_params(axis='y', which='both', direction='in')
+
+ax4.set_yticks([10**-9, 10**-8, 10**-7, 10**-6, 10**-5, 10**-4, 10**-3, 10**-2])
+
+ax4.set_ylabel(f'GOES-{satellite_no_xray} Xray\nFlux [Wm$^2$]', fontname="Arial", fontsize = 12)
+
+
+# ======= radio bursts (ax2)
+from mpl_toolkits.axes_grid1 import make_axes_locatable
+
+lower_bound = -10
+upper_bound = 50
+
+cf = ax2.contourf(X,Y,Z,40, vmin=lower_bound, vmax=upper_bound, cmap=cm.jet, levels=np.linspace(lower_bound,upper_bound,100), extend='max') # ["neither", "both", "min", "max"]
+cax = f.add_axes([0.91, 0.55, 0.0125, 0.15]) # ([0.9, 0.1, 0.03, 0.8])
+cb = f.colorbar(cf, cax=cax)
+
+tick_locator = ticker.MaxNLocator(nbins=5)
+cb.locator = tick_locator
+cb.update_ticks()
+
+'''
+cbar_ax = f.add_axes([0.85, 0.15, 0.05, 0.7])
+f.colorbar(cf, cax=cbar_ax)
+'''
+
+# plt.colorbar()
+'''
+divider = make_axes_locatable(ax2)
+cax = divider.append_axes("right", size="5%", pad=0)
+
+plt.colorbar(cf, cax=cax)
+'''
+
+ax2.set_yscale('log')
+
+# ======= radio burst average (ax3)
+ax3.plot(string_date_to_numeric(rb_data_df_interp.index), rb_data_df_interp['avg'], '.', mfc='none', color='blue', zorder=3)
+
+for rbevent_no_interp in range(len(rb_list_event_interp)):
+	for rbpoint_interp in rb_list_event_interp[rbevent_no_interp]:
+		interp_x = string_date_to_numeric(rbpoint_interp)
+		ax3.vlines(x=interp_x, ymin=t3_threshold_interp, ymax=rb_data_df_interp['avg'].loc[rbpoint_interp], linewidth=1, color='fuchsia', zorder=2)
+	
+'''
+for i in range(len(rb_event_df)):
+	if s_dtime <= (rb_event_df['start_time'][i] and rb_event_df['end_time'][i]) <= e_dtime:
+		ax2.axvspan(rb_event_df['start_time'][i], rb_event_df['end_time'][i], color='lightblue', alpha=0.5)
+	# axes[length_data_list[j]].axvspan(rb_event_df['start_time'].values, rb_event_df['end_time'].values, color='blue', alpha=0.5)
+'''
+'''
+for i in range(len(rb_event_df)):
+	ax2.axvspan(string_date_to_numeric(rb_event_df['start_time'][i]), string_date_to_numeric(rb_event_df['end_time'][i]), color='lightblue', alpha=0.5)
+'''
+
+ax3.axhline(t3_threshold, linewidth=1, zorder=1, color='red', linestyle='-', label=f'{t3_threshold} dB') #  xmin=0, xmax=1
+
+for i in range(len(rb_event_df)):
+	if s_dtime <= (rb_event_df_interp['start_time'][i] and rb_event_df_interp['end_time'][i]) <= e_dtime:
+		ax3.axvline(string_date_to_numeric(rb_event_df_interp['start_time'][i]).values, linewidth=1, zorder=3, color='green', linestyle=':') #  xmin=0, xmax=1
+
+# ======= Protons (ax4)
+for i in energy_bin_list: # for i in sorted(energy_bin_list): # changed to unsorted because the sort queued off of 10 -> 100 -> 50 rather than 10 -> 50 -> 100
+	ax4.plot(string_date_to_numeric(proton_df[f'{i[0]}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].index), proton_df[f'{i[0]}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'],'.', mfc='none', color=f'{i[2]}', label= f'{i[1]}', zorder=5)#, logy=True) , 
+	# ax3.plot(proton_df[f'{i[0]}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], '.', mfc='none', color=f'{i[2]}', label= f'{i[1]}', zorder=5)#, logy=True)
+
+color_tree = iter(cm.rainbow(np.linspace(0,1,10)))
+
+if proton_event_option == 'smooth':
+	ax4.plot(string_date_to_numeric(proton_smooth_df[f'{butter_filter}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].index), proton_smooth_df[f'{butter_filter}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='purple', linewidth=1, label=f'Butter-{butter_order}', zorder=5)
+
+ax4.set_yscale('log')
+
+ax4.set_ylabel(f'GOES-{satellite_no} Epead Proton\nFlux [pfu]', fontname="Arial", fontsize = 12)
+
+
+s_time = datetime.datetime.strptime(start_hour, '%H').time()
+e_time = datetime.datetime.strptime(end_hour, '%H').time()
+
+s_dtime = datetime.datetime.combine(start, s_time)
+e_dtime = datetime.datetime.combine(end, e_time)
+
+
+for i in range(len(proton_event_df)):
+	if s_dtime <= (proton_event_df['start_time'][i] and proton_event_df['end_time'][i]) <= e_dtime:
+		# string_date_to_numeric(rb_event_df['start_time'][0]).values
+		# ax3.axvspan(proton_event_df['start_time'][i], proton_event_df['end_time'][i], color='palegreen', alpha=0.5)
+		ax4.axvline(string_date_to_numeric(proton_event_df['start_time'][i]).values, linewidth=1, zorder=2, color='green', linestyle='-') #  xmin=0, xmax=1
+		# ax3.axvline(string_date_to_numeric(proton_event_df['end_time'][i]).values, linewidth=1, zorder=2, color='green', linestyle='-') #  xmin=0, xmax=1
+
+# ax3.axvline(s_dtime, linewidth=1, zorder=2, color='green', linestyle=':') #  xmin=0, xmax=1
+# ax3.axvline(e_dtime, linewidth=1, zorder=2, color='green', linestyle=':') #  xmin=0, xmax=1
+
+
+ax4.axhline(proton_threshold, linewidth=1, zorder=2, color='red', linestyle='-.', label=f'{round(proton_threshold, 3)} pfu') #  xmin=0, xmax=1 # threshold
+
+
+
+# ===== vertical lines
+
+
+
+'''
+for i in range(len(rb_event_df)):
+	print(f"Radio Burst Start Time ({rb_event_df['start_time'][i]}): ", string_date_to_numeric(rb_event_df['start_time'][i]))
+
+print("=====================")
+
+for i in range(len(proton_event_df)):
+	print(f"Proton Start Time ({proton_event_df['start_time'][i]}): ", string_date_to_numeric(proton_event_df['start_time'][i]))
+'''
+
+
+'''
+plt.xticks(x, rb_data.index, rotation='vertical')
+
+spacing = 100
+visible = ax.xaxis.get_ticklabels()[::spacing]
+for label in ax.xaxis.get_ticklabels():
+    if label not in visible:
+        label.set_visible(False)
+'''
+
+
+# ax.set_xticklabels(rb_data.index)
+# ax.xaxis.set_major_formatter(mdates.ticker.FixedFormatter(rb_data.index))
+
+'''
+# Get the current axis
+ax = plt.gca()
+
+# Only label every 20th value
+ticks_to_use = rb_data.index[::20]
+
+# Set format of labels (note year not excluded as requested)
+labels = [ i.strftime("%-H:%M") for i in ticks_to_use ]
+
+# Now set the ticks and labels
+ax.set_xticks(ticks_to_use)
+ax.set_xticklabels(labels)
+'''
+
+# ax.xaxis_date()
+# ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y'))
+
+# Create your ticker object with M ticks
+M = 20
+xticks = ticker.MaxNLocator(M)
+
+# Set the yaxis major locator using your ticker object. You can also choose the minor
+# tick positions with set_minor_locator.
+# ax1.xaxis.set_major_locator(xticks)
+# ax.set_xticklabels(rb_data.index[::5, :])
+
+
+# ax.xaxis.set_major_formatter(mdates.DateFormatter('%b %d'))
+
+# fig.autofmt_xdate()
+# ax.xaxis.set_major_formatter(mdates.DateFormatter("%w %H:%M:%S"))
+# ax.fmt_xdata = mdates.DateFormatter('%Y')
+
+# ax1.yscale('log')
+
+# plt.setp(ax.xaxis.get_majorticklabels(), rotation=0, horizontalalignment='center')
+
+# plt.tight_layout()
+
+'''
+axes[length_data_list[j]].set_xlabel('Time [UT]', fontname="Arial", fontsize = 12)
+
+myFmt = mdates.DateFormatter('%m/%d\n%H:%M')
+ax = plt.gca()
+ax.xaxis.set_major_formatter(myFmt)
+
+plt.setp(ax.xaxis.get_majorticklabels(), rotation=0, horizontalalignment='center')
+plt.suptitle(f'Space Weather Monitor\n[{event_obj_start_str} -- {event_obj_end_str}]', fontname="Arial", fontsize = 14) #, y=1.04,
+#plt.tight_layout()
+'''
+plt.subplots_adjust(wspace = 0, hspace = 0, top=0.91)
+
+plt.show()
+
+
+
+# rb_data.to_csv("test_data.csv", sep=",")
+# rb_data.plot.scatter(x=rb_data.index, y=data_rad1, c=rb_data.values)
+sys.exit(0)
+
+
+
+
+
+
 
 
 # =========================================================== END OF DATA (PLOTTING)

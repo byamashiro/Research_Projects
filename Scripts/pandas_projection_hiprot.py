@@ -27,7 +27,7 @@ plt.ion()
 
 data_directory = '/Users/bryanyamashiro/Documents/Research_Projects/Data'
 
-data = pd.read_csv(f'{data_directory}/Projection/location.csv', sep=',', comment='#')
+data = pd.read_csv(f'{data_directory}/Projection/location_hiprot.csv', sep=',', comment='#')
 
 proj_choice = ccrs.PlateCarree()
 
@@ -55,9 +55,17 @@ for i in data['flare_location']:
 		elif i[0] == 'S':
 			flare_lat_temp = -int(i[1:3])
 		if i[3] == 'W':
-			flare_long_temp = int(i[4:6])
+			if len(i) == 6:
+				flare_long_temp = int(i[4:6])
+			elif len(i) == 7:
+				flare_long_temp = int(i[4:7])
 		elif i[3] == 'E':
-			flare_long_temp = -int(i[4:6])
+			if len(i) == 6:
+				flare_long_temp = -int(i[4:6])
+			elif len(i) == 7:
+				flare_long_temp = -int(i[4:7])
+
+
 
 		flare_lat_list.append(flare_lat_temp)
 		flare_long_list.append(flare_long_temp)
@@ -208,7 +216,7 @@ z = data['connectivity']
 
 # z1 = z.reshape((len(x), len(y)))
 
-scatter = ax.scatter(data['flare_long'], data['flare_lat'], c=data['connectivity'], cmap='viridis', transform=ccrs.Geodetic(), zorder=3)
+scatter = ax.scatter(data['flare_long'], data['flare_lat'], c=data['connectivity'], cmap='jet', transform=ccrs.Geodetic(), zorder=3)
 # scatter = ax.contourf(x,y , c=z, cmap='viridis', transform=ccrs.PlateCarree(), zorder=3)
 plt.colorbar(scatter)
 plt.xlabel("Longitude")
