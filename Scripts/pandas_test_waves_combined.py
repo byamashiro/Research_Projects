@@ -2024,6 +2024,9 @@ print(f'\n{"="*40}\nNew Dataset Name Goes Here\n{"="*40}')
 
 
 # ======================== Modified Code for plotting, change things in here
+import matplotlib.dates as mdate
+
+
 f, (ax1, ax2, ax3, ax4) = plt.subplots(nrows=4, ncols=1, sharex=True, figsize=(8, 6))
 
 def string_date_to_numeric(li):
@@ -2142,7 +2145,7 @@ for i in range(len(rb_event_df)):
 
 # ======= Protons (ax4)
 for i in energy_bin_list: # for i in sorted(energy_bin_list): # changed to unsorted because the sort queued off of 10 -> 100 -> 50 rather than 10 -> 50 -> 100
-	ax4.plot(string_date_to_numeric(proton_df[f'{i[0]}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].index), proton_df[f'{i[0]}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'],'.', mfc='none', color=f'{i[2]}', label= f'{i[1]}', zorder=5)#, logy=True) , 
+	ax4.plot_date(string_date_to_numeric(proton_df[f'{i[0]}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].index), proton_df[f'{i[0]}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'],'.', mfc='none', color=f'{i[2]}', label= f'{i[1]}', zorder=5)#, logy=True) , 
 	# ax3.plot(proton_df[f'{i[0]}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], '.', mfc='none', color=f'{i[2]}', label= f'{i[1]}', zorder=5)#, logy=True)
 
 color_tree = iter(cm.rainbow(np.linspace(0,1,10)))
@@ -2253,10 +2256,16 @@ myFmt = mdates.DateFormatter('%m/%d\n%H:%M')
 ax = plt.gca()
 ax.xaxis.set_major_formatter(myFmt)
 
-plt.setp(ax.xaxis.get_majorticklabels(), rotation=0, horizontalalignment='center')
 plt.suptitle(f'Space Weather Monitor\n[{event_obj_start_str} -- {event_obj_end_str}]', fontname="Arial", fontsize = 14) #, y=1.04,
 #plt.tight_layout()
 '''
+
+'''
+myFmt = mdates.DateFormatter('%m/%d\n%H:%M')
+ax = plt.gca()
+ax4.xaxis.set_major_formatter(myFmt)
+'''
+
 plt.subplots_adjust(wspace = 0, hspace = 0, top=0.91)
 
 plt.show()
