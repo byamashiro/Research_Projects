@@ -2027,15 +2027,37 @@ print(f'\n{"="*40}\nNew Dataset Name Goes Here\n{"="*40}')
 import matplotlib.dates as mdate
 
 
-f, (ax1, ax2, ax3, ax4) = plt.subplots(nrows=4, ncols=1, sharex=True, figsize=(8, 6))
+f, (ax1, ax2, ax3, ax4) = plt.subplots(nrows=4, ncols=1, sharex=True, figsize=(10, 6))
 
+'''
 def string_date_to_numeric(li):
     series = pd.Series(li)
     datetime = pd.to_datetime(series)
     numeric = pd.to_numeric(datetime)
     return numeric
+'''
 
-x = string_date_to_numeric(rb_data.index)
+def string_date_to_numeric(li):
+    # series = pd.Series(li)
+    # datetime = pd.to_datetime(series)
+    # numeric = datetime.strftime('%s') # pd.to_numeric(datetime)
+    # numeric = li.strftime('%s')
+    datetime = li.strftime('%s')
+    numeric = np.array(datetime, dtype=np.int64)
+    return numeric
+
+
+# ====== Convert 20110607 to epoch
+xray_june = string_date_to_numeric(datetime.datetime(2011, 6, 7, 6, 16, 00))
+t3_june = string_date_to_numeric(datetime.datetime(2011, 6, 7, 6, 26, 30))
+proton_june = string_date_to_numeric(datetime.datetime(2011, 6, 7, 6, 45, 00))
+
+
+# ====== End conversion
+
+
+# x = string_date_to_numeric(rb_data.index)
+x = string_date_to_numeric(rb_data.loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].index)
 # x = np.arange(0,len(rb_data.index))
 y = full_freq
 X, Y = np.meshgrid(x,y)
@@ -2045,9 +2067,8 @@ Yt = np.transpose(Y)
 # print(X, Y)
 
 # Z = rb_data[full_freq].values
-z = rb_data[full_freq].values
+z = rb_data[full_freq].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].values
 Z = np.transpose(z)
-
 
 
 s_time = datetime.datetime.strptime(start_hour, '%H').time()
@@ -2084,10 +2105,10 @@ ax7.set_yticks([10**-9, 10**-8, 10**-7, 10**-6, 10**-5, 10**-4, 10**-3, 10**-2])
 ax7.set_yticklabels(labels=flare_classes)
 ax7.tick_params(axis='y', which='both', direction='in')
 
-ax4.set_yticks([10**-9, 10**-8, 10**-7, 10**-6, 10**-5, 10**-4, 10**-3, 10**-2])
+ax1.set_yticks([10**-9, 10**-8, 10**-7, 10**-6, 10**-5, 10**-4, 10**-3, 10**-2])
 
-ax4.set_ylabel(f'GOES-{satellite_no_xray} Xray\nFlux [Wm$^2$]', fontname="Arial", fontsize = 12)
-
+ax1.set_ylabel(f'Xray Flux\n [Wm$^2$]', fontname="Arial", fontsize = 12)
+ax1.grid(linestyle=':')
 
 # ======= radio bursts (ax2)
 from mpl_toolkits.axes_grid1 import make_axes_locatable
@@ -2117,9 +2138,11 @@ plt.colorbar(cf, cax=cax)
 '''
 
 ax2.set_yscale('log')
+ax2.set_ylabel(f'Frequency\n [kHz]', fontname="Arial", fontsize = 12)
+ax2.grid(linestyle=':')
 
 # ======= radio burst average (ax3)
-ax3.plot(string_date_to_numeric(rb_data_df_interp.index), rb_data_df_interp['avg'], '.', mfc='none', color='blue', zorder=3)
+ax3.plot(string_date_to_numeric(rb_data_df_interp.loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].index), rb_data_df_interp['avg'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], '.', mfc='none', color='blue', zorder=3)
 
 for rbevent_no_interp in range(len(rb_list_event_interp)):
 	for rbpoint_interp in rb_list_event_interp[rbevent_no_interp]:
@@ -2138,14 +2161,17 @@ for i in range(len(rb_event_df)):
 '''
 
 ax3.axhline(t3_threshold, linewidth=1, zorder=1, color='red', linestyle='-', label=f'{t3_threshold} dB') #  xmin=0, xmax=1
-
+'''
 for i in range(len(rb_event_df)):
 	if s_dtime <= (rb_event_df_interp['start_time'][i] and rb_event_df_interp['end_time'][i]) <= e_dtime:
 		ax3.axvline(string_date_to_numeric(rb_event_df_interp['start_time'][i]).values, linewidth=1, zorder=3, color='green', linestyle=':') #  xmin=0, xmax=1
+'''
+ax3.set_ylabel(f'Averaged TIII\n Intensity [dB]', fontname="Arial", fontsize = 12)
+ax3.grid(linestyle=':')
 
 # ======= Protons (ax4)
 for i in energy_bin_list: # for i in sorted(energy_bin_list): # changed to unsorted because the sort queued off of 10 -> 100 -> 50 rather than 10 -> 50 -> 100
-	ax4.plot_date(string_date_to_numeric(proton_df[f'{i[0]}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].index), proton_df[f'{i[0]}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'],'.', mfc='none', color=f'{i[2]}', label= f'{i[1]}', zorder=5)#, logy=True) , 
+	ax4.plot(string_date_to_numeric(proton_df[f'{i[0]}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].index), proton_df[f'{i[0]}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'],'.', mfc='none', color=f'{i[2]}', label= f'{i[1]}', zorder=5)#, logy=True) , 
 	# ax3.plot(proton_df[f'{i[0]}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], '.', mfc='none', color=f'{i[2]}', label= f'{i[1]}', zorder=5)#, logy=True)
 
 color_tree = iter(cm.rainbow(np.linspace(0,1,10)))
@@ -2155,7 +2181,7 @@ if proton_event_option == 'smooth':
 
 ax4.set_yscale('log')
 
-ax4.set_ylabel(f'GOES-{satellite_no} Epead Proton\nFlux [pfu]', fontname="Arial", fontsize = 12)
+ax4.set_ylabel(f'Proton Flux\n [pfu]', fontname="Arial", fontsize = 12)
 
 
 s_time = datetime.datetime.strptime(start_hour, '%H').time()
@@ -2164,24 +2190,29 @@ e_time = datetime.datetime.strptime(end_hour, '%H').time()
 s_dtime = datetime.datetime.combine(start, s_time)
 e_dtime = datetime.datetime.combine(end, e_time)
 
-
+'''
 for i in range(len(proton_event_df)):
 	if s_dtime <= (proton_event_df['start_time'][i] and proton_event_df['end_time'][i]) <= e_dtime:
 		# string_date_to_numeric(rb_event_df['start_time'][0]).values
 		# ax3.axvspan(proton_event_df['start_time'][i], proton_event_df['end_time'][i], color='palegreen', alpha=0.5)
 		ax4.axvline(string_date_to_numeric(proton_event_df['start_time'][i]).values, linewidth=1, zorder=2, color='green', linestyle='-') #  xmin=0, xmax=1
 		# ax3.axvline(string_date_to_numeric(proton_event_df['end_time'][i]).values, linewidth=1, zorder=2, color='green', linestyle='-') #  xmin=0, xmax=1
+'''
 
 # ax3.axvline(s_dtime, linewidth=1, zorder=2, color='green', linestyle=':') #  xmin=0, xmax=1
 # ax3.axvline(e_dtime, linewidth=1, zorder=2, color='green', linestyle=':') #  xmin=0, xmax=1
 
 
 ax4.axhline(proton_threshold, linewidth=1, zorder=2, color='red', linestyle='-.', label=f'{round(proton_threshold, 3)} pfu') #  xmin=0, xmax=1 # threshold
+ax4.grid(linestyle=':')
 
 
 
 # ===== vertical lines
-
+ax1.axvline(xray_june)
+ax2.axvline(t3_june)
+ax3.axvline(t3_june)
+ax4.axvline(proton_june)
 
 
 '''
@@ -2239,7 +2270,7 @@ xticks = ticker.MaxNLocator(M)
 
 # ax.xaxis.set_major_formatter(mdates.DateFormatter('%b %d'))
 
-# fig.autofmt_xdate()
+f.autofmt_xdate()
 # ax.xaxis.set_major_formatter(mdates.DateFormatter("%w %H:%M:%S"))
 # ax.fmt_xdata = mdates.DateFormatter('%Y')
 
@@ -2266,8 +2297,26 @@ ax = plt.gca()
 ax4.xaxis.set_major_formatter(myFmt)
 '''
 
+ax_labels_numeric = ax4.get_xticks()
+
+ax_labels_datetime = []
+for i in ax_labels_numeric:
+	ax_labels_datetime.append(datetime.datetime.fromtimestamp(i)) # .strftime('%Y-%m-%d\n%H:%M'))# .strftime('%c')) # ('%Y-%m-%d %H:%M:%S')
+
+ax_labels_datetime_formatted = []
+for i in range(len(ax_labels_datetime)):
+	ax_labels_datetime_formatted.append(ax_labels_datetime[i].strftime('%Y-%m-%d\n%H:%M:%S'))
+
+ax4.set_xticklabels(ax_labels_datetime_formatted)
+
+
 plt.subplots_adjust(wspace = 0, hspace = 0, top=0.91)
 
+# xmin, xmax = plt.xlim()  # return the current xlim
+# plt.xlim((xmin, xmax))   # set the xlim to xmin, xmax
+# plt.xlim(xmin, xmax)     # set the xlim to xmin, xmax
+
+plt.axis('tight')
 plt.show()
 
 
@@ -2749,3 +2798,275 @@ elif save_plot_option == 'yes' and len(option_bin_set) > 4:
 
 elif save_plot_option != 'yes':
 	plt.show()
+
+
+
+
+
+
+
+# ======= working with string_date_to_numeric
+'''
+# ======================== Modified Code for plotting, change things in here
+import matplotlib.dates as mdate
+
+
+f, (ax1, ax2, ax3, ax4) = plt.subplots(nrows=4, ncols=1, sharex=True, figsize=(8, 6))
+
+def string_date_to_numeric(li):
+    series = pd.Series(li)
+    datetime = pd.to_datetime(series)
+    numeric = pd.to_numeric(datetime)
+    return numeric
+
+x = string_date_to_numeric(rb_data.index)
+# x = np.arange(0,len(rb_data.index))
+y = full_freq
+X, Y = np.meshgrid(x,y)
+Xt = np.transpose(X)
+Yt = np.transpose(Y)
+# print(np.shape(Xt))
+# print(X, Y)
+
+# Z = rb_data[full_freq].values
+z = rb_data[full_freq].values
+Z = np.transpose(z)
+
+
+
+s_time = datetime.datetime.strptime(start_hour, '%H').time()
+e_time = datetime.datetime.strptime(end_hour, '%H').time()
+
+s_dtime = datetime.datetime.combine(start, s_time)
+e_dtime = datetime.datetime.combine(end, e_time)
+
+
+# fig, (ax1, ax2) = plt.subplots(1, 2, sharex=True, figsize=(8, 6))
+# fig = plt.figure()
+# ax = fig.add_subplot(111)
+
+# ax = fig.add_subplot(111, projection='3d')
+# ax.plot_surface(X,Y,Z, cmap=cm.viridis)
+
+
+# ========= xray flux (ax1)
+def flare_class(X):
+	if X == 10**-4:
+		return "X"
+	#return ["%.3f" % z for z in V]
+
+ax1.plot(string_date_to_numeric(xray_df['B_FLUX'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].index), xray_df['B_FLUX'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='blue', label='0.1-0.8 nm', zorder=5)
+ax1.plot(string_date_to_numeric(xray_df['A_FLUX'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].index), xray_df['A_FLUX'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='red', label='0.05-0.4 nm', zorder=5)
+ax1.set_yscale('log')
+
+
+flare_classes = ['', 'A', 'B', 'C', 'M', 'X']
+ax7 = ax1.twinx()
+ax7.set_yscale('log')
+ax7.set_ylim(ax1.get_ylim())
+ax7.set_yticks([10**-9, 10**-8, 10**-7, 10**-6, 10**-5, 10**-4, 10**-3, 10**-2])
+ax7.set_yticklabels(labels=flare_classes)
+ax7.tick_params(axis='y', which='both', direction='in')
+
+ax4.set_yticks([10**-9, 10**-8, 10**-7, 10**-6, 10**-5, 10**-4, 10**-3, 10**-2])
+
+ax1.set_ylabel(f'Xray Flux\n [Wm$^2$]', fontname="Arial", fontsize = 12)
+
+
+# ======= radio bursts (ax2)
+from mpl_toolkits.axes_grid1 import make_axes_locatable
+
+lower_bound = -10
+upper_bound = 50
+
+cf = ax2.contourf(X,Y,Z,40, vmin=lower_bound, vmax=upper_bound, cmap=cm.jet, levels=np.linspace(lower_bound,upper_bound,100), extend='max') # ["neither", "both", "min", "max"]
+cax = f.add_axes([0.91, 0.55, 0.0125, 0.15]) # ([0.9, 0.1, 0.03, 0.8])
+cb = f.colorbar(cf, cax=cax)
+
+tick_locator = ticker.MaxNLocator(nbins=5)
+cb.locator = tick_locator
+cb.update_ticks()
+
+'''
+cbar_ax = f.add_axes([0.85, 0.15, 0.05, 0.7])
+f.colorbar(cf, cax=cbar_ax)
+'''
+
+# plt.colorbar()
+'''
+divider = make_axes_locatable(ax2)
+cax = divider.append_axes("right", size="5%", pad=0)
+
+plt.colorbar(cf, cax=cax)
+'''
+
+ax2.set_yscale('log')
+ax2.set_ylabel(f'Frequency\n [kHz]', fontname="Arial", fontsize = 12)
+
+
+# ======= radio burst average (ax3)
+ax3.plot(string_date_to_numeric(rb_data_df_interp.index), rb_data_df_interp['avg'], '.', mfc='none', color='blue', zorder=3)
+
+for rbevent_no_interp in range(len(rb_list_event_interp)):
+	for rbpoint_interp in rb_list_event_interp[rbevent_no_interp]:
+		interp_x = string_date_to_numeric(rbpoint_interp)
+		ax3.vlines(x=interp_x, ymin=t3_threshold_interp, ymax=rb_data_df_interp['avg'].loc[rbpoint_interp], linewidth=1, color='fuchsia', zorder=2)
+	
+'''
+for i in range(len(rb_event_df)):
+	if s_dtime <= (rb_event_df['start_time'][i] and rb_event_df['end_time'][i]) <= e_dtime:
+		ax2.axvspan(rb_event_df['start_time'][i], rb_event_df['end_time'][i], color='lightblue', alpha=0.5)
+	# axes[length_data_list[j]].axvspan(rb_event_df['start_time'].values, rb_event_df['end_time'].values, color='blue', alpha=0.5)
+'''
+'''
+for i in range(len(rb_event_df)):
+	ax2.axvspan(string_date_to_numeric(rb_event_df['start_time'][i]), string_date_to_numeric(rb_event_df['end_time'][i]), color='lightblue', alpha=0.5)
+'''
+
+ax3.axhline(t3_threshold, linewidth=1, zorder=1, color='red', linestyle='-', label=f'{t3_threshold} dB') #  xmin=0, xmax=1
+
+for i in range(len(rb_event_df)):
+	if s_dtime <= (rb_event_df_interp['start_time'][i] and rb_event_df_interp['end_time'][i]) <= e_dtime:
+		ax3.axvline(string_date_to_numeric(rb_event_df_interp['start_time'][i]).values, linewidth=1, zorder=3, color='green', linestyle=':') #  xmin=0, xmax=1
+ax3.set_ylabel(f'Averaged TIII\n Intensity [dB]', fontname="Arial", fontsize = 12)
+
+# ======= Protons (ax4)
+for i in energy_bin_list: # for i in sorted(energy_bin_list): # changed to unsorted because the sort queued off of 10 -> 100 -> 50 rather than 10 -> 50 -> 100
+	ax4.plot_date(string_date_to_numeric(proton_df[f'{i[0]}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].index), proton_df[f'{i[0]}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'],'.', mfc='none', color=f'{i[2]}', label= f'{i[1]}', zorder=5)#, logy=True) , 
+	# ax3.plot(proton_df[f'{i[0]}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], '.', mfc='none', color=f'{i[2]}', label= f'{i[1]}', zorder=5)#, logy=True)
+
+color_tree = iter(cm.rainbow(np.linspace(0,1,10)))
+
+if proton_event_option == 'smooth':
+	ax4.plot(string_date_to_numeric(proton_smooth_df[f'{butter_filter}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'].index), proton_smooth_df[f'{butter_filter}'].loc[f'{event_obj_start_str_date}':f'{event_obj_end_str_date}'], color='purple', linewidth=1, label=f'Butter-{butter_order}', zorder=5)
+
+ax4.set_yscale('log')
+
+ax4.set_ylabel(f'Proton Flux\n [pfu]', fontname="Arial", fontsize = 12)
+
+
+s_time = datetime.datetime.strptime(start_hour, '%H').time()
+e_time = datetime.datetime.strptime(end_hour, '%H').time()
+
+s_dtime = datetime.datetime.combine(start, s_time)
+e_dtime = datetime.datetime.combine(end, e_time)
+
+
+for i in range(len(proton_event_df)):
+	if s_dtime <= (proton_event_df['start_time'][i] and proton_event_df['end_time'][i]) <= e_dtime:
+		# string_date_to_numeric(rb_event_df['start_time'][0]).values
+		# ax3.axvspan(proton_event_df['start_time'][i], proton_event_df['end_time'][i], color='palegreen', alpha=0.5)
+		ax4.axvline(string_date_to_numeric(proton_event_df['start_time'][i]).values, linewidth=1, zorder=2, color='green', linestyle='-') #  xmin=0, xmax=1
+		# ax3.axvline(string_date_to_numeric(proton_event_df['end_time'][i]).values, linewidth=1, zorder=2, color='green', linestyle='-') #  xmin=0, xmax=1
+
+# ax3.axvline(s_dtime, linewidth=1, zorder=2, color='green', linestyle=':') #  xmin=0, xmax=1
+# ax3.axvline(e_dtime, linewidth=1, zorder=2, color='green', linestyle=':') #  xmin=0, xmax=1
+
+
+ax4.axhline(proton_threshold, linewidth=1, zorder=2, color='red', linestyle='-.', label=f'{round(proton_threshold, 3)} pfu') #  xmin=0, xmax=1 # threshold
+
+
+
+# ===== vertical lines
+
+
+
+'''
+for i in range(len(rb_event_df)):
+	print(f"Radio Burst Start Time ({rb_event_df['start_time'][i]}): ", string_date_to_numeric(rb_event_df['start_time'][i]))
+
+print("=====================")
+
+for i in range(len(proton_event_df)):
+	print(f"Proton Start Time ({proton_event_df['start_time'][i]}): ", string_date_to_numeric(proton_event_df['start_time'][i]))
+'''
+
+
+'''
+plt.xticks(x, rb_data.index, rotation='vertical')
+
+spacing = 100
+visible = ax.xaxis.get_ticklabels()[::spacing]
+for label in ax.xaxis.get_ticklabels():
+    if label not in visible:
+        label.set_visible(False)
+'''
+
+
+# ax.set_xticklabels(rb_data.index)
+# ax.xaxis.set_major_formatter(mdates.ticker.FixedFormatter(rb_data.index))
+
+'''
+# Get the current axis
+ax = plt.gca()
+
+# Only label every 20th value
+ticks_to_use = rb_data.index[::20]
+
+# Set format of labels (note year not excluded as requested)
+labels = [ i.strftime("%-H:%M") for i in ticks_to_use ]
+
+# Now set the ticks and labels
+ax.set_xticks(ticks_to_use)
+ax.set_xticklabels(labels)
+'''
+
+# ax.xaxis_date()
+# ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y'))
+
+# Create your ticker object with M ticks
+M = 20
+xticks = ticker.MaxNLocator(M)
+
+# Set the yaxis major locator using your ticker object. You can also choose the minor
+# tick positions with set_minor_locator.
+# ax1.xaxis.set_major_locator(xticks)
+# ax.set_xticklabels(rb_data.index[::5, :])
+
+
+# ax.xaxis.set_major_formatter(mdates.DateFormatter('%b %d'))
+
+# fig.autofmt_xdate()
+# ax.xaxis.set_major_formatter(mdates.DateFormatter("%w %H:%M:%S"))
+# ax.fmt_xdata = mdates.DateFormatter('%Y')
+
+# ax1.yscale('log')
+
+# plt.setp(ax.xaxis.get_majorticklabels(), rotation=0, horizontalalignment='center')
+
+# plt.tight_layout()
+
+'''
+axes[length_data_list[j]].set_xlabel('Time [UT]', fontname="Arial", fontsize = 12)
+
+myFmt = mdates.DateFormatter('%m/%d\n%H:%M')
+ax = plt.gca()
+ax.xaxis.set_major_formatter(myFmt)
+
+plt.suptitle(f'Space Weather Monitor\n[{event_obj_start_str} -- {event_obj_end_str}]', fontname="Arial", fontsize = 14) #, y=1.04,
+#plt.tight_layout()
+'''
+
+'''
+myFmt = mdates.DateFormatter('%m/%d\n%H:%M')
+ax = plt.gca()
+ax4.xaxis.set_major_formatter(myFmt)
+'''
+ax_labels_numeric = ax4.get_xticks() * pow(10,-9)
+
+ax_labels_datetime = []
+for i in ax_labels_numeric:
+	ax_labels_datetime.append(datetime.datetime.fromtimestamp(i).strftime('%Y-%m-%d %H:%M:%S'))# .strftime('%c'))
+
+ax4.set_xticklabels(ax_labels_datetime)
+
+plt.subplots_adjust(wspace = 0, hspace = 0, top=0.91)
+
+plt.show()
+
+
+
+# rb_data.to_csv("test_data.csv", sep=",")
+# rb_data.plot.scatter(x=rb_data.index, y=data_rad1, c=rb_data.values)
+sys.exit(0)
+'''
