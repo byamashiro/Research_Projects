@@ -66,8 +66,8 @@ def applyPlotStyle():
 	axes[length_data_list[j]].grid(True)
 	axes[length_data_list[j]].minorticks_on()
 
-	axes[length_data_list[j]].legend(loc='lower right', ncol=1,fontsize=8)# borderaxespad=0)# bbox_to_anchor=(1, 0.5)) # bbox_to_anchor=(1.02,1.0)
-	axes[length_data_list[j]].tick_params(axis='y', which='both', direction='in')
+	# axes[length_data_list[j]].legend(loc='lower right', ncol=1,fontsize=8)# borderaxespad=0)# bbox_to_anchor=(1, 0.5)) # bbox_to_anchor=(1.02,1.0)
+	axes[length_data_list[j]].tick_params(axis='both', which='both', direction='in')
 
 	# axes[length_data_list[j]].axvline(proton_df.idxmax().P6W_UNCOR_FLUX) # (proton_df.P6W_UNCOR_FLUX.max())
 
@@ -121,7 +121,7 @@ if '1' in option_bin_set:
 	'''
 	# ============= Uncorrected Data
 
-	axes[length_data_list[j]].plot(data['uncorr_fluence'], data['goes_max_proton'], 'o', mfc='none', color='red', zorder=5)#, logy=True)
+	axes[length_data_list[j]].plot(data['uncorr_integral'], data['goes_max_proton'], 'o', mfc='none', color='red', zorder=5)#, logy=True)
 
 	# axes[length_data_list[j]].plot(data['fluence_old'], data['goes_max_proton'], 'o', mfc='none', color='blue', label= '120 kHz Fluence', zorder=5)#, logy=True)
 
@@ -132,17 +132,18 @@ if '1' in option_bin_set:
 	# axes[length_data_list[j]].set_ylim((10**(-3)), (10**3))
 	
 	# axes[length_data_list[j]].set_yticks([10**-3, 10**-2, 10**-1, 10**0, 10**1, 10**2, 10**3])
-	axes[length_data_list[j]].set_ylabel(f'log(Max Proton Flux) [pfu]', fontname="Arial", fontsize = 12)
-	axes[length_data_list[j]].set_xlabel(r'log(Unorrected Type III Radio Burst Fluence) [sfu$\cdot$min$_{TIII}$]', fontname="Arial", fontsize = 12)
+	axes[length_data_list[j]].set_ylabel(f'log(Max Proton Flux) [pfu]', fontname="Arial", fontsize = 16)
+	axes[length_data_list[j]].set_xlabel(r'log(Uncorrected Type III Radio Burst Integral Intensity) [dB]', fontname="Arial", fontsize = 16)
 
 	applyPlotStyle()
+	plt.savefig('uncorrected.png', format='png', dpi=900)
 	plt.show()
 
 	# ============= Corrected Data
 	length_data_list[0] = 0,0
 	f, axes = plt.subplots(nrows=length_data, ncols=1, sharex=False, figsize=(7, 7), squeeze=False)
 
-	axes[length_data_list[j]].plot(data['fluence'], data['goes_max_proton'], 'o', mfc='none', color='blue', zorder=5)#, logy=True)
+	axes[length_data_list[j]].plot(data['fluence'], data['goes_max_proton'], 'o', mfc='none', color='green', zorder=5)#, logy=True)
 
 	# axes[length_data_list[j]].plot(data['fluence_old'], data['goes_max_proton'], 'o', mfc='none', color='blue', label= '120 kHz Fluence', zorder=5)#, logy=True)
 
@@ -154,7 +155,7 @@ if '1' in option_bin_set:
 	
 	# axes[length_data_list[j]].set_yticks([10**-3, 10**-2, 10**-1, 10**0, 10**1, 10**2, 10**3])
 	axes[length_data_list[j]].set_ylabel(f'log(Max Proton Flux) [pfu]', fontname="Arial", fontsize = 12)
-	axes[length_data_list[j]].set_xlabel(r'log(Corrected Type III Radio Burst Fluence) [(sfu$\cdot$min$_{TIII}$)$\cdot$ min$_{GOES}$]', fontname="Arial", fontsize = 12)
+	axes[length_data_list[j]].set_xlabel(r'log(Corrected Integrated Type III Radio Burst Fluence) [(sfu$\cdot$min$_{TIII}$)$\cdot$ min$_{GOES}$]', fontname="Arial", fontsize = 12)
 
 	applyPlotStyle()
 	plt.show()
@@ -164,7 +165,7 @@ if '1' in option_bin_set:
 	length_data_list[0] = 0,0
 	f, axes = plt.subplots(nrows=length_data, ncols=1, sharex=False, figsize=(7, 7), squeeze=False)
 
-	axes[length_data_list[j]].plot(data['integral'], data['goes_max_proton'], 'o', mfc='none', color='green', zorder=5)#, logy=True)
+	axes[length_data_list[j]].plot(data['integral'], data['goes_max_proton'], 'o', mfc='none', color='blue', zorder=5)#, logy=True)
 
 	# axes[length_data_list[j]].plot(data['fluence_old'], data['goes_max_proton'], 'o', mfc='none', color='blue', label= '120 kHz Fluence', zorder=5)#, logy=True)
 
@@ -175,10 +176,12 @@ if '1' in option_bin_set:
 	# axes[length_data_list[j]].set_ylim((10**(-3)), (10**3))
 	
 	# axes[length_data_list[j]].set_yticks([10**-3, 10**-2, 10**-1, 10**0, 10**1, 10**2, 10**3])
-	axes[length_data_list[j]].set_ylabel(f'log(Max Proton Flux) [pfu]', fontname="Arial", fontsize = 12)
-	axes[length_data_list[j]].set_xlabel(r'log(Corrected Type III Radio Burst Integral Intensity) [(sfu$\cdot$min$_{TIII}$)$\cdot$ min$_{GOES}$]', fontname="Arial", fontsize = 12)
+	axes[length_data_list[j]].set_ylabel(f'log(Max Proton Flux) [pfu]', fontname="Arial", fontsize = 16)
+	axes[length_data_list[j]].set_xlabel(r'log(Corrected Type III Radio Burst Integral Intensity) [dB]', fontname="Arial", fontsize = 16)
 
 	applyPlotStyle()
+	plt.savefig('corrected.png', format='png', dpi=900)
+
 	plt.show()
 
 	sys.exit(0)

@@ -174,7 +174,19 @@ proj_choice = ccrs.PlateCarree() # Mollweide is the closest to aitoff
 plt.figure(figsize=(12,6))
 ax = plt.axes(projection=proj_choice) # PlateCarree and Mercator have functioning gridlines
 # ax.stock_img()
-plt.title('Plate Carree Projection')
+
+'''
+ax.text(-0.07, 0.55, 'Latitude', va='bottom', ha='center',
+		fontsize=16,
+        rotation='vertical', rotation_mode='anchor',
+        transform=ax.transAxes)
+ax.text(0.5, -0.1, 'Longitude', va='bottom', ha='center',
+		fontsize=16,
+        rotation='horizontal', rotation_mode='anchor',
+        transform=ax.transAxes)
+'''
+
+# plt.title('Plate Carree Projection')
 gl = ax.gridlines(crs=proj_choice, draw_labels=True, zorder=2)
 gl.xlabels_top = False
 gl.xformatter = LONGITUDE_FORMATTER
@@ -214,12 +226,28 @@ x = data['flare_long']
 y = data['flare_lat']
 z = data['connectivity']
 
+for i in range(len(data)):
+	if "M" in data.iloc[i]['flare_class']:
+		plt.plot(data['flare_long'][i], data['flare_lat'][i], '^', color='grey', markersize=10, zorder=2, label="M-Class" if i==0 else "")
+	elif "X" in data.iloc[i]['flare_class']:
+		plt.plot(data['flare_long'][i], data['flare_lat'][i], 's', color='grey', markersize=10, zorder=2, label="X-Class" if i==4 else "")
+	elif "B" in data.iloc[i]['flare_class']:
+		plt.plot(data['flare_long'][i], data['flare_lat'][i], 'o', color='grey', markersize=10, zorder=2, label="Backside" if i==15 else "")
+	elif "F" in data.iloc[i]['flare_class']:
+		plt.plot(data['flare_long'][i], data['flare_lat'][i], 'd', color='grey', markersize=10, zorder=2, label="Backside" if i==15 else "")
+
+
+
 # z1 = z.reshape((len(x), len(y)))
 
 scatter = ax.scatter(data['flare_long'], data['flare_lat'], c=data['connectivity'], cmap='jet', transform=ccrs.Geodetic(), zorder=3)
 # scatter = ax.contourf(x,y , c=z, cmap='viridis', transform=ccrs.PlateCarree(), zorder=3)
 plt.colorbar(scatter)
 plt.xlabel("Longitude")
+
+ax.grid(True)
+ax.grid(linestyle=':')
+
 # for i in range(len(data)):
 	# color_choice = next(color_cm)
 	#ax.plot(data['flare_long'][i], data['flare_lat'][i], 'o', transform=ccrs.Geodetic(), color=color_choice, markersize=2, zorder=3) # longitude and latitude #ccrs.PlateCarree() color=color_choice
@@ -247,6 +275,9 @@ ax.plot(1.0, 1.0, 'k*', markersize = 15, color='blue')
 # ax.title("Aitoff")
 ax.grid(True)
 plt.show()
+
+plt.savefig(f'presentation_plots/projection_plot.png', format='png', dpi=900)
+
 
 sys.exit(0)
 

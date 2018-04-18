@@ -26,7 +26,7 @@ plt.close("all")
 
 data_directory = '/Users/bryanyamashiro/Documents/Research_Projects/Data'
 
-data = pd.read_csv(f'{data_directory}/Projection/location_backside.csv', sep=',', comment='#')
+data = pd.read_csv(f'{data_directory}/Projection/location_hiprot.csv', sep=',', comment='#')
 
 proj_choice = ccrs.PlateCarree()
 
@@ -42,6 +42,40 @@ east_limb_y = [-90, 90]
 
 flare_lat_list = []
 flare_long_list = []
+
+for i in data['flare_location']:
+	# print(i)
+	try:
+		flare_lat_temp = 0
+		flare_long_temp = 0
+
+		if i[0] == 'N':
+			flare_lat_temp = int(i[1:3])
+		elif i[0] == 'S':
+			flare_lat_temp = -int(i[1:3])
+		if i[3] == 'W':
+			if len(i) == 6:
+				flare_long_temp = int(i[4:6])
+			elif len(i) == 7:
+				flare_long_temp = int(i[4:7])
+		elif i[3] == 'E':
+			if len(i) == 6:
+				flare_long_temp = -int(i[4:6])
+			elif len(i) == 7:
+				flare_long_temp = -int(i[4:7])
+
+
+
+		flare_lat_list.append(flare_lat_temp)
+		flare_long_list.append(flare_long_temp)
+
+	except:
+		flare_lat_list.append(np.nan)
+		flare_long_list.append(np.nan)
+		# print("not working")
+
+data['flare_lat'] = flare_lat_list
+data['flare_long'] = flare_long_list
 
 '''
 for i in data['flare_location']:
@@ -157,7 +191,7 @@ ax.text(0.5, -0.1, 'Longitude', va='bottom', ha='center',
 #plt.title('Plate Carree Projection')
 # plt.xlabel("Longitude")
 # plt.ylabel("Latitude")
-gl = ax.gridlines(crs=proj_choice, draw_labels=True, zorder=2)
+gl = ax.gridlines(crs=proj_choice, draw_labels=True, zorder=2, linestyle=':')
 gl.xlabels_top = False
 gl.xformatter = LONGITUDE_FORMATTER
 gl.yformatter = LATITUDE_FORMATTER
@@ -168,17 +202,19 @@ gl.yformatter = LATITUDE_FORMATTER
 
 for i in range(len(data)):
 	if "M" in data.iloc[i]['flare_class']:
-		plt.plot(data['flare_long'][i], data['flare_lat'][i], 'o', color='blue', mfc='none', markersize=10, zorder=4, label="M-Class" if i==0 else "")
-	elif "X" in data.iloc[i]['flare_class']:
-		plt.plot(data['flare_long'][i], data['flare_lat'][i], 'x', color='red', markersize=10, zorder=4, label="X-Class" if i==4 else "")
-	elif "B" in data.iloc[i]['flare_class']:
-		plt.plot(data['flare_long'][i], data['flare_lat'][i], '+', color='green', markersize=10, zorder=4, label="Backside" if i==15 else "")
+		plt.plot(data['flare_long'][i], data['flare_lat'][i], 'o', mfc='none', color='blue', markersize=10, zorder=4) # , label="M-Class" if i==0 else "") # '^',
+	elif "X" in data.iloc[i]['flare_class']: 
+		plt.plot(data['flare_long'][i], data['flare_lat'][i], 'x', color='red', markersize=10, zorder=4) # , label="X-Class" if i==4 else "") # 's'
+	elif "B" in data.iloc[i]['flare_class']: 
+		plt.plot(data['flare_long'][i], data['flare_lat'][i], '+', color='green', markersize=10, zorder=4) # , label="Backside" if i==15 else "") # 'o'
+	elif "F" in data.iloc[i]['flare_class']: 
+		plt.plot(data['flare_long'][i], data['flare_lat'][i], '^', mfc='none', color='orange', markersize=10, zorder=4) # , label="Filament" if i==15 else "") # 'd'
 
 ax.set_extent((-180, 180, -90, 90)) # crs=ccrs.PlateCarree()
 ax.plot(west_limb_x, west_limb_y, transform=ccrs.PlateCarree(), color='black', lw=2, zorder=2)
 ax.plot(east_limb_x, east_limb_y, transform=ccrs.PlateCarree(), color='black', lw=2, zorder=2)
 
-plt.legend(loc='upper right', ncol=1,fontsize=14)
+# plt.legend(loc='upper right', ncol=1,fontsize=14)
 
 
 # scatter = ax.scatter(data['flare_long'], data['flare_lat'], c=data['connectivity'], cmap='viridis', transform=ccrs.Geodetic(), zorder=3)
@@ -193,7 +229,8 @@ plt.legend(loc='upper right', ncol=1,fontsize=14)
 	#ax.plot(data['flare_long'][i], data['flare_lat'][i], 'o', transform=ccrs.Geodetic(), color=color_choice, markersize=2, zorder=3) # longitude and latitude #ccrs.PlateCarree() color=color_choice
 
 # plt.colorbar()
-plt.savefig(f'{data_directory}/Projection/flare_location_test_v2.png', format='png', dpi=900)
+# plt.savefig(f'{data_directory}/Projection/flare_location_test_v2.png', format='png', dpi=900)
+plt.savefig(f'presentation_plots/flare_projection_plot.png', format='png', dpi=900)
 
 plt.show()
 
