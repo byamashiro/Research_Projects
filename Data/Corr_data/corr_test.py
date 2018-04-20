@@ -121,7 +121,7 @@ if '1' in option_bin_set:
 	'''
 	# ============= Uncorrected Data
 
-	axes[length_data_list[j]].plot(data['uncorr_integral'], data['goes_max_proton'], 'o', mfc='none', color='red', zorder=5)#, logy=True)
+	axes[length_data_list[j]].plot(data['uncorr_integral'], data['goes_max_proton'], 'o', color='red', zorder=5)#, logy=True) # , mfc='none'
 
 	# axes[length_data_list[j]].plot(data['fluence_old'], data['goes_max_proton'], 'o', mfc='none', color='blue', label= '120 kHz Fluence', zorder=5)#, logy=True)
 
@@ -143,7 +143,7 @@ if '1' in option_bin_set:
 	length_data_list[0] = 0,0
 	f, axes = plt.subplots(nrows=length_data, ncols=1, sharex=False, figsize=(7, 7), squeeze=False)
 
-	axes[length_data_list[j]].plot(data['fluence'], data['goes_max_proton'], 'o', mfc='none', color='green', zorder=5)#, logy=True)
+	axes[length_data_list[j]].plot(data['fluence'], data['goes_max_proton'], 'o', color='green', zorder=5)#, logy=True) # , mfc='none'
 
 	# axes[length_data_list[j]].plot(data['fluence_old'], data['goes_max_proton'], 'o', mfc='none', color='blue', label= '120 kHz Fluence', zorder=5)#, logy=True)
 
@@ -165,7 +165,7 @@ if '1' in option_bin_set:
 	length_data_list[0] = 0,0
 	f, axes = plt.subplots(nrows=length_data, ncols=1, sharex=False, figsize=(7, 7), squeeze=False)
 
-	axes[length_data_list[j]].plot(data['integral'], data['goes_max_proton'], 'o', mfc='none', color='blue', zorder=5)#, logy=True)
+	axes[length_data_list[j]].plot(data['integral'], data['goes_max_proton'], 'o', color='blue', zorder=5) #, logy=True) # , mfc='none'
 
 	# axes[length_data_list[j]].plot(data['fluence_old'], data['goes_max_proton'], 'o', mfc='none', color='blue', label= '120 kHz Fluence', zorder=5)#, logy=True)
 
