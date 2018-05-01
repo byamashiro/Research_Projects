@@ -799,7 +799,7 @@ if '2' in option_bin_set:
 		rb_len = len(rb_list_event[0])
 
 		for i in rb_list_event[0]:
-			print(i)
+			# print(i)
 			rb_var = np.sqrt(  pow((rb_data[t3_freq_outlier].loc[i]  -  rb_mean), 2) / (rb_len - 1)  ) # had 120 instead of t3_freq
 			# rb_var = np.sqrt(  pow((rb_data_event[t3_freq].loc[i]  -  rb_mean), 2) / (rb_len - 1)  ) # had 120 instead of t3_freq
 
@@ -940,7 +940,8 @@ if '2' in option_bin_set:
 	print(rb_event_df_interp)
 	print('='*40)
 
-
+	rb_event_df.to_csv(f'{data_directory}/T3_Detection/rbevents_{t3_freq}khz_{t3_threshold}_{start_date}_{end_date}.txt', sep=',', index=False)
+	rb_event_df_interp.to_csv(f'{data_directory}/T3_Detection/rbevents_interp_{t3_freq}khz_{t3_threshold}_{start_date}_{end_date}.txt', sep=',', index=False)
 
 
 
