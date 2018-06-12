@@ -583,8 +583,8 @@ if '1' in option_bin_set:
 
 	# ======== (BEGIN) Interpolating and smoothing data
 	elif proton_event_option == 'smooth':
-		proton_threshold = pow(10,-1.26) # pow(10,-1.45) when Butterworth filter was at (1 or 2, 0.08)
-		butter_order = 1
+		proton_threshold = pow(10,-1.26) # pow(10,-1.26) (20180611) # pow(10,-1.45) when Butterworth filter was at (1 or 2, 0.08)
+		butter_order = 1 # 1 (20180611)
 		butter_filter = f'butter{butter_order}'
 		proton_smooth_df = pd.DataFrame(proton_df[f'{proton_channel}']) # pd.DataFrame(proton_df[f'{proton_channel}'].loc[event_obj_start:event_obj_end])
 
@@ -628,7 +628,7 @@ if '1' in option_bin_set:
 	'''
 
 	min_length_event = 500 # changed thresholds (03/06/2018): 1000 # 60
-	min_t_between_pts = 60 # changed thresholds (03/06/2018): 60 # 40
+	min_t_between_pts = 15 # 60 (20180611) # changed thresholds (03/06/2018): 60 # 40
 
 	for i in proton_data_event[proton_data_event.values > proton_threshold].index: # for i in rb_data[rb_data.values > 300].index: # one level is 1 minute
 		if len(proton_list_temp) == 0:

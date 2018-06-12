@@ -231,7 +231,7 @@ for detection_year in year_list:
 				
 				# ========== Adding smoothed (begin)
 				if proton_event_option == 'smooth':
-					detection_threshold = pow(10,-1.26)
+					detection_threshold = pow(10,-1.24) # pow(10,-1.26)
 					butter_order = 1
 					butter_filter = f'butter{butter_order}'
 					proton_smooth_df = pd.DataFrame(proton_df[f'{energy_header}'])
